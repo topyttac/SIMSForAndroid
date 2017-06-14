@@ -70,6 +70,9 @@ public class SourceFragment extends Fragment {
 
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
+
+        mRootRef = FirebaseDatabase.getInstance().getReference();
+        mRootRef.child("source").orderByChild("s_name").addChildEventListener(sourceEventListener);
     }
 
     @Override
@@ -89,7 +92,6 @@ public class SourceFragment extends Fragment {
         // Init 'View' instance(s) with rootView.findViewById here
         montserrat_regular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-Regular.ttf");
         montserrat_bold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-SemiBold.ttf");
-        mRootRef = FirebaseDatabase.getInstance().getReference();
 
         tv_title = (TextView) rootView.findViewById(R.id.tv_title);
         recyclerView_source = (RecyclerView) rootView.findViewById(R.id.recycler_view_source);
@@ -107,7 +109,6 @@ public class SourceFragment extends Fragment {
         llm.setAutoMeasureEnabled(false);
         recyclerView_source.setLayoutManager(llm);
 
-        mRootRef.child("source").orderByChild("s_name").addChildEventListener(sourceEventListener);
         bottom_sheet.setFabAnimationEndListener(fab_animation_click);
         fab.setOnClickListener(fab_click);
         sourceAdapter.setOnItemClickListener(onItemClickListener);
@@ -122,9 +123,6 @@ public class SourceFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-//        if (sourceEventListener != null) {
-//            mSourceRef.removeEventListener(sourceEventListener);
-//        }
     }
 
     /*

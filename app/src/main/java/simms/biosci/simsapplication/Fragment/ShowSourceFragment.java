@@ -61,6 +61,9 @@ public class ShowSourceFragment extends Fragment {
 
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
+
+        mRootRef = FirebaseDatabase.getInstance().getReference();
+        mRootRef.child("source").orderByChild("s_key").equalTo(key).addChildEventListener(show_source_click);
     }
 
     @Override
@@ -82,7 +85,6 @@ public class ShowSourceFragment extends Fragment {
         // Init 'View' instance(s) with rootView.findViewById here
         montserrat_regular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-Regular.ttf");
         montserrat_bold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-SemiBold.ttf");
-        mRootRef = FirebaseDatabase.getInstance().getReference();
 
         tv_title = (TextView) rootView.findViewById(R.id.tv_title);
         btn_update = (Button) rootView.findViewById(R.id.btn_update);
@@ -102,34 +104,6 @@ public class ShowSourceFragment extends Fragment {
 
         btn_update.setOnClickListener(btn_update_click);
         btn_delete.setOnClickListener(btn_delete_click);
-        mRootRef.child("source").orderByChild("s_key").equalTo(key).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                FeedSource model = dataSnapshot.getValue(FeedSource.class);
-                et_source_name.setText(model.getS_name() + "");
-                et_source_desc.setText(model.getS_desc() + "");
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
 
     @Override
@@ -140,6 +114,8 @@ public class ShowSourceFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        if (show_source_click != null)
+            mRootRef.removeEventListener(show_source_click);
     }
 
     /*
@@ -204,6 +180,35 @@ public class ShowSourceFragment extends Fragment {
             intent.putExtra("what2do", "delete");
             getActivity().setResult(REQUEST_CODE_SHOW, intent);
             getActivity().finish();
+        }
+    };
+
+    ChildEventListener show_source_click = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            FeedSource model = dataSnapshot.getValue(FeedSource.class);
+            et_source_name.setText(model.getS_name() + "");
+            et_source_desc.setText(model.getS_desc() + "");
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
         }
     };
 }

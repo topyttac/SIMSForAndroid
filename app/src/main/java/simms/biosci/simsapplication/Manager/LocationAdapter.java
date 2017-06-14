@@ -22,7 +22,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Custom
     private List<FeedLocation> feedItems;
     private Context context;
     private OnItemClickListener onItemClickListener;
-    private Typeface montserrat_regular, montserrat_bold;
+    private Typeface montserrat_regular, montserrat_bold, prompt_regular;
 
     public LocationAdapter(Context context, List<FeedLocation> feedItems){
         this.context = context;
@@ -64,13 +64,14 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Custom
         public CustomViewHolder(View itemView) {
             super(itemView);
             montserrat_regular = Typeface.createFromAsset(context.getAssets(), "fonts/Montserrat-Regular.ttf");
+            prompt_regular = Typeface.createFromAsset(context.getAssets(), "fonts/Prompt-Regular.ttf");
             montserrat_bold = Typeface.createFromAsset(context.getAssets(), "fonts/Montserrat-SemiBold.ttf");
             this.ll_card = (LinearLayout) itemView.findViewById(R.id.ll_card);
             this.tv_location = (TextView) itemView.findViewById(R.id.tv_location);
             this.tv_address = (TextView) itemView.findViewById(R.id.tv_address);
             this.tv_title_address = (TextView) itemView.findViewById(R.id.tv_title_address);
             this.tv_location.setTypeface(montserrat_bold);
-            this.tv_address.setTypeface(montserrat_regular);
+            this.tv_address.setTypeface(prompt_regular);
             this.tv_title_address.setTypeface(montserrat_regular);
         }
     }

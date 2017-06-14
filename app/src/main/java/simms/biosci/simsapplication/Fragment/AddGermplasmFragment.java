@@ -1,6 +1,7 @@
 package simms.biosci.simsapplication.Fragment;
 
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,12 +18,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import simms.biosci.simsapplication.Manager.FeedLocation;
+import simms.biosci.simsapplication.Manager.FeedSource;
 import simms.biosci.simsapplication.R;
 
 /**
@@ -38,6 +46,9 @@ public class AddGermplasmFragment extends Fragment {
     private Button btn_add, btn_reset;
     private int source = -1, location = -1;
     private DatabaseReference mRootRef, mGermplasmRef;
+    private List<FeedLocation> feedLocation;
+    private List<FeedSource> feedSources;
+    private String[] locationList, sourceList;
 
     public AddGermplasmFragment() {
         super();
@@ -58,6 +69,11 @@ public class AddGermplasmFragment extends Fragment {
 
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
+
+        mRootRef = FirebaseDatabase.getInstance().getReference();
+        mGermplasmRef = mRootRef.child("germplasm");
+        mRootRef.child("source").orderByChild("s_name").addChildEventListener(select_source_click);
+        mRootRef.child("location").orderByChild("l_name").addChildEventListener(select_location_click);
     }
 
     @Override
@@ -77,8 +93,6 @@ public class AddGermplasmFragment extends Fragment {
         // Init 'View' instance(s) with rootView.findViewById here
         montserrat_regular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-Regular.ttf");
         montserrat_bold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-SemiBold.ttf");
-        mRootRef = FirebaseDatabase.getInstance().getReference();
-        mGermplasmRef = mRootRef.child("germplasm");
 
         tv_title = (TextView) rootView.findViewById(R.id.tv_title);
         btn_add = (Button) rootView.findViewById(R.id.btn_add);
@@ -136,6 +150,9 @@ public class AddGermplasmFragment extends Fragment {
         et_box.setTypeface(montserrat_regular);
         et_note.setTypeface(montserrat_regular);
 
+        feedLocation = new ArrayList<>();
+        feedSources = new ArrayList<>();
+
         tv_select_location.setText(Html.fromHtml("<u>Tap to select</u>"));
         tv_select_source.setText(Html.fromHtml("<u>Tap to select</u>"));
 
@@ -143,6 +160,8 @@ public class AddGermplasmFragment extends Fragment {
         btn_reset.setOnClickListener(btn_reset_click);
         tv_select_location.setOnClickListener(tv_select_location_click);
         tv_select_source.setOnClickListener(tv_select_source_click);
+
+        new LoadingFireBase().execute("");
     }
 
     @Override
@@ -153,6 +172,10 @@ public class AddGermplasmFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        if (select_source_click != null)
+            mRootRef.removeEventListener(select_source_click);
+        if (select_location_click != null)
+            mRootRef.removeEventListener(select_location_click);
     }
 
     /*
@@ -180,14 +203,14 @@ public class AddGermplasmFragment extends Fragment {
             anim.setInterpolator(interpolator);
             btn_add.startAnimation(anim);
 
-            if(tv_select_location.getText().toString().equals("Tap to select") || tv_select_source.getText().toString().equals("Tap to select") ||
+            if (tv_select_location.getText().toString().equals("Tap to select") || tv_select_source.getText().toString().equals("Tap to select") ||
                     et_germplasm.getText().toString().equals("") || et_cross.getText().toString().equals("") ||
                     et_lot.getText().toString().equals("") || et_stock.getText().toString().equals("") ||
                     et_balance.getText().toString().equals("") || et_room.getText().toString().equals("") ||
                     et_shelf.getText().toString().equals("") || et_row.getText().toString().equals("") ||
-                    et_box.getText().toString().equals("") || et_note.getText().toString().equals("")){
+                    et_box.getText().toString().equals("") || et_note.getText().toString().equals("")) {
                 Toast.makeText(getContext(), "Please fill in all information.", Toast.LENGTH_SHORT).show();
-            } else{
+            } else {
                 String key = mGermplasmRef.push().getKey();
                 HashMap<String, Object> germplasm = new HashMap<String, Object>();
                 germplasm.put("g_name", et_germplasm.getText().toString());
@@ -224,7 +247,7 @@ public class AddGermplasmFragment extends Fragment {
         }
     };
 
-    private void cleanUp(){
+    private void cleanUp() {
         et_germplasm.setText("");
         et_cross.setText("");
         et_lot.setText("");
@@ -242,6 +265,7 @@ public class AddGermplasmFragment extends Fragment {
         location = -1;
         source = -1;
     }
+
     View.OnClickListener tv_select_location_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -253,7 +277,7 @@ public class AddGermplasmFragment extends Fragment {
             MaterialDialog.Builder builder = new MaterialDialog.Builder(getContext());
             builder
                     .title("Select Source")
-                    .items("Thamasat", "Biosci 2")
+                    .items(locationList)
                     .typeface("Montserrat-Regular.ttf", "Montserrat-Regular.ttf")
                     .itemsCallbackSingleChoice(location, new MaterialDialog.ListCallbackSingleChoice() {
                         @Override
@@ -280,7 +304,7 @@ public class AddGermplasmFragment extends Fragment {
             MaterialDialog.Builder builder = new MaterialDialog.Builder(getContext());
             builder
                     .title("Select Source")
-                    .items("Nursery 1", "Nursery 2", "Nursery 3")
+                    .items(sourceList)
                     .typeface("Montserrat-Regular.ttf", "Montserrat-Regular.ttf")
                     .itemsCallbackSingleChoice(source, new MaterialDialog.ListCallbackSingleChoice() {
                         @Override
@@ -295,4 +319,82 @@ public class AddGermplasmFragment extends Fragment {
                     .show();
         }
     };
+
+    ChildEventListener select_location_click = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            FeedLocation model = dataSnapshot.getValue(FeedLocation.class);
+            feedLocation.add(model);
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
+
+    ChildEventListener select_source_click = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            FeedSource model = dataSnapshot.getValue(FeedSource.class);
+            feedSources.add(model);
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
+
+    private class LoadingFireBase extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            locationList = new String[feedLocation.size()];
+            sourceList = new String[feedSources.size()];
+            for (int i = 0; i < feedLocation.size(); i++) {
+                locationList[i] = feedLocation.get(i).getL_name() + "";
+            }
+            for (int i = 0; i < feedSources.size(); i++) {
+                sourceList[i] = feedSources.get(i).getS_name() + "";
+            }
+        }
+
+    }
 }

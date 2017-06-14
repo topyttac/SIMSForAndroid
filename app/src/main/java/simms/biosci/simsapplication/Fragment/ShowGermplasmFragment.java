@@ -2,6 +2,7 @@ package simms.biosci.simsapplication.Fragment;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -24,10 +25,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import simms.biosci.simsapplication.Manager.FeedGermplasm;
+import simms.biosci.simsapplication.Manager.FeedLocation;
+import simms.biosci.simsapplication.Manager.FeedSource;
 import simms.biosci.simsapplication.R;
 
 /**
@@ -45,6 +50,9 @@ public class ShowGermplasmFragment extends Fragment {
     private DatabaseReference mRootRef, mGermplasmRef;
     private String key;
     private static final int REQUEST_CODE_SHOW = 4;
+    private List<FeedLocation> feedLocation;
+    private List<FeedSource> feedSources;
+    private String[] locationList, sourceList;
 
     public ShowGermplasmFragment() {
         super();
@@ -66,6 +74,12 @@ public class ShowGermplasmFragment extends Fragment {
 
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
+
+        mRootRef = FirebaseDatabase.getInstance().getReference();
+        mGermplasmRef = mRootRef.child("germplasm");
+        mRootRef.child("source").orderByChild("s_name").addChildEventListener(select_source_click);
+        mRootRef.child("location").orderByChild("l_name").addChildEventListener(select_location_click);
+        mRootRef.child("germplasm").orderByChild("g_key").equalTo(key).addChildEventListener(show_germplasm_listener);
     }
 
     @Override
@@ -87,7 +101,6 @@ public class ShowGermplasmFragment extends Fragment {
         // Init 'View' instance(s) with rootView.findViewById here
         montserrat_regular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-Regular.ttf");
         montserrat_bold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-SemiBold.ttf");
-        mRootRef = FirebaseDatabase.getInstance().getReference();
 
         tv_title = (TextView) rootView.findViewById(R.id.tv_title);
         btn_update = (Button) rootView.findViewById(R.id.btn_update);
@@ -145,6 +158,9 @@ public class ShowGermplasmFragment extends Fragment {
         et_box.setTypeface(montserrat_regular);
         et_note.setTypeface(montserrat_regular);
 
+        feedLocation = new ArrayList<>();
+        feedSources = new ArrayList<>();
+
         tv_select_location.setText(Html.fromHtml("<u>Tap to select</u>"));
         tv_select_source.setText(Html.fromHtml("<u>Tap to select</u>"));
 
@@ -153,46 +169,7 @@ public class ShowGermplasmFragment extends Fragment {
         tv_select_location.setOnClickListener(tv_select_location_click);
         tv_select_source.setOnClickListener(tv_select_source_click);
 
-        mRootRef.child("germplasm").orderByChild("g_key").equalTo(key).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                FeedGermplasm model = dataSnapshot.getValue(FeedGermplasm.class);
-                et_germplasm.setText(model.getG_name() + "");
-                et_cross.setText(model.getG_cross() + "");
-                tv_select_source.setText(Html.fromHtml("<u>" + model.getG_source() + "</u>"));
-                tv_select_source.setTextColor(getResources().getColor(R.color.light_blue));
-                et_lot.setText(model.getG_lot() + "");
-                tv_select_location.setText(Html.fromHtml("<u>" + model.getG_location() + "</u>"));
-                tv_select_location.setTextColor(getResources().getColor(R.color.light_blue));
-                et_stock.setText(model.getG_stock() + "");
-                et_balance.setText(model.getG_balance() + "");
-                et_room.setText(model.getG_room() + "");
-                et_shelf.setText(model.getG_shelf() + "");
-                et_row.setText(model.getG_row() + "");
-                et_box.setText(model.getG_box() + "");
-                et_note.setText(model.getG_note() + "");
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        new LoadingFireBase().execute("");
     }
 
     @Override
@@ -230,14 +207,14 @@ public class ShowGermplasmFragment extends Fragment {
             anim.setInterpolator(interpolator);
             btn_update.startAnimation(anim);
 
-            if(tv_select_location.getText().toString().equals("Tap to select") || tv_select_source.getText().toString().equals("Tap to select") ||
+            if (tv_select_location.getText().toString().equals("Tap to select") || tv_select_source.getText().toString().equals("Tap to select") ||
                     et_germplasm.getText().toString().equals("") || et_cross.getText().toString().equals("") ||
                     et_lot.getText().toString().equals("") || et_stock.getText().toString().equals("") ||
                     et_balance.getText().toString().equals("") || et_room.getText().toString().equals("") ||
                     et_shelf.getText().toString().equals("") || et_row.getText().toString().equals("") ||
-                    et_box.getText().toString().equals("") || et_note.getText().toString().equals("")){
+                    et_box.getText().toString().equals("") || et_note.getText().toString().equals("")) {
                 Toast.makeText(getContext(), "Please fill in all information.", Toast.LENGTH_SHORT).show();
-            } else{
+            } else {
                 HashMap<String, Object> germplasm = new HashMap<String, Object>();
                 germplasm.put("g_name", et_germplasm.getText().toString());
                 germplasm.put("g_cross", et_cross.getText().toString());
@@ -306,7 +283,7 @@ public class ShowGermplasmFragment extends Fragment {
             MaterialDialog.Builder builder = new MaterialDialog.Builder(getContext());
             builder
                     .title("Select Source")
-                    .items("Thamasat", "Biosci 2")
+                    .items(locationList)
                     .typeface("Montserrat-Regular.ttf", "Montserrat-Regular.ttf")
                     .itemsCallbackSingleChoice(location, new MaterialDialog.ListCallbackSingleChoice() {
                         @Override
@@ -333,7 +310,7 @@ public class ShowGermplasmFragment extends Fragment {
             MaterialDialog.Builder builder = new MaterialDialog.Builder(getContext());
             builder
                     .title("Select Source")
-                    .items("Nursery 1", "Nursery 2", "Nursery 3")
+                    .items(sourceList)
                     .typeface("Montserrat-Regular.ttf", "Montserrat-Regular.ttf")
                     .itemsCallbackSingleChoice(source, new MaterialDialog.ListCallbackSingleChoice() {
                         @Override
@@ -346,6 +323,130 @@ public class ShowGermplasmFragment extends Fragment {
                     })
                     .negativeText("cancel")
                     .show();
+        }
+    };
+
+    ChildEventListener select_location_click = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            FeedLocation model = dataSnapshot.getValue(FeedLocation.class);
+            feedLocation.add(model);
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
+
+    ChildEventListener select_source_click = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            FeedSource model = dataSnapshot.getValue(FeedSource.class);
+            feedSources.add(model);
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
+
+    private class LoadingFireBase extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            locationList = new String[feedLocation.size()];
+            sourceList = new String[feedSources.size()];
+            for (int i = 0; i < feedLocation.size(); i++) {
+                locationList[i] = feedLocation.get(i).getL_name() + "";
+                if (tv_select_location.getText().toString().equals(feedLocation.get(i).getL_name())) {
+                    location = i;
+                }
+            }
+            for (int i = 0; i < feedSources.size(); i++) {
+                sourceList[i] = feedSources.get(i).getS_name() + "";
+                if (tv_select_source.getText().toString().equals(feedSources.get(i).getS_name())) {
+                    source = i;
+                }
+            }
+        }
+    }
+
+    ChildEventListener show_germplasm_listener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            FeedGermplasm model = dataSnapshot.getValue(FeedGermplasm.class);
+            et_germplasm.setText(model.getG_name() + "");
+            et_cross.setText(model.getG_cross() + "");
+            tv_select_source.setText(Html.fromHtml("<u>" + model.getG_source() + "</u>"));
+            tv_select_source.setTextColor(getResources().getColor(R.color.light_blue));
+            et_lot.setText(model.getG_lot() + "");
+            tv_select_location.setText(Html.fromHtml("<u>" + model.getG_location() + "</u>"));
+            tv_select_location.setTextColor(getResources().getColor(R.color.light_blue));
+            et_stock.setText(model.getG_stock() + "");
+            et_balance.setText(model.getG_balance() + "");
+            et_room.setText(model.getG_room() + "");
+            et_shelf.setText(model.getG_shelf() + "");
+            et_row.setText(model.getG_row() + "");
+            et_box.setText(model.getG_box() + "");
+            et_note.setText(model.getG_note() + "");
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
         }
     };
 }

@@ -70,6 +70,9 @@ public class GermplasmFragment extends Fragment {
 
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
+
+        mRootRef = FirebaseDatabase.getInstance().getReference();
+        mRootRef.child("germplasm").orderByChild("g_name").addChildEventListener(germplasmEventListener);
     }
 
     @Override
@@ -91,7 +94,6 @@ public class GermplasmFragment extends Fragment {
         // Init 'View' instance(s) with rootView.findViewById here
         montserrat_regular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-Regular.ttf");
         montserrat_bold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-SemiBold.ttf");
-        mRootRef = FirebaseDatabase.getInstance().getReference();
 
         tv_title = (TextView) rootView.findViewById(R.id.tv_title);
         bottom_sheet = (SheetLayout) rootView.findViewById(R.id.bottom_sheet);
@@ -109,8 +111,6 @@ public class GermplasmFragment extends Fragment {
         llm.setAutoMeasureEnabled(false);
         recyclerView_germplasm.setLayoutManager(llm);
 
-
-        mRootRef.child("germplasm").orderByChild("g_name").addChildEventListener(germplasmEventListener);
         bottom_sheet.setFabAnimationEndListener(fab_animation_click);
         fab.setOnClickListener(fab_click);
         germplasmAdapter.setOnItemClickListener(onItemClickListener);
