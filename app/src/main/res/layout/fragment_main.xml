@@ -2,64 +2,99 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#EEEEEE">
+    android:layout_height="match_parent">
 
-    <android.support.v7.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="8dp"
-        app:cardCornerRadius="10dp">
+        android:orientation="vertical">
 
-        <LinearLayout
+        <com.arlib.floatingsearchview.FloatingSearchView
+            android:id="@+id/floating_search_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="?attr/actionBarSize"
+            app:floatingSearch_close_search_on_keyboard_dismiss="true"
+            app:floatingSearch_leftActionMode="showSearch"
+            app:floatingSearch_menu="@menu/menu_search"
+            app:floatingSearch_searchHint="Search..."
+            app:floatingSearch_showSearchKey="false"
+            app:floatingSearch_suggestionsListAnimDuration="250" />
 
-            <FrameLayout
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="3dp"
+            android:layout_weight="1"
+            android:fillViewport="true"
+            android:scrollbars="vertical">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rec_gradients_blue"
-                android:padding="16dp">
+                android:orientation="vertical">
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/tv_germplasm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/button_rec_tran_green"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:text="Germplasm"
+                    android:textColor="@android:color/white"
+                    android:textSize="16dp" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/search_menu" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_view_germplasm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:scrollbars="none" />
 
-                    <TextView
-                        android:id="@+id/tv_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Search"
-                        android:textColor="@android:color/white"
-                        android:textSize="30dp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </FrameLayout>
+                <TextView
+                    android:id="@+id/tv_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/button_rec_tran_green"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:text="Location"
+                    android:textColor="@android:color/white"
+                    android:textSize="16dp" />
 
-            <com.arlib.floatingsearchview.FloatingSearchView
-                android:id="@+id/floating_search_view"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:floatingSearch_close_search_on_keyboard_dismiss="true"
-                app:floatingSearch_leftActionMode="showSearch"
-                app:floatingSearch_menu="@menu/menu_search"
-                app:floatingSearch_searchHint="Search..."
-                app:floatingSearch_showSearchKey="false"
-                app:floatingSearch_suggestionsListAnimDuration="250" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_view_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:scrollbars="none" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler_view_germplasm"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="vertical" />
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
+                <TextView
+                    android:id="@+id/tv_source"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/button_rec_tran_green"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:text="Source"
+                    android:textColor="@android:color/white"
+                    android:textSize="16dp" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_view_source"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:scrollbars="none" />
+            </LinearLayout>
+
+
+        </ScrollView>
+    </LinearLayout>
 </RelativeLayout>

@@ -26,12 +26,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import simms.biosci.simsapplication.Activity.AddGermplasmActivity;
+import simms.biosci.simsapplication.Activity.AddLocationActivity;
+import simms.biosci.simsapplication.Activity.AddSourceActivity;
 import simms.biosci.simsapplication.Manager.FeedGermplasm;
 import simms.biosci.simsapplication.Manager.FeedLocation;
 import simms.biosci.simsapplication.Manager.FeedSource;
 import simms.biosci.simsapplication.Manager.GermplasmSearchAdapter;
+import simms.biosci.simsapplication.Manager.LocationSearchAdapter;
 import simms.biosci.simsapplication.Manager.OnItemClickListener;
-import simms.biosci.simsapplication.Manager.SingletonSIMS;
+import simms.biosci.simsapplication.Manager.SourceSearchAdapter;
 import simms.biosci.simsapplication.R;
 
 import static android.content.ContentValues.TAG;
@@ -42,14 +45,19 @@ import static android.content.ContentValues.TAG;
 @SuppressWarnings("unused")
 public class MainFragment extends Fragment {
 
-    private TextView tv_title;
+    private TextView tv_germplasm, tv_location, tv_source;
     private Typeface montserrat_regular, montserrat_bold;
-    private SingletonSIMS singletonSIMS;
     private FloatingSearchView floating_search_view;
     private DatabaseReference mRootRef;
     private RecyclerView recyclerView_germplasm;
-    private GermplasmSearchAdapter germplasmAdapter;
+    private RecyclerView recyclerView_location;
+    private RecyclerView recyclerView_source;
+    private GermplasmSearchAdapter germplasmSearchAdapter;
+    private LocationSearchAdapter locationSearchAdapter;
+    private SourceSearchAdapter sourceSearchAdapter;
     private List<FeedGermplasm> feedGermplasm;
+    private List<FeedLocation> feedLocations;
+    private List<FeedSource> feedSources;
     private static final int REQUEST_CODE_SHOW = 4;
 
     public MainFragment() {
@@ -74,6 +82,8 @@ public class MainFragment extends Fragment {
 
         mRootRef = FirebaseDatabase.getInstance().getReference();
         mRootRef.child("germplasm").orderByChild("g_name").addChildEventListener(germplasmEventListener);
+        mRootRef.child("location").orderByChild("l_name").addChildEventListener(locationEventListener);
+        mRootRef.child("source").orderByChild("s_name").addChildEventListener(sourceEventListener);
     }
 
     @Override
@@ -86,7 +96,6 @@ public class MainFragment extends Fragment {
 
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
-        singletonSIMS = SingletonSIMS.getInstance();
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -94,26 +103,54 @@ public class MainFragment extends Fragment {
         // Init 'View' instance(s) with rootView.findViewById here
         montserrat_regular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-Regular.ttf");
         montserrat_bold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-SemiBold.ttf");
-        tv_title = (TextView) rootView.findViewById(R.id.tv_title);
+
+        tv_germplasm = (TextView) rootView.findViewById(R.id.tv_germplasm);
+        tv_location = (TextView) rootView.findViewById(R.id.tv_location);
+        tv_source = (TextView) rootView.findViewById(R.id.tv_source);
         floating_search_view = (FloatingSearchView) rootView.findViewById(R.id.floating_search_view);
         recyclerView_germplasm = (RecyclerView) rootView.findViewById(R.id.recycler_view_germplasm);
+        recyclerView_location = (RecyclerView) rootView.findViewById(R.id.recycler_view_location);
+        recyclerView_source = (RecyclerView) rootView.findViewById(R.id.recycler_view_source);
 
-        tv_title.setTypeface(montserrat_bold);
+        tv_germplasm.setTypeface(montserrat_bold);
+        tv_location.setTypeface(montserrat_bold);
+        tv_source.setTypeface(montserrat_bold);
         feedGermplasm = new ArrayList<>();
+        feedLocations = new ArrayList<>();
+        feedSources = new ArrayList<>();
 
-        germplasmAdapter = new GermplasmSearchAdapter(getContext(), feedGermplasm);
-        recyclerView_germplasm.setAdapter(germplasmAdapter);
+        germplasmSearchAdapter = new GermplasmSearchAdapter(getContext(), feedGermplasm);
+        recyclerView_germplasm.setNestedScrollingEnabled(false);
+        recyclerView_germplasm.setAdapter(germplasmSearchAdapter);
         recyclerView_germplasm.setHasFixedSize(true);
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        llm.setAutoMeasureEnabled(false);
-        recyclerView_germplasm.setLayoutManager(llm);
+        LinearLayoutManager llm_germplasm = new simms.biosci.simsapplication.Manager.LinearLayoutManager(getActivity(), 1, false);
+        llm_germplasm.setAutoMeasureEnabled(false);
+        recyclerView_germplasm.setLayoutManager(llm_germplasm);
+
+        locationSearchAdapter = new LocationSearchAdapter(getContext(), feedLocations);
+        recyclerView_location.setNestedScrollingEnabled(false);
+        recyclerView_location.setAdapter(locationSearchAdapter);
+        recyclerView_location.setHasFixedSize(true);
+        LinearLayoutManager llm_location = new simms.biosci.simsapplication.Manager.LinearLayoutManager(getActivity(), 1, false);
+        llm_location.setAutoMeasureEnabled(false);
+        recyclerView_location.setLayoutManager(llm_location);
+
+        sourceSearchAdapter = new SourceSearchAdapter(getContext(), feedSources);
+        recyclerView_source.setNestedScrollingEnabled(false);
+        recyclerView_source.setAdapter(sourceSearchAdapter);
+        recyclerView_source.setHasFixedSize(true);
+        LinearLayoutManager llm_source = new simms.biosci.simsapplication.Manager.LinearLayoutManager(getActivity(), 1, false);
+        llm_source.setAutoMeasureEnabled(false);
+        recyclerView_source.setLayoutManager(llm_source);
 
         floating_search_view.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
             @Override
             public void onSearchTextChanged(String oldQuery, String newQuery) {
                 Log.i("hello", "old: " + oldQuery);
                 Log.i("hello", "new: " + newQuery);
-                germplasmAdapter.getFilter().filter(newQuery);
+                germplasmSearchAdapter.getFilter().filter(newQuery);
+                locationSearchAdapter.getFilter().filter(newQuery);
+                sourceSearchAdapter.getFilter().filter(newQuery);
             }
         });
 
@@ -128,7 +165,9 @@ public class MainFragment extends Fragment {
             }
         });
 
-        germplasmAdapter.setOnItemClickListener(onItemClickListener);
+        germplasmSearchAdapter.setOnItemClickListener(germplasmClickListener);
+        locationSearchAdapter.setOnItemClickListener(locationClickListener);
+        sourceSearchAdapter.setOnItemClickListener(sourceClickListener);
     }
 
     @Override
@@ -164,7 +203,7 @@ public class MainFragment extends Fragment {
             try {
                 FeedGermplasm model = dataSnapshot.getValue(FeedGermplasm.class);
                 feedGermplasm.add(model);
-                germplasmAdapter.notifyItemInserted(feedGermplasm.size() - 1);
+                germplasmSearchAdapter.notifyItemInserted(feedGermplasm.size() - 1);
             } catch (Exception ex) {
                 Log.e(TAG, ex.getMessage());
             }
@@ -187,8 +226,8 @@ public class MainFragment extends Fragment {
                     feedGermplasm.get(i).setG_row(p0.getG_row());
                     feedGermplasm.get(i).setG_box(p0.getG_box());
                     feedGermplasm.get(i).setG_note(p0.getG_note());
-                    germplasmAdapter.notifyDataSetChanged();
-                    germplasmAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                    germplasmSearchAdapter.notifyDataSetChanged();
+                    germplasmSearchAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
                 }
             }
         }
@@ -199,8 +238,8 @@ public class MainFragment extends Fragment {
             for (int i = 0; i < feedGermplasm.size(); i++) {
                 if (feedGermplasm.get(i).getG_key().equals(p0.getG_key())) {
                     feedGermplasm.remove(i);
-                    germplasmAdapter.notifyItemRemoved(i);
-                    germplasmAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                    germplasmSearchAdapter.notifyItemRemoved(i);
+                    germplasmSearchAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
                 }
             }
         }
@@ -216,14 +255,14 @@ public class MainFragment extends Fragment {
         }
     };
 
-    OnItemClickListener onItemClickListener = new OnItemClickListener() {
+    OnItemClickListener germplasmClickListener = new OnItemClickListener() {
         @Override
         public void onGermplasmClick(FeedGermplasm item) {
             Intent intent = new Intent(getContext(), AddGermplasmActivity.class);
             intent.putExtra("KEY", item.getG_key());
             Log.i("key", item.getG_key() + "");
-            intent.putExtra("REQUEST_CODE", REQUEST_CODE_SHOW);
-            startActivityForResult(intent, REQUEST_CODE_SHOW);
+            intent.putExtra("REQUEST_CODE", 4);
+            startActivityForResult(intent, 4);
         }
 
         @Override
@@ -234,6 +273,147 @@ public class MainFragment extends Fragment {
         @Override
         public void onSourceClick(FeedSource item) {
 
+        }
+    };
+    OnItemClickListener locationClickListener = new OnItemClickListener() {
+        @Override
+        public void onGermplasmClick(FeedGermplasm item) {
+
+        }
+
+        @Override
+        public void onLocationClick(FeedLocation item) {
+            Intent intent = new Intent(getContext(), AddLocationActivity.class);
+            intent.putExtra("KEY", item.getL_key());
+            intent.putExtra("REQUEST_CODE", 5);
+            startActivityForResult(intent, 5);
+        }
+
+        @Override
+        public void onSourceClick(FeedSource item) {
+
+        }
+    };
+
+    ChildEventListener locationEventListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            if (dataSnapshot != null && dataSnapshot.getValue() != null) {
+                try {
+                    FeedLocation model = dataSnapshot.getValue(FeedLocation.class);
+                    feedLocations.add(model);
+                    locationSearchAdapter.notifyItemInserted(feedLocations.size() - 1);
+                } catch (Exception ex) {
+                    Log.e(TAG, ex.getMessage());
+                }
+            }
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            FeedLocation p0 = dataSnapshot.getValue(FeedLocation.class);
+            for (int i = 0; i < feedLocations.size(); i++) {
+                if (feedLocations.get(i).getL_key().equals(p0.getL_key())) {
+                    feedLocations.get(i).setL_name(p0.getL_name());
+                    feedLocations.get(i).setL_province(p0.getL_province());
+                    feedLocations.get(i).setL_district(p0.getL_district());
+                    feedLocations.get(i).setL_sub_district(p0.getL_sub_district());
+                    locationSearchAdapter.notifyDataSetChanged();
+                    locationSearchAdapter.notifyItemRangeChanged(i, feedLocations.size());
+                }
+            }
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            FeedLocation p0 = dataSnapshot.getValue(FeedLocation.class);
+            for (int i = 0; i < feedLocations.size(); i++) {
+                if (feedLocations.get(i).getL_key().equals(p0.getL_key())) {
+                    feedLocations.remove(i);
+                    locationSearchAdapter.notifyItemRemoved(i);
+                    locationSearchAdapter.notifyItemRangeChanged(i, feedLocations.size());
+                }
+            }
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            Log.d(TAG, databaseError.getMessage());
+        }
+    };
+
+    ChildEventListener sourceEventListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            if (dataSnapshot != null && dataSnapshot.getValue() != null) {
+                try {
+                    FeedSource model = dataSnapshot.getValue(FeedSource.class);
+                    feedSources.add(model);
+                    sourceSearchAdapter.notifyItemInserted(feedSources.size() - 1);
+                } catch (Exception ex) {
+                    Log.e(TAG, ex.getMessage());
+                }
+            }
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            FeedSource p0 = dataSnapshot.getValue(FeedSource.class);
+            for (int i = 0; i < feedSources.size(); i++) {
+                if (feedSources.get(i).getS_key().equals(p0.getS_key())) {
+                    feedSources.get(i).setS_name(p0.getS_name());
+                    feedSources.get(i).setS_desc(p0.getS_desc());
+                    sourceSearchAdapter.notifyDataSetChanged();
+                    sourceSearchAdapter.notifyItemRangeChanged(i, feedSources.size());
+                }
+            }
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            FeedSource p0 = dataSnapshot.getValue(FeedSource.class);
+            for (int i = 0; i < feedSources.size(); i++) {
+                if (feedSources.get(i).getS_key().equals(p0.getS_key())) {
+                    feedSources.remove(i);
+                    sourceSearchAdapter.notifyItemRemoved(i);
+                    sourceSearchAdapter.notifyItemRangeChanged(i, feedSources.size());
+                }
+            }
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            Log.d(TAG, databaseError.getMessage());
+        }
+    };
+
+    OnItemClickListener sourceClickListener = new OnItemClickListener() {
+        @Override
+        public void onGermplasmClick(FeedGermplasm item) {
+
+        }
+
+        @Override
+        public void onLocationClick(FeedLocation item) {
+
+        }
+
+        @Override
+        public void onSourceClick(FeedSource item) {
+            Intent intent = new Intent(getContext(), AddSourceActivity.class);
+            intent.putExtra("KEY", item.getS_key());
+            intent.putExtra("REQUEST_CODE", 6);
+            startActivityForResult(intent, 6);
         }
     };
 }

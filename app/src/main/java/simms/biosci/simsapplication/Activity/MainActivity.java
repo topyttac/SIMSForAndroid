@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import simms.biosci.simsapplication.Fragment.CrossFragment;
 import simms.biosci.simsapplication.Fragment.GermplasmFragment;
 import simms.biosci.simsapplication.Fragment.LocationFragment;
 import simms.biosci.simsapplication.Fragment.MainFragment;
@@ -28,9 +29,9 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
-    private LinearLayout ll_search, ll_germplasm, ll_location, ll_resource;
+    private LinearLayout ll_germplasm, ll_location, ll_resource, ll_cross;
     private Typeface montserrat_regular, montserrat_bold;
-    private TextView tv_search, tv_germplasm, tv_location, tv_resource;
+    private TextView tv_germplasm, tv_location, tv_resource, tv_cross;
     private static final int REQUEST_CODE = 2;
 
     @Override
@@ -53,19 +54,19 @@ public class MainActivity extends AppCompatActivity {
         montserrat_bold = Typeface.createFromAsset(getAssets(), "fonts/Montserrat-SemiBold.ttf");
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        ll_search = (LinearLayout) findViewById(R.id.ll_search);
         ll_germplasm = (LinearLayout) findViewById(R.id.ll_germplasm);
         ll_location = (LinearLayout) findViewById(R.id.ll_location);
         ll_resource = (LinearLayout) findViewById(R.id.ll_resource);
-        tv_search = (TextView) findViewById(R.id.tv_title);
+        ll_cross = (LinearLayout) findViewById(R.id.ll_cross);
         tv_germplasm = (TextView) findViewById(R.id.tv_germplasm);
         tv_location = (TextView) findViewById(R.id.tv_location);
         tv_resource = (TextView) findViewById(R.id.tv_resource);
+        tv_cross = (TextView) findViewById(R.id.tv_cross);
 
-        tv_search.setTypeface(montserrat_bold);
         tv_germplasm.setTypeface(montserrat_bold);
         tv_location.setTypeface(montserrat_bold);
         tv_resource.setTypeface(montserrat_bold);
+        tv_cross.setTypeface(montserrat_bold);
 
         setSupportActionBar(toolbar); // set toolbar
 
@@ -82,10 +83,10 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //end hamburger
 
-        ll_search.setOnClickListener(ll_search_click);
         ll_germplasm.setOnClickListener(ll_germplasm_click);
         ll_location.setOnClickListener(ll_location_click);
         ll_resource.setOnClickListener(ll_resource_click);
+        ll_cross.setOnClickListener(ll_cross_click);
     }
 
     @Override
@@ -111,10 +112,10 @@ public class MainActivity extends AppCompatActivity {
         if (actionBarDrawerToggle.onOptionsItemSelected(item)) // when press hamburger
             return true;
         else if (item.getItemId() == R.id.menu_home) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.contentContainer,
-                            MainFragment.newInstance())
-                    .commit();
+            Intent intent = getIntent();
+            finish();
+            startActivity(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             return true;
         } else if (item.getItemId() == R.id.menu_add) {
             Intent intent = new Intent(MainActivity.this, AddGermplasmActivity.class);
@@ -126,21 +127,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /*############ LISTENER #############*/
-    View.OnClickListener ll_search_click = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-//            Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.bounce);
-//            BounceInterpolator interpolator = new BounceInterpolator();
-//            anim.setInterpolator(interpolator);
-//            ll_search.startAnimation(anim);
-
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.contentContainer,
-                            MainFragment.newInstance())
-                    .commit();
-            drawerLayout.closeDrawers();
-        }
-    };
 
     View.OnClickListener ll_germplasm_click = new View.OnClickListener() {
         @Override
@@ -176,6 +162,17 @@ public class MainActivity extends AppCompatActivity {
             drawerLayout.closeDrawers();
         }
     };
+
+    View.OnClickListener ll_cross_click = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.contentContainer,
+                            CrossFragment.newInstance())
+                    .commit();
+            drawerLayout.closeDrawers();
+        }
+    };
     /*############ LISTENER #############*/
 
     @Override
@@ -187,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Boolean exit = false;
+
     @Override
     public void onBackPressed() {
         if (exit) {
