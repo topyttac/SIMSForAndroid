@@ -1,29 +1,40 @@
 package simms.biosci.simsapplication.Fragment;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.Html;
-import android.text.InputType;
-import android.view.KeyEvent;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.BounceInterpolator;
-import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.spark.submitbutton.SubmitButton;
+import com.arlib.floatingsearchview.FloatingSearchView;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
-import co.ceryle.radiorealbutton.RadioRealButton;
-import co.ceryle.radiorealbutton.RadioRealButtonGroup;
+import java.util.ArrayList;
+import java.util.List;
+
+import simms.biosci.simsapplication.Activity.AddGermplasmActivity;
+import simms.biosci.simsapplication.Manager.FeedGermplasm;
+import simms.biosci.simsapplication.Manager.FeedLocation;
+import simms.biosci.simsapplication.Manager.FeedSource;
+import simms.biosci.simsapplication.Manager.GermplasmSearchAdapter;
+import simms.biosci.simsapplication.Manager.OnItemClickListener;
 import simms.biosci.simsapplication.Manager.SingletonSIMS;
 import simms.biosci.simsapplication.R;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by nuuneoi on 11/16/2014.
@@ -31,14 +42,15 @@ import simms.biosci.simsapplication.R;
 @SuppressWarnings("unused")
 public class MainFragment extends Fragment {
 
-    private RadioRealButtonGroup rb_0;
-    private RadioRealButton rb_1, rb_2, rb_3;
-    private SubmitButton btn_sensor, btn_camera;
-    private TextView tv_title, tv_search;
-    private EditText et_search;
+    private TextView tv_title;
     private Typeface montserrat_regular, montserrat_bold;
-    private FrameLayout fl_search;
     private SingletonSIMS singletonSIMS;
+    private FloatingSearchView floating_search_view;
+    private DatabaseReference mRootRef;
+    private RecyclerView recyclerView_germplasm;
+    private GermplasmSearchAdapter germplasmAdapter;
+    private List<FeedGermplasm> feedGermplasm;
+    private static final int REQUEST_CODE_SHOW = 4;
 
     public MainFragment() {
         super();
@@ -59,6 +71,9 @@ public class MainFragment extends Fragment {
 
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
+
+        mRootRef = FirebaseDatabase.getInstance().getReference();
+        mRootRef.child("germplasm").orderByChild("g_name").addChildEventListener(germplasmEventListener);
     }
 
     @Override
@@ -79,33 +94,41 @@ public class MainFragment extends Fragment {
         // Init 'View' instance(s) with rootView.findViewById here
         montserrat_regular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-Regular.ttf");
         montserrat_bold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-SemiBold.ttf");
-        rb_0 = (RadioRealButtonGroup) rootView.findViewById(R.id.rb_0);
-        rb_1 = (RadioRealButton) rootView.findViewById(R.id.rb_1);
-        rb_2 = (RadioRealButton) rootView.findViewById(R.id.rb_2);
-        rb_3 = (RadioRealButton) rootView.findViewById(R.id.rb_3);
-        btn_sensor = (SubmitButton) rootView.findViewById(R.id.btn_sensor);
-        btn_camera = (SubmitButton) rootView.findViewById(R.id.btn_camera);
-        tv_search = (TextView) rootView.findViewById(R.id.tv_search);
-        et_search = (EditText) rootView.findViewById(R.id.et_search);
-        fl_search = (FrameLayout) rootView.findViewById(R.id.fl_search);
         tv_title = (TextView) rootView.findViewById(R.id.tv_title);
+        floating_search_view = (FloatingSearchView) rootView.findViewById(R.id.floating_search_view);
+        recyclerView_germplasm = (RecyclerView) rootView.findViewById(R.id.recycler_view_germplasm);
 
         tv_title.setTypeface(montserrat_bold);
-        btn_sensor.setTypeface(montserrat_regular);
-        btn_camera.setTypeface(montserrat_regular);
-        tv_search.setTypeface(montserrat_regular);
-        et_search.setTypeface(montserrat_regular);
+        feedGermplasm = new ArrayList<>();
 
-        btn_camera.setVisibility(View.INVISIBLE);
-        btn_sensor.setVisibility(View.INVISIBLE);
+        germplasmAdapter = new GermplasmSearchAdapter(getContext(), feedGermplasm);
+        recyclerView_germplasm.setAdapter(germplasmAdapter);
+        recyclerView_germplasm.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        llm.setAutoMeasureEnabled(false);
+        recyclerView_germplasm.setLayoutManager(llm);
 
-        rb_0.setOnClickedButtonListener(radio_group_click);
-        et_search.setOnEditorActionListener(et_search_click);
-        tv_search.setOnClickListener(tv_search_click);
-        tv_search.setText(Html.fromHtml("<u>By Name</u>:"));
-        if(singletonSIMS.getSelectedType() > 0)
-            tv_search.setText(Html.fromHtml("<u>" + singletonSIMS.getSelectedTypeName() + "</u>:"));
+        floating_search_view.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
+            @Override
+            public void onSearchTextChanged(String oldQuery, String newQuery) {
+                Log.i("hello", "old: " + oldQuery);
+                Log.i("hello", "new: " + newQuery);
+                germplasmAdapter.getFilter().filter(newQuery);
+            }
+        });
 
+        floating_search_view.setOnMenuItemClickListener(new FloatingSearchView.OnMenuItemClickListener() {
+            @Override
+            public void onActionMenuItemSelected(MenuItem item) {
+                if (item.getItemId() == R.id.search_camera) {
+                    Toast.makeText(getContext(), "Camera launch.", Toast.LENGTH_SHORT).show();
+                } else if (item.getItemId() == R.id.search_barcode) {
+                    Toast.makeText(getContext(), "Barcode launch.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        germplasmAdapter.setOnItemClickListener(onItemClickListener);
     }
 
     @Override
@@ -135,76 +158,82 @@ public class MainFragment extends Fragment {
         // Restore Instance State here
     }
 
-    RadioRealButtonGroup.OnClickedButtonListener radio_group_click = new RadioRealButtonGroup.OnClickedButtonListener() {
+    ChildEventListener germplasmEventListener = new ChildEventListener() {
         @Override
-        public void onClickedButton(RadioRealButton button, int position) {
-            switch (position) {
-                case 0:
-                    fl_search.setVisibility(View.INVISIBLE);
-                    btn_sensor.setVisibility(View.INVISIBLE);
-                    btn_camera.setVisibility(View.VISIBLE);
-                    break;
-                case 1:
-                    btn_camera.setVisibility(View.INVISIBLE);
-                    btn_sensor.setVisibility(View.INVISIBLE);
-                    fl_search.setVisibility(View.VISIBLE);
-                    break;
-                case 2:
-                    fl_search.setVisibility(View.INVISIBLE);
-                    btn_camera.setVisibility(View.INVISIBLE);
-                    btn_sensor.setVisibility(View.VISIBLE);
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            try {
+                FeedGermplasm model = dataSnapshot.getValue(FeedGermplasm.class);
+                feedGermplasm.add(model);
+                germplasmAdapter.notifyItemInserted(feedGermplasm.size() - 1);
+            } catch (Exception ex) {
+                Log.e(TAG, ex.getMessage());
             }
         }
-    };
 
-    TextView.OnEditorActionListener et_search_click = new TextView.OnEditorActionListener() {
         @Override
-        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            FeedGermplasm p0 = dataSnapshot.getValue(FeedGermplasm.class);
+            for (int i = 0; i < feedGermplasm.size(); i++) {
+                if (feedGermplasm.get(i).getG_key().equals(p0.getG_key())) {
+                    feedGermplasm.get(i).setG_name(p0.getG_name());
+                    feedGermplasm.get(i).setG_cross(p0.getG_cross());
+                    feedGermplasm.get(i).setG_source(p0.getG_source());
+                    feedGermplasm.get(i).setG_lot(p0.getG_lot());
+                    feedGermplasm.get(i).setG_location(p0.getG_location());
+                    feedGermplasm.get(i).setG_stock(p0.getG_stock());
+                    feedGermplasm.get(i).setG_balance(p0.getG_balance());
+                    feedGermplasm.get(i).setG_room(p0.getG_room());
+                    feedGermplasm.get(i).setG_shelf(p0.getG_shelf());
+                    feedGermplasm.get(i).setG_row(p0.getG_row());
+                    feedGermplasm.get(i).setG_box(p0.getG_box());
+                    feedGermplasm.get(i).setG_note(p0.getG_note());
+                    germplasmAdapter.notifyDataSetChanged();
+                    germplasmAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                }
+            }
+        }
 
-            return false;
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            FeedGermplasm p0 = dataSnapshot.getValue(FeedGermplasm.class);
+            for (int i = 0; i < feedGermplasm.size(); i++) {
+                if (feedGermplasm.get(i).getG_key().equals(p0.getG_key())) {
+                    feedGermplasm.remove(i);
+                    germplasmAdapter.notifyItemRemoved(i);
+                    germplasmAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                }
+            }
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            Log.d(TAG, databaseError.getMessage());
         }
     };
 
-    View.OnClickListener tv_search_click = new View.OnClickListener() {
+    OnItemClickListener onItemClickListener = new OnItemClickListener() {
         @Override
-        public void onClick(View v) {
-            Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.bounce);
-            BounceInterpolator interpolator = new BounceInterpolator();
-            anim.setInterpolator(interpolator);
-            tv_search.startAnimation(anim);
-            MaterialDialog.Builder builder = new MaterialDialog.Builder(getContext());
-            builder
-                    .title("Select Search Type")
-                    .items("By Name", "By Germplasm", "By Location", "By Source")
-                    .typeface("Montserrat-Regular.ttf", "Montserrat-Regular.ttf")
-                    .itemsCallbackSingleChoice(singletonSIMS.getSelectedType() > 0 ? singletonSIMS.getSelectedType() : 0, new MaterialDialog.ListCallbackSingleChoice() {
-                        @Override
-                        public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                            tv_search.setText(Html.fromHtml("<u>" + text + "</u>:"));
-                            singletonSIMS.setSelectedType(which);
-                            singletonSIMS.setSelectedTypeName(text + ":");
-                            if(which == 0){
-                                et_search.setHint("rice, corn - e.g.");
-                                et_search.setInputType(InputType.TYPE_CLASS_TEXT);
-                                et_search.setText("");
-                            } else if (which == 1){
-                                et_search.setHint("20, 130 - e.g.");
-                                et_search.setInputType(InputType.TYPE_CLASS_NUMBER);
-                                et_search.setText("");
-                            } else if (which == 2){
-                                et_search.setHint("Thamasat, Biosci - e.g.");
-                                et_search.setInputType(InputType.TYPE_CLASS_TEXT);
-                                et_search.setText("");
-                            } else if (which == 3){
-                                et_search.setHint("Nusery 1, Nusery 2 - e.g.");
-                                et_search.setInputType(InputType.TYPE_CLASS_TEXT);
-                                et_search.setText("");
-                            }
-                            return true;
-                        }
-                    })
-                    .negativeText("cancel")
-                    .show();
+        public void onGermplasmClick(FeedGermplasm item) {
+            Intent intent = new Intent(getContext(), AddGermplasmActivity.class);
+            intent.putExtra("KEY", item.getG_key());
+            Log.i("key", item.getG_key() + "");
+            intent.putExtra("REQUEST_CODE", REQUEST_CODE_SHOW);
+            startActivityForResult(intent, REQUEST_CODE_SHOW);
+        }
+
+        @Override
+        public void onLocationClick(FeedLocation item) {
+
+        }
+
+        @Override
+        public void onSourceClick(FeedSource item) {
+
         }
     };
 }

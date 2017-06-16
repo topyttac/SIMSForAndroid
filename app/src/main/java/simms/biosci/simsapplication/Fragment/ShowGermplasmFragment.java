@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -18,6 +19,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -215,41 +217,52 @@ public class ShowGermplasmFragment extends Fragment {
                     et_box.getText().toString().equals("") || et_note.getText().toString().equals("")) {
                 Toast.makeText(getContext(), "Please fill in all information.", Toast.LENGTH_SHORT).show();
             } else {
-                HashMap<String, Object> germplasm = new HashMap<String, Object>();
-                germplasm.put("g_name", et_germplasm.getText().toString());
-                germplasm.put("g_cross", et_cross.getText().toString());
-                germplasm.put("g_source", tv_select_source.getText().toString());
-                germplasm.put("g_lot", Integer.parseInt(et_lot.getText().toString()));
-                germplasm.put("g_location", tv_select_location.getText().toString());
-                germplasm.put("g_stock", et_stock.getText().toString());
-                germplasm.put("g_balance", Integer.parseInt(et_balance.getText().toString()));
-                germplasm.put("g_room", Integer.parseInt(et_room.getText().toString()));
-                germplasm.put("g_shelf", Integer.parseInt(et_shelf.getText().toString()));
-                germplasm.put("g_row", Integer.parseInt(et_row.getText().toString()));
-                germplasm.put("g_box", Integer.parseInt(et_box.getText().toString()));
-                germplasm.put("g_note", et_note.getText().toString());
-                germplasm.put("g_key", key);
-                Map<String, Object> child = new HashMap<>();
-                child.put(key, germplasm);
-                mRootRef.child("germplasm").updateChildren(child);
-                Toast.makeText(getContext(), "Update germplasm successfully.", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent();
-                intent.putExtra("KEY", key);
-                intent.putExtra("g_name", et_germplasm.getText().toString());
-                intent.putExtra("g_cross", et_cross.getText().toString());
-                intent.putExtra("g_source", tv_select_source.getText().toString());
-                intent.putExtra("g_lot", Integer.parseInt(et_lot.getText().toString()));
-                intent.putExtra("g_location", tv_select_location.getText().toString());
-                intent.putExtra("g_stock", et_stock.getText().toString());
-                intent.putExtra("g_balance", Integer.parseInt(et_balance.getText().toString()));
-                intent.putExtra("g_room", Integer.parseInt(et_room.getText().toString()));
-                intent.putExtra("g_shelf", Integer.parseInt(et_shelf.getText().toString()));
-                intent.putExtra("g_row", Integer.parseInt(et_row.getText().toString()));
-                intent.putExtra("g_box", Integer.parseInt(et_box.getText().toString()));
-                intent.putExtra("g_note", et_note.getText().toString());
-                intent.putExtra("what2do", "update");
-                getActivity().setResult(REQUEST_CODE_SHOW, intent);
-                getActivity().finish();
+                new MaterialDialog.Builder(getContext())
+                        .title("Are you want to update germplasm ?")
+                        .typeface("Montserrat-Regular.ttf", "Montserrat-Regular.ttf")
+                        .positiveText("YES")
+                        .negativeText("NO")
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                HashMap<String, Object> germplasm = new HashMap<String, Object>();
+                                germplasm.put("g_name", et_germplasm.getText().toString());
+                                germplasm.put("g_cross", et_cross.getText().toString());
+                                germplasm.put("g_source", tv_select_source.getText().toString());
+                                germplasm.put("g_lot", Integer.parseInt(et_lot.getText().toString()));
+                                germplasm.put("g_location", tv_select_location.getText().toString());
+                                germplasm.put("g_stock", et_stock.getText().toString());
+                                germplasm.put("g_balance", Integer.parseInt(et_balance.getText().toString()));
+                                germplasm.put("g_room", Integer.parseInt(et_room.getText().toString()));
+                                germplasm.put("g_shelf", Integer.parseInt(et_shelf.getText().toString()));
+                                germplasm.put("g_row", Integer.parseInt(et_row.getText().toString()));
+                                germplasm.put("g_box", Integer.parseInt(et_box.getText().toString()));
+                                germplasm.put("g_note", et_note.getText().toString());
+                                germplasm.put("g_key", key);
+                                Map<String, Object> child = new HashMap<>();
+                                child.put(key, germplasm);
+                                mRootRef.child("germplasm").updateChildren(child);
+                                Toast.makeText(getContext(), "Update germplasm successfully.", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent();
+                                intent.putExtra("KEY", key);
+                                intent.putExtra("g_name", et_germplasm.getText().toString());
+                                intent.putExtra("g_cross", et_cross.getText().toString());
+                                intent.putExtra("g_source", tv_select_source.getText().toString());
+                                intent.putExtra("g_lot", Integer.parseInt(et_lot.getText().toString()));
+                                intent.putExtra("g_location", tv_select_location.getText().toString());
+                                intent.putExtra("g_stock", et_stock.getText().toString());
+                                intent.putExtra("g_balance", Integer.parseInt(et_balance.getText().toString()));
+                                intent.putExtra("g_room", Integer.parseInt(et_room.getText().toString()));
+                                intent.putExtra("g_shelf", Integer.parseInt(et_shelf.getText().toString()));
+                                intent.putExtra("g_row", Integer.parseInt(et_row.getText().toString()));
+                                intent.putExtra("g_box", Integer.parseInt(et_box.getText().toString()));
+                                intent.putExtra("g_note", et_note.getText().toString());
+                                intent.putExtra("what2do", "update");
+                                getActivity().setResult(REQUEST_CODE_SHOW, intent);
+                                getActivity().finish();
+                            }
+                        })
+                        .show();
             }
         }
     };
@@ -262,13 +275,24 @@ public class ShowGermplasmFragment extends Fragment {
             anim.setInterpolator(interpolator);
             btn_delete.startAnimation(anim);
 
-            mRootRef.child("germplasm").child(key).removeValue();
-            Toast.makeText(getContext(), "Delete germplasm successfully.", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent();
-            intent.putExtra("KEY", key);
-            intent.putExtra("what2do", "delete");
-            getActivity().setResult(REQUEST_CODE_SHOW, intent);
-            getActivity().finish();
+            new MaterialDialog.Builder(getContext())
+                    .title("Are you want to delete germplasm ?")
+                    .typeface("Montserrat-Regular.ttf", "Montserrat-Regular.ttf")
+                    .positiveText("YES")
+                    .negativeText("NO")
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            mRootRef.child("germplasm").child(key).removeValue();
+                            Toast.makeText(getContext(), "Delete germplasm successfully.", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent();
+                            intent.putExtra("KEY", key);
+                            intent.putExtra("what2do", "delete");
+                            getActivity().setResult(REQUEST_CODE_SHOW, intent);
+                            getActivity().finish();
+                        }
+                    })
+                    .show();
         }
     };
 

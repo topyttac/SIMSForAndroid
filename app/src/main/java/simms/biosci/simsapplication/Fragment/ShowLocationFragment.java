@@ -3,6 +3,7 @@ package simms.biosci.simsapplication.Fragment;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -17,6 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -32,6 +34,7 @@ import java.util.Map;
 import simms.biosci.simsapplication.Manager.Amphur;
 import simms.biosci.simsapplication.Manager.DatabaseHelper;
 import simms.biosci.simsapplication.Manager.District;
+import simms.biosci.simsapplication.Manager.FeedGermplasm;
 import simms.biosci.simsapplication.Manager.FeedLocation;
 import simms.biosci.simsapplication.Manager.Province;
 import simms.biosci.simsapplication.R;
@@ -49,7 +52,7 @@ public class ShowLocationFragment extends Fragment {
     private Button btn_update, btn_delete;
     private EditText et_location_name;
     private int province = -1, district = -1, sub_district = -1;
-    private DatabaseReference mRootRef, mLocationRef;
+    private DatabaseReference mRootRef, mGermplasmRef;
     private String key;
     private FeedLocation model;
     private static final int REQUEST_CODE_SHOW = 5;
@@ -59,6 +62,7 @@ public class ShowLocationFragment extends Fragment {
     private List<Province> listProvince;
     private List<Amphur> listAmphur;
     private List<District> listDistrict;
+    private String locationName;
 
     public ShowLocationFragment() {
         super();
@@ -89,6 +93,7 @@ public class ShowLocationFragment extends Fragment {
         }
 
         mRootRef = FirebaseDatabase.getInstance().getReference();
+        mGermplasmRef = mRootRef.child("germplasm");
         mRootRef.child("location").orderByChild("l_key").equalTo(key).addChildEventListener(show_location_click);
 
     }
@@ -201,25 +206,81 @@ public class ShowLocationFragment extends Fragment {
             if (et_location_name.getText().toString().equals("") || tv_select_province.getText().toString().equals("Tap to select") || tv_select_province.getText().toString().equals("Tap to select") || tv_select_district.getText().toString().equals("Tap to select")) {
                 Toast.makeText(getContext(), "Please fill in all information.", Toast.LENGTH_SHORT).show();
             } else {
-                HashMap<String, Object> location = new HashMap<String, Object>();
-                location.put("l_name", et_location_name.getText().toString());
-                location.put("l_province", tv_select_province.getText().toString());
-                location.put("l_district", tv_select_district.getText().toString());
-                location.put("l_sub_district", tv_select_sub_district.getText().toString());
-                location.put("l_key", key);
-                Map<String, Object> child = new HashMap<>();
-                child.put(key, location);
-                mRootRef.child("location").updateChildren(child);
-                Toast.makeText(getContext(), "Update location successfully.", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent();
-                intent.putExtra("KEY", key);
-                intent.putExtra("l_name", et_location_name.getText().toString());
-                intent.putExtra("l_province", tv_select_province.getText().toString());
-                intent.putExtra("l_district", tv_select_district.getText().toString());
-                intent.putExtra("l_sub_district", tv_select_sub_district.getText().toString());
-                intent.putExtra("what2do", "update");
-                getActivity().setResult(REQUEST_CODE_SHOW, intent);
-                getActivity().finish();
+                new MaterialDialog.Builder(getContext())
+                        .title("Are you want to update location ?")
+                        .content("This change will be affected to all germplasm.")
+                        .typeface("Montserrat-Regular.ttf", "Montserrat-Regular.ttf")
+                        .positiveText("YES")
+                        .negativeText("NO")
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                HashMap<String, Object> location = new HashMap<String, Object>();
+                                location.put("l_name", et_location_name.getText().toString());
+                                location.put("l_province", tv_select_province.getText().toString());
+                                location.put("l_district", tv_select_district.getText().toString());
+                                location.put("l_sub_district", tv_select_sub_district.getText().toString());
+                                location.put("l_key", key);
+                                Map<String, Object> child = new HashMap<>();
+                                child.put(key, location);
+                                mRootRef.child("location").updateChildren(child);
+                                mRootRef.child("germplasm").orderByChild("g_location").equalTo(locationName).addChildEventListener(new ChildEventListener() {
+                                    @Override
+                                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                        FeedGermplasm model = dataSnapshot.getValue(FeedGermplasm.class);
+                                        mRootRef.child("germplasm").child(model.getG_key()).child("g_location").setValue(et_location_name.getText().toString());
+//                                        HashMap<String, Object> germplasm = new HashMap<String, Object>();
+//                                        germplasm.put("g_name", model.getG_name());
+//                                        germplasm.put("g_cross", model.getG_cross());
+//                                        germplasm.put("g_source", model.getG_source());
+//                                        germplasm.put("g_lot", model.getG_lot());
+//                                        germplasm.put("g_location", et_location_name.getText().toString());
+//                                        germplasm.put("g_stock", model.getG_stock());
+//                                        germplasm.put("g_balance", model.getG_balance());
+//                                        germplasm.put("g_room", model.getG_room());
+//                                        germplasm.put("g_shelf", model.getG_shelf());
+//                                        germplasm.put("g_row", model.getG_row());
+//                                        germplasm.put("g_box", model.getG_box());
+//                                        germplasm.put("g_note", model.getG_note());
+//                                        germplasm.put("g_key", model.getG_key());
+//                                        Map<String, Object> child = new HashMap<>();
+//                                        child.put(model.getG_key(), germplasm);
+//                                        mGermplasmRef.updateChildren(child);
+                                    }
+
+                                    @Override
+                                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                                    }
+
+                                    @Override
+                                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                                    }
+
+                                    @Override
+                                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+                                Toast.makeText(getContext(), "Update location successfully.", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent();
+                                intent.putExtra("KEY", key);
+                                intent.putExtra("l_name", et_location_name.getText().toString());
+                                intent.putExtra("l_province", tv_select_province.getText().toString());
+                                intent.putExtra("l_district", tv_select_district.getText().toString());
+                                intent.putExtra("l_sub_district", tv_select_sub_district.getText().toString());
+                                intent.putExtra("what2do", "update");
+                                getActivity().setResult(REQUEST_CODE_SHOW, intent);
+                                getActivity().finish();
+                            }
+                        })
+                        .show();
             }
         }
     };
@@ -232,13 +293,52 @@ public class ShowLocationFragment extends Fragment {
             anim.setInterpolator(interpolator);
             btn_delete.startAnimation(anim);
 
-            mRootRef.child("location").child(key).removeValue();
-            Toast.makeText(getContext(), "Delete location successfully.", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent();
-            intent.putExtra("KEY", key);
-            intent.putExtra("what2do", "delete");
-            getActivity().setResult(REQUEST_CODE_SHOW, intent);
-            getActivity().finish();
+            new MaterialDialog.Builder(getContext())
+                    .title("Are you want to delete location ?")
+                    .content("This change will be affected to all germplasm.")
+                    .typeface("Montserrat-Regular.ttf", "Montserrat-Regular.ttf")
+                    .positiveText("YES")
+                    .negativeText("NO")
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            mRootRef.child("location").child(key).removeValue();
+//                            mRootRef.child("germplasm").orderByChild("g_location").equalTo(locationName).addChildEventListener(new ChildEventListener() {
+//                                @Override
+//                                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                                    FeedGermplasm model = dataSnapshot.getValue(FeedGermplasm.class);
+//                                    mRootRef.child("germplasm").child(model.getG_key()).removeValue();
+//                                }
+//
+//                                @Override
+//                                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//
+//                                }
+//
+//                                @Override
+//                                public void onChildRemoved(DataSnapshot dataSnapshot) {
+//
+//                                }
+//
+//                                @Override
+//                                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(DatabaseError databaseError) {
+//
+//                                }
+//                            });
+                            Toast.makeText(getContext(), "Delete location successfully.", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent();
+                            intent.putExtra("KEY", key);
+                            intent.putExtra("what2do", "delete");
+                            getActivity().setResult(REQUEST_CODE_SHOW, intent);
+                            getActivity().finish();
+                        }
+                    })
+                    .show();
         }
     };
 
@@ -249,6 +349,7 @@ public class ShowLocationFragment extends Fragment {
             BounceInterpolator interpolator = new BounceInterpolator();
             anim.setInterpolator(interpolator);
             tv_select_province.startAnimation(anim);
+
             MaterialDialog.Builder builder = new MaterialDialog.Builder(getContext());
             builder
                     .title("Select Province")
@@ -361,6 +462,7 @@ public class ShowLocationFragment extends Fragment {
             tv_select_district.setTextColor(getResources().getColor(R.color.light_blue));
             tv_select_sub_district.setText(Html.fromHtml("<u>" + model.getL_sub_district() + "</u>"));
             tv_select_sub_district.setTextColor(getResources().getColor(R.color.light_blue));
+            locationName = model.getL_name();
         }
 
         @Override

@@ -3,6 +3,7 @@ package simms.biosci.simsapplication.Fragment;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,6 +17,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
+import simms.biosci.simsapplication.Manager.FeedGermplasm;
 import simms.biosci.simsapplication.Manager.FeedSource;
 import simms.biosci.simsapplication.R;
 
@@ -38,9 +42,10 @@ public class ShowSourceFragment extends Fragment {
     private TextView tv_title, tv_source_name, tv_source_desc;
     private Button btn_update, btn_delete;
     private EditText et_source_name, et_source_desc;
-    private DatabaseReference mRootRef, mSourceRef;
-    private String key;
+    private DatabaseReference mRootRef, mGermplasmRef;
+    private String key, sourceName;
     private static final int REQUEST_CODE_SHOW = 6;
+
     public ShowSourceFragment() {
         super();
     }
@@ -63,6 +68,7 @@ public class ShowSourceFragment extends Fragment {
             onRestoreInstanceState(savedInstanceState);
 
         mRootRef = FirebaseDatabase.getInstance().getReference();
+        mGermplasmRef = mRootRef.child("germplasm");
         mRootRef.child("source").orderByChild("s_key").equalTo(key).addChildEventListener(show_source_click);
     }
 
@@ -146,21 +152,78 @@ public class ShowSourceFragment extends Fragment {
             if (et_source_name.getText().toString().equals("") || et_source_desc.getText().toString().equals("")) {
                 Toast.makeText(getContext(), "Please fill in all information.", Toast.LENGTH_SHORT).show();
             } else {
-                HashMap<String, Object> source = new HashMap<String, Object>();
-                source.put("s_name", et_source_name.getText().toString());
-                source.put("s_desc", et_source_desc.getText().toString());
-                source.put("s_key", key);
-                Map<String, Object> child = new HashMap<>();
-                child.put(key, source);
-                mRootRef.child("source").updateChildren(child);
-                Toast.makeText(getContext(), "Update source successfully.", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent();
-                intent.putExtra("KEY", key);
-                intent.putExtra("s_name", et_source_name.getText().toString());
-                intent.putExtra("s_desc", et_source_desc.getText().toString());
-                intent.putExtra("what2do", "update");
-                getActivity().setResult(REQUEST_CODE_SHOW, intent);
-                getActivity().finish();
+                new MaterialDialog.Builder(getContext())
+                        .title("Are you want to update source ?")
+                        .content("This change will be affected to all germplasm.")
+                        .typeface("Montserrat-Regular.ttf", "Montserrat-Regular.ttf")
+                        .positiveText("YES")
+                        .negativeText("NO")
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                HashMap<String, Object> source = new HashMap<String, Object>();
+                                source.put("s_name", et_source_name.getText().toString());
+                                source.put("s_desc", et_source_desc.getText().toString());
+                                source.put("s_key", key);
+                                Map<String, Object> child = new HashMap<>();
+                                child.put(key, source);
+                                mRootRef.child("source").updateChildren(child);
+                                mRootRef.child("germplasm").orderByChild("g_source").equalTo(sourceName).addChildEventListener(new ChildEventListener() {
+                                    @Override
+                                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                        FeedGermplasm model = dataSnapshot.getValue(FeedGermplasm.class);
+                                        mRootRef.child("germplasm").child(model.getG_key()).child("g_source").setValue(et_source_name.getText().toString());
+//                                        HashMap<String, Object> germplasm = new HashMap<String, Object>();
+//                                        germplasm.put("g_name", model.getG_name());
+//                                        germplasm.put("g_cross", model.getG_cross());
+//                                        germplasm.put("g_source", et_source_name.getText().toString());
+//                                        germplasm.put("g_lot", model.getG_lot());
+//                                        germplasm.put("g_location", model.getG_location());
+//                                        germplasm.put("g_stock", model.getG_stock());
+//                                        germplasm.put("g_balance", model.getG_balance());
+//                                        germplasm.put("g_room", model.getG_room());
+//                                        germplasm.put("g_shelf", model.getG_shelf());
+//                                        germplasm.put("g_row", model.getG_row());
+//                                        germplasm.put("g_box", model.getG_box());
+//                                        germplasm.put("g_note", model.getG_note());
+//                                        germplasm.put("g_key", model.getG_key());
+//                                        Map<String, Object> child = new HashMap<>();
+//                                        child.put(model.getG_key(), germplasm);
+//                                        mGermplasmRef.updateChildren(child);
+                                    }
+
+                                    @Override
+                                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                                    }
+
+                                    @Override
+                                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                                    }
+
+                                    @Override
+                                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+                                Toast.makeText(getContext(), "Update source successfully.", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent();
+                                intent.putExtra("KEY", key);
+                                intent.putExtra("s_name", et_source_name.getText().toString());
+                                intent.putExtra("s_desc", et_source_desc.getText().toString());
+                                intent.putExtra("what2do", "update");
+                                getActivity().setResult(REQUEST_CODE_SHOW, intent);
+                                getActivity().finish();
+                            }
+                        })
+                        .show();
+
             }
         }
     };
@@ -173,13 +236,52 @@ public class ShowSourceFragment extends Fragment {
             anim.setInterpolator(interpolator);
             btn_delete.startAnimation(anim);
 
-            mRootRef.child("source").child(key).removeValue();
-            Toast.makeText(getContext(), "Delete source successfully.", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent();
-            intent.putExtra("KEY", key);
-            intent.putExtra("what2do", "delete");
-            getActivity().setResult(REQUEST_CODE_SHOW, intent);
-            getActivity().finish();
+            new MaterialDialog.Builder(getContext())
+                    .title("Are you want to delete source ?")
+                    .content("This change will be affected to all germplasm.")
+                    .typeface("Montserrat-Regular.ttf", "Montserrat-Regular.ttf")
+                    .positiveText("YES")
+                    .negativeText("NO")
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            mRootRef.child("source").child(key).removeValue();
+//                            mRootRef.child("germplasm").orderByChild("g_source").equalTo(sourceName).addChildEventListener(new ChildEventListener() {
+//                                @Override
+//                                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                                    FeedGermplasm model = dataSnapshot.getValue(FeedGermplasm.class);
+//                                    mRootRef.child("germplasm").child(model.getG_key()).removeValue();
+//                                }
+//
+//                                @Override
+//                                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//
+//                                }
+//
+//                                @Override
+//                                public void onChildRemoved(DataSnapshot dataSnapshot) {
+//
+//                                }
+//
+//                                @Override
+//                                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(DatabaseError databaseError) {
+//
+//                                }
+//                            });
+                            Toast.makeText(getContext(), "Delete source successfully.", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent();
+                            intent.putExtra("KEY", key);
+                            intent.putExtra("what2do", "delete");
+                            getActivity().setResult(REQUEST_CODE_SHOW, intent);
+                            getActivity().finish();
+                        }
+                    })
+                    .show();
         }
     };
 
@@ -189,6 +291,7 @@ public class ShowSourceFragment extends Fragment {
             FeedSource model = dataSnapshot.getValue(FeedSource.class);
             et_source_name.setText(model.getS_name() + "");
             et_source_desc.setText(model.getS_desc() + "");
+            sourceName = model.getS_name() + "";
         }
 
         @Override
