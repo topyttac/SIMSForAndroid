@@ -49,13 +49,37 @@
                     </LinearLayout>
                 </FrameLayout>
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_view_germplasm"
+                <com.arlib.floatingsearchview.FloatingSearchView
+                    android:id="@+id/floating_search_view"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scrollbars="vertical"
-                    android:layout_margin="1dp" />
+                    android:layout_height="?attr/actionBarSize"
+                    app:floatingSearch_close_search_on_keyboard_dismiss="true"
+                    app:floatingSearch_leftActionMode="showSearch"
+                    app:floatingSearch_menu="@menu/menu_search"
+                    app:floatingSearch_searchHint="Search..."
+                    app:floatingSearch_showSearchKey="true"
+                    app:floatingSearch_suggestionsListAnimDuration="250" />
 
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/tv_result"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_margin="30dp"
+                        android:text="No result found."
+                        android:textSize="20dp" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recycler_view_germplasm"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="1dp"
+                        android:scrollbars="vertical" />
+                </RelativeLayout>
             </LinearLayout>
 
             <android.support.design.widget.FloatingActionButton

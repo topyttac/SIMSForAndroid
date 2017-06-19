@@ -27,21 +27,21 @@ import simms.biosci.simsapplication.R;
  * Created by nuuneoi on 11/16/2014.
  */
 @SuppressWarnings("unused")
-public class AddSourceFragment extends Fragment {
+public class AddCrossFragment extends Fragment {
 
     private Typeface montserrat_regular, montserrat_bold;
-    private TextView tv_title, tv_source_name, tv_source_desc;
+    private TextView tv_title, tv_cross_name, tv_cross_desc;
     private Button btn_add, btn_reset;
-    private EditText et_source_name, et_source_desc;
-    private DatabaseReference mRootRef, mSourceRef;
+    private EditText et_cross_name, et_cross_desc;
+    private DatabaseReference mRootRef, mCrossRef;
 
-    public AddSourceFragment() {
+    public AddCrossFragment() {
         super();
     }
 
     @SuppressWarnings("unused")
-    public static AddSourceFragment newInstance() {
-        AddSourceFragment fragment = new AddSourceFragment();
+    public static AddCrossFragment newInstance() {
+        AddCrossFragment fragment = new AddCrossFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -56,13 +56,14 @@ public class AddSourceFragment extends Fragment {
             onRestoreInstanceState(savedInstanceState);
 
         mRootRef = FirebaseDatabase.getInstance().getReference();
-        mSourceRef = mRootRef.child("source");
+        mCrossRef = mRootRef.child("cross");
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_add_source, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_add_cross, container, false);
         initInstances(rootView, savedInstanceState);
         return rootView;
     }
@@ -80,18 +81,18 @@ public class AddSourceFragment extends Fragment {
         tv_title = (TextView) rootView.findViewById(R.id.tv_title);
         btn_add = (Button) rootView.findViewById(R.id.btn_add);
         btn_reset = (Button) rootView.findViewById(R.id.btn_reset);
-        tv_source_name = (TextView) rootView.findViewById(R.id.tv_source_name);
-        et_source_name = (EditText) rootView.findViewById(R.id.et_source_name);
-        tv_source_desc = (TextView) rootView.findViewById(R.id.tv_source_desc);
-        et_source_desc = (EditText) rootView.findViewById(R.id.et_source_desc);
+        tv_cross_name = (TextView) rootView.findViewById(R.id.tv_cross_name);
+        et_cross_name = (EditText) rootView.findViewById(R.id.et_cross_name);
+        tv_cross_desc = (TextView) rootView.findViewById(R.id.tv_cross_desc);
+        et_cross_desc = (EditText) rootView.findViewById(R.id.et_cross_desc);
 
         btn_add.setTypeface(montserrat_bold);
         btn_reset.setTypeface(montserrat_bold);
         tv_title.setTypeface(montserrat_bold);
-        tv_source_name.setTypeface(montserrat_bold);
-        et_source_name.setTypeface(montserrat_regular);
-        tv_source_desc.setTypeface(montserrat_bold);
-        et_source_desc.setTypeface(montserrat_regular);
+        tv_cross_name.setTypeface(montserrat_bold);
+        et_cross_name.setTypeface(montserrat_regular);
+        tv_cross_desc.setTypeface(montserrat_bold);
+        et_cross_desc.setTypeface(montserrat_regular);
 
         btn_add.setOnClickListener(btn_add_click);
         btn_reset.setOnClickListener(btn_reset_click);
@@ -132,17 +133,17 @@ public class AddSourceFragment extends Fragment {
             anim.setInterpolator(interpolator);
             btn_add.startAnimation(anim);
 
-            if(et_source_name.getText().toString().equals("") || et_source_desc.getText().toString().equals("")){
+            if(et_cross_name.getText().toString().equals("") || et_cross_desc.getText().toString().equals("")){
                 Toast.makeText(getContext(), "Please fill in all information.", Toast.LENGTH_SHORT).show();
             } else{
-                String key = mSourceRef.push().getKey();
-                HashMap<String, Object> source = new HashMap<String, Object>();
-                source.put("s_name", et_source_name.getText().toString());
-                source.put("s_desc", et_source_desc.getText().toString());
-                source.put("s_key", key);
+                String key = mCrossRef.push().getKey();
+                HashMap<String, Object> cross = new HashMap<String, Object>();
+                cross.put("c_name", et_cross_name.getText().toString());
+                cross.put("c_desc", et_cross_desc.getText().toString());
+                cross.put("c_key", key);
                 Map<String, Object> child = new HashMap<>();
-                child.put(key, source);
-                mSourceRef.updateChildren(child);
+                child.put(key, cross);
+                mCrossRef.updateChildren(child);
                 Toast.makeText(getContext(), "Add source successfully.", Toast.LENGTH_SHORT).show();
                 cleanUp();
                 getActivity().finish();
@@ -162,7 +163,7 @@ public class AddSourceFragment extends Fragment {
     };
 
     private void cleanUp(){
-        et_source_name.setText("");
-        et_source_desc.setText("");
+        et_cross_name.setText("");
+        et_cross_desc.setText("");
     }
 }

@@ -20,15 +20,15 @@ import simms.biosci.simsapplication.R;
  * Created by topyttac on 4/23/2017 AD.
  */
 
-public class GermplasmSearchAdapter extends RecyclerView.Adapter<GermplasmSearchAdapter.CustomViewHolder> implements Filterable {
+public class CrossSearchAdapter extends RecyclerView.Adapter<CrossSearchAdapter.CustomViewHolder> implements Filterable{
 
-    private List<FeedGermplasm> mArrayList;
-    private List<FeedGermplasm> mFilteredList;
-    private OnItemClickListener onItemClickListener;
+    private List<FeedCross> mArrayList;
+    private List<FeedCross> mFilteredList;
     private Context context;
+    private OnItemClickListener onItemClickListener;
     private Typeface montserrat_regular, montserrat_bold;
 
-    public GermplasmSearchAdapter(Context context, List<FeedGermplasm> feedItems) {
+    public CrossSearchAdapter(Context context, List<FeedCross> feedItems) {
         this.context = context;
         this.mArrayList = feedItems;
         this.mFilteredList = feedItems;
@@ -36,21 +36,20 @@ public class GermplasmSearchAdapter extends RecyclerView.Adapter<GermplasmSearch
 
     @Override
     public CustomViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.germplasm_list, null);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cross_list, null);
         CustomViewHolder customViewHolder = new CustomViewHolder(view);
         return customViewHolder;
     }
 
     @Override
     public void onBindViewHolder(CustomViewHolder holder, final int position) {
-        holder.tv_germplasm.setText(mFilteredList.get(position).getG_name());
-        holder.tv_location.setText(mFilteredList.get(position).getG_location());
-        holder.tv_source.setText(mFilteredList.get(position).getG_source());
+        holder.tv_cross.setText(mFilteredList.get(position).getC_name());
+        holder.tv_desc.setText(mFilteredList.get(position).getC_desc());
 
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onItemClickListener.onGermplasmClick(mFilteredList.get(position));
+                onItemClickListener.onCrossClick(mFilteredList.get(position));
             }
         };
         holder.ll_card.setOnClickListener(listener);
@@ -70,13 +69,13 @@ public class GermplasmSearchAdapter extends RecyclerView.Adapter<GermplasmSearch
                     mFilteredList = mArrayList;
                 } else {
 
-                    List<FeedGermplasm> filteredList = new ArrayList<>();
+                    List<FeedCross> filteredList = new ArrayList<>();
 
-                    for (FeedGermplasm feedGermplasm : mArrayList) {
+                    for (FeedCross feedCross : mArrayList) {
 
-                        if (feedGermplasm.getG_name().toLowerCase().contains(charString) || feedGermplasm.getG_source().toLowerCase().contains(charString) || feedGermplasm.getG_location().toLowerCase().contains(charString)) {
+                        if (feedCross.getC_name().toLowerCase().contains(charString) || feedCross.getC_desc().toLowerCase().contains(charString)) {
 
-                            filteredList.add(feedGermplasm);
+                            filteredList.add(feedCross);
                         }
                     }
 
@@ -90,12 +89,11 @@ public class GermplasmSearchAdapter extends RecyclerView.Adapter<GermplasmSearch
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                mFilteredList = (List<FeedGermplasm>) filterResults.values;
+                mFilteredList = (List<FeedCross>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
     }
-
     @Override
     public int getItemCount() {
         return null != mFilteredList ? mFilteredList.size() : 0;
@@ -104,23 +102,19 @@ public class GermplasmSearchAdapter extends RecyclerView.Adapter<GermplasmSearch
     class CustomViewHolder extends RecyclerView.ViewHolder {
 
         protected LinearLayout ll_card;
-        protected TextView tv_germplasm, tv_location, tv_source, tv_title_location, tv_title_source;
+        protected TextView tv_cross, tv_desc, tv_title_desc;
 
         public CustomViewHolder(View itemView) {
             super(itemView);
             montserrat_regular = Typeface.createFromAsset(context.getAssets(), "fonts/Montserrat-Regular.ttf");
             montserrat_bold = Typeface.createFromAsset(context.getAssets(), "fonts/Montserrat-SemiBold.ttf");
             this.ll_card = (LinearLayout) itemView.findViewById(R.id.ll_card);
-            this.tv_germplasm = (TextView) itemView.findViewById(R.id.tv_germplasm);
-            this.tv_location = (TextView) itemView.findViewById(R.id.tv_location);
-            this.tv_source = (TextView) itemView.findViewById(R.id.tv_source);
-            this.tv_title_location = (TextView) itemView.findViewById(R.id.tv_title_location);
-            this.tv_title_source = (TextView) itemView.findViewById(R.id.tv_title_source);
-            this.tv_germplasm.setTypeface(montserrat_bold);
-            this.tv_location.setTypeface(montserrat_regular);
-            this.tv_source.setTypeface(montserrat_regular);
-            this.tv_title_location.setTypeface(montserrat_regular);
-            this.tv_title_source.setTypeface(montserrat_regular);
+            this.tv_cross = (TextView) itemView.findViewById(R.id.tv_cross);
+            this.tv_desc = (TextView) itemView.findViewById(R.id.tv_desc);
+            this.tv_title_desc = (TextView) itemView.findViewById(R.id.tv_title_desc);
+            this.tv_cross.setTypeface(montserrat_bold);
+            this.tv_title_desc.setTypeface(montserrat_regular);
+            this.tv_desc.setTypeface(montserrat_regular);
         }
     }
 

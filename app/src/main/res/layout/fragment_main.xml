@@ -17,7 +17,7 @@
             app:floatingSearch_leftActionMode="showSearch"
             app:floatingSearch_menu="@menu/menu_search"
             app:floatingSearch_searchHint="Search..."
-            app:floatingSearch_showSearchKey="false"
+            app:floatingSearch_showSearchKey="true"
             app:floatingSearch_suggestionsListAnimDuration="250" />
 
         <ScrollView
@@ -88,6 +88,26 @@
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recycler_view_source"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:scrollbars="none" />
+
+                <TextView
+                    android:id="@+id/tv_cross"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/button_rec_tran_green"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:text="Cross"
+                    android:textColor="@android:color/white"
+                    android:textSize="16dp" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_view_cross"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="1dp"

@@ -25,9 +25,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+import simms.biosci.simsapplication.Activity.AddCrossActivity;
 import simms.biosci.simsapplication.Activity.AddGermplasmActivity;
 import simms.biosci.simsapplication.Activity.AddLocationActivity;
 import simms.biosci.simsapplication.Activity.AddSourceActivity;
+import simms.biosci.simsapplication.Manager.CrossSearchAdapter;
+import simms.biosci.simsapplication.Manager.FeedCross;
 import simms.biosci.simsapplication.Manager.FeedGermplasm;
 import simms.biosci.simsapplication.Manager.FeedLocation;
 import simms.biosci.simsapplication.Manager.FeedSource;
@@ -45,19 +48,22 @@ import static android.content.ContentValues.TAG;
 @SuppressWarnings("unused")
 public class MainFragment extends Fragment {
 
-    private TextView tv_germplasm, tv_location, tv_source;
+    private TextView tv_germplasm, tv_location, tv_source, tv_cross;
     private Typeface montserrat_regular, montserrat_bold;
     private FloatingSearchView floating_search_view;
     private DatabaseReference mRootRef;
     private RecyclerView recyclerView_germplasm;
     private RecyclerView recyclerView_location;
     private RecyclerView recyclerView_source;
+    private RecyclerView recyclerView_cross;
     private GermplasmSearchAdapter germplasmSearchAdapter;
     private LocationSearchAdapter locationSearchAdapter;
     private SourceSearchAdapter sourceSearchAdapter;
+    private CrossSearchAdapter crossSearchAdapter;
     private List<FeedGermplasm> feedGermplasm;
     private List<FeedLocation> feedLocations;
     private List<FeedSource> feedSources;
+    private List<FeedCross> feedCrosses;
     private static final int REQUEST_CODE_SHOW = 4;
 
     public MainFragment() {
@@ -84,6 +90,7 @@ public class MainFragment extends Fragment {
         mRootRef.child("germplasm").orderByChild("g_name").addChildEventListener(germplasmEventListener);
         mRootRef.child("location").orderByChild("l_name").addChildEventListener(locationEventListener);
         mRootRef.child("source").orderByChild("s_name").addChildEventListener(sourceEventListener);
+        mRootRef.child("cross").orderByChild("c_name").addChildEventListener(crossEventListener);
     }
 
     @Override
@@ -107,17 +114,21 @@ public class MainFragment extends Fragment {
         tv_germplasm = (TextView) rootView.findViewById(R.id.tv_germplasm);
         tv_location = (TextView) rootView.findViewById(R.id.tv_location);
         tv_source = (TextView) rootView.findViewById(R.id.tv_source);
+        tv_cross = (TextView) rootView.findViewById(R.id.tv_cross);
         floating_search_view = (FloatingSearchView) rootView.findViewById(R.id.floating_search_view);
         recyclerView_germplasm = (RecyclerView) rootView.findViewById(R.id.recycler_view_germplasm);
         recyclerView_location = (RecyclerView) rootView.findViewById(R.id.recycler_view_location);
         recyclerView_source = (RecyclerView) rootView.findViewById(R.id.recycler_view_source);
+        recyclerView_cross = (RecyclerView) rootView.findViewById(R.id.recycler_view_cross);
 
         tv_germplasm.setTypeface(montserrat_bold);
         tv_location.setTypeface(montserrat_bold);
         tv_source.setTypeface(montserrat_bold);
+        tv_cross.setTypeface(montserrat_bold);
         feedGermplasm = new ArrayList<>();
         feedLocations = new ArrayList<>();
         feedSources = new ArrayList<>();
+        feedCrosses = new ArrayList<>();
 
         germplasmSearchAdapter = new GermplasmSearchAdapter(getContext(), feedGermplasm);
         recyclerView_germplasm.setNestedScrollingEnabled(false);
@@ -143,14 +154,21 @@ public class MainFragment extends Fragment {
         llm_source.setAutoMeasureEnabled(false);
         recyclerView_source.setLayoutManager(llm_source);
 
+        crossSearchAdapter = new CrossSearchAdapter(getContext(), feedCrosses);
+        recyclerView_cross.setNestedScrollingEnabled(false);
+        recyclerView_cross.setAdapter(crossSearchAdapter);
+        recyclerView_cross.setHasFixedSize(true);
+        LinearLayoutManager llm_cross = new simms.biosci.simsapplication.Manager.LinearLayoutManager(getActivity(), 1, false);
+        llm_cross.setAutoMeasureEnabled(false);
+        recyclerView_cross.setLayoutManager(llm_cross);
+
         floating_search_view.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
             @Override
             public void onSearchTextChanged(String oldQuery, String newQuery) {
-                Log.i("hello", "old: " + oldQuery);
-                Log.i("hello", "new: " + newQuery);
-                germplasmSearchAdapter.getFilter().filter(newQuery);
-                locationSearchAdapter.getFilter().filter(newQuery);
-                sourceSearchAdapter.getFilter().filter(newQuery);
+                germplasmSearchAdapter.getFilter().filter(newQuery.toLowerCase());
+                locationSearchAdapter.getFilter().filter(newQuery.toLowerCase());
+                sourceSearchAdapter.getFilter().filter(newQuery.toLowerCase());
+                crossSearchAdapter.getFilter().filter(newQuery.toLowerCase());
             }
         });
 
@@ -168,6 +186,7 @@ public class MainFragment extends Fragment {
         germplasmSearchAdapter.setOnItemClickListener(germplasmClickListener);
         locationSearchAdapter.setOnItemClickListener(locationClickListener);
         sourceSearchAdapter.setOnItemClickListener(sourceClickListener);
+        crossSearchAdapter.setOnItemClickListener(crossClickListener);
     }
 
     @Override
@@ -274,6 +293,11 @@ public class MainFragment extends Fragment {
         public void onSourceClick(FeedSource item) {
 
         }
+
+        @Override
+        public void onCrossClick(FeedCross item) {
+
+        }
     };
     OnItemClickListener locationClickListener = new OnItemClickListener() {
         @Override
@@ -291,6 +315,11 @@ public class MainFragment extends Fragment {
 
         @Override
         public void onSourceClick(FeedSource item) {
+
+        }
+
+        @Override
+        public void onCrossClick(FeedCross item) {
 
         }
     };
@@ -414,6 +443,85 @@ public class MainFragment extends Fragment {
             intent.putExtra("KEY", item.getS_key());
             intent.putExtra("REQUEST_CODE", 6);
             startActivityForResult(intent, 6);
+        }
+
+        @Override
+        public void onCrossClick(FeedCross item) {
+
+        }
+    };
+    ChildEventListener crossEventListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            if (dataSnapshot != null && dataSnapshot.getValue() != null) {
+                try {
+                    FeedCross model = dataSnapshot.getValue(FeedCross.class);
+                    feedCrosses.add(model);
+                    crossSearchAdapter.notifyItemInserted(feedCrosses.size() - 1);
+                } catch (Exception ex) {
+                    Log.e(TAG, ex.getMessage());
+                }
+            }
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            FeedCross p0 = dataSnapshot.getValue(FeedCross.class);
+            for (int i = 0; i < feedCrosses.size(); i++) {
+                if (feedCrosses.get(i).getC_key().equals(p0.getC_key())) {
+                    feedCrosses.get(i).setC_name(p0.getC_name());
+                    feedCrosses.get(i).setC_desc(p0.getC_desc());
+                    crossSearchAdapter.notifyDataSetChanged();
+                    crossSearchAdapter.notifyItemRangeChanged(i, feedCrosses.size());
+                }
+            }
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            FeedCross p0 = dataSnapshot.getValue(FeedCross.class);
+            for (int i = 0; i < feedCrosses.size(); i++) {
+                if (feedCrosses.get(i).getC_key().equals(p0.getC_key())) {
+                    feedCrosses.remove(i);
+                    crossSearchAdapter.notifyItemRemoved(i);
+                    crossSearchAdapter.notifyItemRangeChanged(i, feedCrosses.size());
+                }
+            }
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            Log.d(TAG, databaseError.getMessage());
+        }
+    };
+
+    OnItemClickListener crossClickListener = new OnItemClickListener() {
+        @Override
+        public void onGermplasmClick(FeedGermplasm item) {
+
+        }
+
+        @Override
+        public void onLocationClick(FeedLocation item) {
+
+        }
+
+        @Override
+        public void onSourceClick(FeedSource item) {
+
+        }
+
+        @Override
+        public void onCrossClick(FeedCross item) {
+            Intent intent = new Intent(getContext(), AddCrossActivity.class);
+            intent.putExtra("KEY", item.getC_key());
+            intent.putExtra("REQUEST_CODE", 8);
+            startActivityForResult(intent, 8);
         }
     };
 }

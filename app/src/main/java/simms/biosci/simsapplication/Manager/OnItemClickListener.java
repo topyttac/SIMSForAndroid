@@ -10,4 +10,6 @@ public interface OnItemClickListener {
     void onLocationClick(FeedLocation item);
 
     void onSourceClick(FeedSource item);
+
+    void onCrossClick(FeedCross item);
 }

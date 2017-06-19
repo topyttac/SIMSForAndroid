@@ -10,10 +10,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.arlib.floatingsearchview.FloatingSearchView;
 import com.github.fabtransitionactivity.SheetLayout;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -25,10 +28,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import simms.biosci.simsapplication.Activity.AddLocationActivity;
+import simms.biosci.simsapplication.Manager.FeedCross;
 import simms.biosci.simsapplication.Manager.FeedGermplasm;
 import simms.biosci.simsapplication.Manager.FeedLocation;
 import simms.biosci.simsapplication.Manager.FeedSource;
-import simms.biosci.simsapplication.Manager.LocationAdapter;
+import simms.biosci.simsapplication.Manager.LocationSearchAdapter;
 import simms.biosci.simsapplication.Manager.OnItemClickListener;
 import simms.biosci.simsapplication.R;
 
@@ -41,13 +45,14 @@ import static android.content.ContentValues.TAG;
 public class LocationFragment extends Fragment {
 
     private Typeface montserrat_regular, montserrat_bold;
+    private FloatingSearchView floating_search_view;
     private TextView tv_title;
     private SheetLayout bottom_sheet;
     private FloatingActionButton fab;
     private static final int REQUEST_CODE_ADD = 2;
     private static final int REQUEST_CODE_SHOW = 5;
     private RecyclerView recyclerView_location;
-    private LocationAdapter locationAdapter;
+    private LocationSearchAdapter locationAdapter;
     private List<FeedLocation> feedLocations;
     private DatabaseReference mRootRef, mLocationRef;
 
@@ -93,6 +98,7 @@ public class LocationFragment extends Fragment {
         montserrat_regular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-Regular.ttf");
         montserrat_bold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-SemiBold.ttf");
 
+        floating_search_view = (FloatingSearchView) rootView.findViewById(R.id.floating_search_view);
         tv_title = (TextView) rootView.findViewById(R.id.tv_title);
         bottom_sheet = (SheetLayout) rootView.findViewById(R.id.bottom_sheet);
         fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
@@ -102,7 +108,7 @@ public class LocationFragment extends Fragment {
         bottom_sheet.setFab(fab);
         feedLocations = new ArrayList<>();
 
-        locationAdapter = new LocationAdapter(getContext(), feedLocations);
+        locationAdapter = new LocationSearchAdapter(getContext(), feedLocations);
         recyclerView_location.setAdapter(locationAdapter);
         recyclerView_location.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
@@ -112,6 +118,24 @@ public class LocationFragment extends Fragment {
         bottom_sheet.setFabAnimationEndListener(fab_animation_click);
         fab.setOnClickListener(fab_click);
         locationAdapter.setOnItemClickListener(onItemClickListener);
+
+        floating_search_view.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
+            @Override
+            public void onSearchTextChanged(String oldQuery, String newQuery) {
+                locationAdapter.getFilter().filter(newQuery.toLowerCase());
+            }
+        });
+
+        floating_search_view.setOnMenuItemClickListener(new FloatingSearchView.OnMenuItemClickListener() {
+            @Override
+            public void onActionMenuItemSelected(MenuItem item) {
+                if (item.getItemId() == R.id.search_camera) {
+                    Toast.makeText(getContext(), "Camera launch.", Toast.LENGTH_SHORT).show();
+                } else if (item.getItemId() == R.id.search_barcode) {
+                    Toast.makeText(getContext(), "Barcode launch.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override
@@ -214,6 +238,11 @@ public class LocationFragment extends Fragment {
 
         @Override
         public void onSourceClick(FeedSource item) {
+
+        }
+
+        @Override
+        public void onCrossClick(FeedCross item) {
 
         }
     };

@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import simms.biosci.simsapplication.Manager.FeedCross;
 import simms.biosci.simsapplication.Manager.FeedLocation;
 import simms.biosci.simsapplication.Manager.FeedSource;
 import simms.biosci.simsapplication.R;
@@ -41,14 +42,15 @@ public class AddGermplasmFragment extends Fragment {
 
     private Typeface montserrat_regular, montserrat_bold;
     private TextView tv_title, tv_germplasm, tv_cross, tv_source, tv_select_source, tv_lot, tv_location, tv_select_location, tv_stock,
-            tv_balance, tv_room, tv_shelf, tv_row, tv_box, tv_note;
-    private EditText et_germplasm, et_cross, et_lot, et_stock, et_balance, et_room, et_shelf, et_row, et_box, et_note;
+            tv_balance, tv_room, tv_shelf, tv_row, tv_box, tv_note, tv_select_cross;
+    private EditText et_germplasm, et_lot, et_stock, et_balance, et_room, et_shelf, et_row, et_box, et_note;
     private Button btn_add, btn_reset;
-    private int source = -1, location = -1;
+    private int source = -1, location = -1, cross = -1;
     private DatabaseReference mRootRef, mGermplasmRef;
     private List<FeedLocation> feedLocation;
     private List<FeedSource> feedSources;
-    private String[] locationList, sourceList;
+    private List<FeedCross> feedCrosses;
+    private String[] locationList, sourceList, crossList;
 
     public AddGermplasmFragment() {
         super();
@@ -74,6 +76,7 @@ public class AddGermplasmFragment extends Fragment {
         mGermplasmRef = mRootRef.child("germplasm");
         mRootRef.child("source").orderByChild("s_name").addChildEventListener(select_source_click);
         mRootRef.child("location").orderByChild("l_name").addChildEventListener(select_location_click);
+        mRootRef.child("cross").orderByChild("c_name").addChildEventListener(select_cross_click);
     }
 
     @Override
@@ -112,7 +115,7 @@ public class AddGermplasmFragment extends Fragment {
         tv_box = (TextView) rootView.findViewById(R.id.tv_box);
         tv_note = (TextView) rootView.findViewById(R.id.tv_note);
         et_germplasm = (EditText) rootView.findViewById(R.id.et_germplasm);
-        et_cross = (EditText) rootView.findViewById(R.id.et_cross);
+        tv_select_cross = (TextView) rootView.findViewById(R.id.tv_select_cross);
         et_lot = (EditText) rootView.findViewById(R.id.et_lot);
         et_stock = (EditText) rootView.findViewById(R.id.et_stock);
         et_balance = (EditText) rootView.findViewById(R.id.et_balance);
@@ -140,7 +143,7 @@ public class AddGermplasmFragment extends Fragment {
         tv_box.setTypeface(montserrat_bold);
         tv_note.setTypeface(montserrat_bold);
         et_germplasm.setTypeface(montserrat_regular);
-        et_cross.setTypeface(montserrat_regular);
+        tv_select_cross.setTypeface(montserrat_regular);
         et_lot.setTypeface(montserrat_regular);
         et_stock.setTypeface(montserrat_regular);
         et_balance.setTypeface(montserrat_regular);
@@ -150,9 +153,11 @@ public class AddGermplasmFragment extends Fragment {
         et_box.setTypeface(montserrat_regular);
         et_note.setTypeface(montserrat_regular);
 
+        feedCrosses = new ArrayList<>();
         feedLocation = new ArrayList<>();
         feedSources = new ArrayList<>();
 
+        tv_select_cross.setText(Html.fromHtml("<u>Tap to select</u>"));
         tv_select_location.setText(Html.fromHtml("<u>Tap to select</u>"));
         tv_select_source.setText(Html.fromHtml("<u>Tap to select</u>"));
 
@@ -160,6 +165,7 @@ public class AddGermplasmFragment extends Fragment {
         btn_reset.setOnClickListener(btn_reset_click);
         tv_select_location.setOnClickListener(tv_select_location_click);
         tv_select_source.setOnClickListener(tv_select_source_click);
+        tv_select_cross.setOnClickListener(tv_select_cross_click);
 
         new LoadingFireBase().execute("");
     }
@@ -176,6 +182,8 @@ public class AddGermplasmFragment extends Fragment {
             mRootRef.removeEventListener(select_source_click);
         if (select_location_click != null)
             mRootRef.removeEventListener(select_location_click);
+        if (select_cross_click != null)
+            mRootRef.removeEventListener(select_cross_click);
     }
 
     /*
@@ -204,7 +212,7 @@ public class AddGermplasmFragment extends Fragment {
             btn_add.startAnimation(anim);
 
             if (tv_select_location.getText().toString().equals("Tap to select") || tv_select_source.getText().toString().equals("Tap to select") ||
-                    et_germplasm.getText().toString().equals("") || et_cross.getText().toString().equals("") ||
+                    et_germplasm.getText().toString().equals("") || tv_select_cross.getText().toString().equals("Tap to select") ||
                     et_lot.getText().toString().equals("") || et_stock.getText().toString().equals("") ||
                     et_balance.getText().toString().equals("") || et_room.getText().toString().equals("") ||
                     et_shelf.getText().toString().equals("") || et_row.getText().toString().equals("") ||
@@ -214,7 +222,7 @@ public class AddGermplasmFragment extends Fragment {
                 String key = mGermplasmRef.push().getKey();
                 HashMap<String, Object> germplasm = new HashMap<String, Object>();
                 germplasm.put("g_name", et_germplasm.getText().toString());
-                germplasm.put("g_cross", et_cross.getText().toString());
+                germplasm.put("g_cross", tv_select_cross.getText().toString());
                 germplasm.put("g_source", tv_select_source.getText().toString());
                 germplasm.put("g_lot", Integer.parseInt(et_lot.getText().toString()));
                 germplasm.put("g_location", tv_select_location.getText().toString());
@@ -249,7 +257,6 @@ public class AddGermplasmFragment extends Fragment {
 
     private void cleanUp() {
         et_germplasm.setText("");
-        et_cross.setText("");
         et_lot.setText("");
         et_stock.setText("");
         et_balance.setText("");
@@ -258,13 +265,43 @@ public class AddGermplasmFragment extends Fragment {
         et_row.setText("");
         et_box.setText("");
         et_note.setText("");
+        tv_select_cross.setText(Html.fromHtml("<u>Tap to select</u>"));
         tv_select_location.setText(Html.fromHtml("<u>Tap to select</u>"));
         tv_select_source.setText(Html.fromHtml("<u>Tap to select</u>"));
+        tv_select_cross.setTextColor(getResources().getColor(R.color.soft_gray));
         tv_select_location.setTextColor(getResources().getColor(R.color.soft_gray));
         tv_select_source.setTextColor(getResources().getColor(R.color.soft_gray));
         location = -1;
         source = -1;
+        cross = -1;
     }
+
+    View.OnClickListener tv_select_cross_click = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.bounce);
+            BounceInterpolator interpolator = new BounceInterpolator();
+            anim.setInterpolator(interpolator);
+            tv_select_cross.startAnimation(anim);
+
+            MaterialDialog.Builder builder = new MaterialDialog.Builder(getContext());
+            builder
+                    .title("Select Cross")
+                    .items(crossList)
+                    .typeface("Montserrat-Regular.ttf", "Montserrat-Regular.ttf")
+                    .itemsCallbackSingleChoice(cross, new MaterialDialog.ListCallbackSingleChoice() {
+                        @Override
+                        public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                            tv_select_cross.setText(Html.fromHtml("<u>" + text + "</u>"));
+                            tv_select_cross.setTextColor(getResources().getColor(R.color.light_blue));
+                            cross = which;
+                            return true;
+                        }
+                    })
+                    .negativeText("cancel")
+                    .show();
+        }
+    };
 
     View.OnClickListener tv_select_location_click = new View.OnClickListener() {
         @Override
@@ -317,6 +354,34 @@ public class AddGermplasmFragment extends Fragment {
                     })
                     .negativeText("cancel")
                     .show();
+        }
+    };
+
+    ChildEventListener select_cross_click = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            FeedCross model = dataSnapshot.getValue(FeedCross.class);
+            feedCrosses.add(model);
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
         }
     };
 
@@ -388,13 +453,16 @@ public class AddGermplasmFragment extends Fragment {
             super.onPostExecute(s);
             locationList = new String[feedLocation.size()];
             sourceList = new String[feedSources.size()];
+            crossList = new String[feedCrosses.size()];
             for (int i = 0; i < feedLocation.size(); i++) {
                 locationList[i] = feedLocation.get(i).getL_name() + "";
             }
             for (int i = 0; i < feedSources.size(); i++) {
                 sourceList[i] = feedSources.get(i).getS_name() + "";
             }
+            for (int i = 0; i < feedCrosses.size(); i++) {
+                crossList[i] = feedCrosses.get(i).getC_name() + "";
+            }
         }
-
     }
 }
