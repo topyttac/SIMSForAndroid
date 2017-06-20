@@ -15,6 +15,10 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import simms.biosci.simsapplication.Object.Amphur;
+import simms.biosci.simsapplication.Object.District;
+import simms.biosci.simsapplication.Object.Province;
+
 /**
  * Created by topyttac on 3/4/2017 AD.
  */

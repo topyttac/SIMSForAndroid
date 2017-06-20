@@ -38,6 +38,8 @@ public class AddSourceActivity extends AppCompatActivity {
             }
 
         }
+
+        setTitle("Add");
     }
 
     private void initInstance() {
@@ -60,7 +62,7 @@ public class AddSourceActivity extends AppCompatActivity {
             return true;
         } else if (item.getItemId() == R.id.menu_home) {
             finish();
-            Intent intent = new Intent(AddSourceActivity.this, MainActivity.class);
+            Intent intent = new Intent(AddSourceActivity.this, SearchActivity.class);
             startActivity(intent);
             overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
         }

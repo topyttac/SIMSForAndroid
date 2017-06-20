@@ -38,6 +38,8 @@ public class AddGermplasmActivity extends AppCompatActivity {
             }
 
         }
+
+        setTitle("Add");
     }
 
     private void initInstance() {
@@ -60,7 +62,7 @@ public class AddGermplasmActivity extends AppCompatActivity {
             return true;
         } else if (item.getItemId() == R.id.menu_home) {
             finish();
-            Intent intent = new Intent(AddGermplasmActivity.this, MainActivity.class);
+            Intent intent = new Intent(AddGermplasmActivity.this, SearchActivity.class);
             startActivity(intent);
             overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
         }

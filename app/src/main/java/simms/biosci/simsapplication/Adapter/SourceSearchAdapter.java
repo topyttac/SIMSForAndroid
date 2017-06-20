@@ -1,8 +1,11 @@
-package simms.biosci.simsapplication.Manager;
+package simms.biosci.simsapplication.Adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,22 +16,26 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import simms.biosci.simsapplication.Object.FeedSource;
+import simms.biosci.simsapplication.Manager.OnItemClickListener;
 import simms.biosci.simsapplication.R;
 
 /**
  * Created by topyttac on 4/23/2017 AD.
  */
 
-public class CrossSearchAdapter extends RecyclerView.Adapter<CrossSearchAdapter.CustomViewHolder> implements Filterable{
+public class SourceSearchAdapter extends RecyclerView.Adapter<SourceSearchAdapter.CustomViewHolder> implements Filterable {
 
-    private List<FeedCross> mArrayList;
-    private List<FeedCross> mFilteredList;
+    private List<FeedSource> mArrayList;
+    private List<FeedSource> mFilteredList;
     private Context context;
     private OnItemClickListener onItemClickListener;
     private Typeface montserrat_regular, montserrat_bold;
+    private String text = "";
 
-    public CrossSearchAdapter(Context context, List<FeedCross> feedItems) {
+    public SourceSearchAdapter(Context context, List<FeedSource> feedItems) {
         this.context = context;
         this.mArrayList = feedItems;
         this.mFilteredList = feedItems;
@@ -36,20 +43,47 @@ public class CrossSearchAdapter extends RecyclerView.Adapter<CrossSearchAdapter.
 
     @Override
     public CustomViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cross_list, null);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.source_list, null);
         CustomViewHolder customViewHolder = new CustomViewHolder(view);
         return customViewHolder;
     }
 
     @Override
     public void onBindViewHolder(CustomViewHolder holder, final int position) {
-        holder.tv_cross.setText(mFilteredList.get(position).getC_name());
-        holder.tv_desc.setText(mFilteredList.get(position).getC_desc());
+        holder.tv_source.setText(mFilteredList.get(position).getS_name());
+        holder.tv_desc.setText(mFilteredList.get(position).getS_desc());
+
+        FeedSource txt = mFilteredList.get(position);
+        String source = txt.getS_name().toLowerCase(Locale.getDefault());
+        String desc = txt.getS_desc().toLowerCase(Locale.getDefault());
+        // logic of highlighted text
+        if (source.contains(text)) {
+
+            int startPos = source.indexOf(text);
+            int endPos = startPos + text.length();
+
+            Spannable spanString = Spannable.Factory.getInstance().newSpannable(holder.tv_source.getText());
+            spanString.setSpan(new ForegroundColorSpan(Color.parseColor("#039BE5")), startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            // red color of matching text
+
+            holder.tv_source.setText(spanString);
+        }
+        if (desc.contains(text)) {
+
+            int startPos = desc.indexOf(text);
+            int endPos = startPos + text.length();
+
+            Spannable spanString = Spannable.Factory.getInstance().newSpannable(holder.tv_desc.getText());
+            spanString.setSpan(new ForegroundColorSpan(Color.parseColor("#039BE5")), startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            // red color of matching text
+
+            holder.tv_desc.setText(spanString);
+        }
 
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onItemClickListener.onCrossClick(mFilteredList.get(position));
+                onItemClickListener.onSourceClick(mFilteredList.get(position));
             }
         };
         holder.ll_card.setOnClickListener(listener);
@@ -63,19 +97,20 @@ public class CrossSearchAdapter extends RecyclerView.Adapter<CrossSearchAdapter.
             protected FilterResults performFiltering(CharSequence charSequence) {
 
                 String charString = charSequence.toString();
+                text = charString;
 
                 if (charString.isEmpty()) {
 
                     mFilteredList = mArrayList;
                 } else {
 
-                    List<FeedCross> filteredList = new ArrayList<>();
+                    List<FeedSource> filteredList = new ArrayList<>();
 
-                    for (FeedCross feedCross : mArrayList) {
+                    for (FeedSource feedSource : mArrayList) {
 
-                        if (feedCross.getC_name().toLowerCase().contains(charString) || feedCross.getC_desc().toLowerCase().contains(charString)) {
+                        if (feedSource.getS_name().toLowerCase().contains(charString) || feedSource.getS_desc().toLowerCase().contains(charString)) {
 
-                            filteredList.add(feedCross);
+                            filteredList.add(feedSource);
                         }
                     }
 
@@ -89,11 +124,12 @@ public class CrossSearchAdapter extends RecyclerView.Adapter<CrossSearchAdapter.
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                mFilteredList = (List<FeedCross>) filterResults.values;
+                mFilteredList = (List<FeedSource>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
     }
+
     @Override
     public int getItemCount() {
         return null != mFilteredList ? mFilteredList.size() : 0;
@@ -102,17 +138,17 @@ public class CrossSearchAdapter extends RecyclerView.Adapter<CrossSearchAdapter.
     class CustomViewHolder extends RecyclerView.ViewHolder {
 
         protected LinearLayout ll_card;
-        protected TextView tv_cross, tv_desc, tv_title_desc;
+        protected TextView tv_source, tv_desc, tv_title_desc;
 
         public CustomViewHolder(View itemView) {
             super(itemView);
             montserrat_regular = Typeface.createFromAsset(context.getAssets(), "fonts/Montserrat-Regular.ttf");
             montserrat_bold = Typeface.createFromAsset(context.getAssets(), "fonts/Montserrat-SemiBold.ttf");
             this.ll_card = (LinearLayout) itemView.findViewById(R.id.ll_card);
-            this.tv_cross = (TextView) itemView.findViewById(R.id.tv_cross);
+            this.tv_source = (TextView) itemView.findViewById(R.id.tv_source);
             this.tv_desc = (TextView) itemView.findViewById(R.id.tv_desc);
             this.tv_title_desc = (TextView) itemView.findViewById(R.id.tv_title_desc);
-            this.tv_cross.setTypeface(montserrat_bold);
+            this.tv_source.setTypeface(montserrat_bold);
             this.tv_title_desc.setTypeface(montserrat_regular);
             this.tv_desc.setTypeface(montserrat_regular);
         }

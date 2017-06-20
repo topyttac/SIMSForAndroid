@@ -28,11 +28,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import simms.biosci.simsapplication.Activity.AddGermplasmActivity;
-import simms.biosci.simsapplication.Manager.FeedCross;
-import simms.biosci.simsapplication.Manager.FeedGermplasm;
-import simms.biosci.simsapplication.Manager.FeedLocation;
-import simms.biosci.simsapplication.Manager.FeedSource;
-import simms.biosci.simsapplication.Manager.GermplasmSearchAdapter;
+import simms.biosci.simsapplication.Object.FeedCross;
+import simms.biosci.simsapplication.Object.FeedGermplasm;
+import simms.biosci.simsapplication.Object.FeedLocation;
+import simms.biosci.simsapplication.Object.FeedSource;
+import simms.biosci.simsapplication.Adapter.GermplasmSearchAdapter;
 import simms.biosci.simsapplication.Manager.OnItemClickListener;
 import simms.biosci.simsapplication.R;
 
@@ -46,7 +46,7 @@ public class GermplasmFragment extends Fragment {
 
     private Typeface montserrat_regular, montserrat_bold;
     private FloatingSearchView floating_search_view;
-    private TextView tv_title, tv_result;
+    private TextView tv_title;
     private SheetLayout bottom_sheet;
     private FloatingActionButton fab;
     private static final int REQUEST_CODE_ADD = 1;
@@ -102,13 +102,10 @@ public class GermplasmFragment extends Fragment {
 
         floating_search_view = (FloatingSearchView) rootView.findViewById(R.id.floating_search_view);
         tv_title = (TextView) rootView.findViewById(R.id.tv_title);
-        tv_result = (TextView) rootView.findViewById(R.id.tv_result);
         bottom_sheet = (SheetLayout) rootView.findViewById(R.id.bottom_sheet);
         fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         recyclerView_germplasm = (RecyclerView) rootView.findViewById(R.id.recycler_view_germplasm);
         tv_title.setTypeface(montserrat_bold);
-        tv_result.setTypeface(montserrat_bold);
-        tv_result.setVisibility(View.INVISIBLE);
 
         bottom_sheet.setFab(fab);
         feedGermplasm = new ArrayList<>();

@@ -1,8 +1,11 @@
-package simms.biosci.simsapplication.Manager;
+package simms.biosci.simsapplication.Adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +16,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import simms.biosci.simsapplication.Object.FeedLocation;
+import simms.biosci.simsapplication.Manager.OnItemClickListener;
 import simms.biosci.simsapplication.R;
 
 /**
@@ -27,6 +33,7 @@ public class LocationSearchAdapter extends RecyclerView.Adapter<LocationSearchAd
     private OnItemClickListener onItemClickListener;
     private Context context;
     private Typeface montserrat_regular, montserrat_bold, prompt_regular;
+    private String text = "";
 
     public LocationSearchAdapter(Context context, List<FeedLocation> feedItems) {
         this.context = context;
@@ -44,8 +51,34 @@ public class LocationSearchAdapter extends RecyclerView.Adapter<LocationSearchAd
     @Override
     public void onBindViewHolder(CustomViewHolder holder, final int position) {
         holder.tv_location.setText(mFilteredList.get(position).getL_name());
-        holder.tv_address.setText(mFilteredList.get(position).getL_sub_district() + ", " + mFilteredList.get(position).getL_district() + ", " + mFilteredList.get(position).getL_province());
+        holder.tv_address.setText(mFilteredList.get(position).getL_sub_district() + mFilteredList.get(position).getL_district() + mFilteredList.get(position).getL_province());
 
+        FeedLocation txt = mFilteredList.get(position);
+        String location = txt.getL_name().toLowerCase(Locale.getDefault());
+        String address = txt.getL_sub_district().toLowerCase(Locale.getDefault()) + txt.getL_district().toLowerCase(Locale.getDefault()) + txt.getL_province().toLowerCase(Locale.getDefault());
+        // logic of highlighted text
+        if (location.contains(text)) {
+
+            int startPos = location.indexOf(text);
+            int endPos = startPos + text.length();
+
+            Spannable spanString = Spannable.Factory.getInstance().newSpannable(holder.tv_location.getText());
+            spanString.setSpan(new ForegroundColorSpan(Color.parseColor("#039BE5")), startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            // red color of matching text
+
+            holder.tv_location.setText(spanString);
+        }
+        if (address.contains(text)) {
+
+            int startPos = address.indexOf(text);
+            int endPos = startPos + text.length();
+
+            Spannable spanString = Spannable.Factory.getInstance().newSpannable(holder.tv_address.getText());
+            spanString.setSpan(new ForegroundColorSpan(Color.parseColor("#039BE5")), startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            // red color of matching text
+
+            holder.tv_address.setText(spanString);
+        }
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,6 +96,7 @@ public class LocationSearchAdapter extends RecyclerView.Adapter<LocationSearchAd
             protected FilterResults performFiltering(CharSequence charSequence) {
 
                 String charString = charSequence.toString();
+                text = charString;
 
                 if (charString.isEmpty()) {
 

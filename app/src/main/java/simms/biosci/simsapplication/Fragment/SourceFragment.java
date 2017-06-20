@@ -28,12 +28,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import simms.biosci.simsapplication.Activity.AddSourceActivity;
-import simms.biosci.simsapplication.Manager.FeedCross;
-import simms.biosci.simsapplication.Manager.FeedGermplasm;
-import simms.biosci.simsapplication.Manager.FeedLocation;
-import simms.biosci.simsapplication.Manager.FeedSource;
+import simms.biosci.simsapplication.Object.FeedCross;
+import simms.biosci.simsapplication.Object.FeedGermplasm;
+import simms.biosci.simsapplication.Object.FeedLocation;
+import simms.biosci.simsapplication.Object.FeedSource;
 import simms.biosci.simsapplication.Manager.OnItemClickListener;
-import simms.biosci.simsapplication.Manager.SourceSearchAdapter;
+import simms.biosci.simsapplication.Adapter.SourceSearchAdapter;
 import simms.biosci.simsapplication.R;
 
 import static android.content.ContentValues.TAG;

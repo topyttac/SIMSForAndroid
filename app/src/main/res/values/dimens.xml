@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="header_menu_bar_height">96dp</dimen>
+    <dimen name="linear_menu_bar_height">60dp</dimen>
+    <dimen name="menu_bar_width">300dp</dimen>
+    <dimen name="linear_menu_bar_margin_top">8dp</dimen>
+    <dimen name="image_view_menu_bar_margin_16">16dp</dimen>
+    <dimen name="image_view_menu_bar_margin_12">12dp</dimen>
+    <dimen name="image_view_menu_bar_margin_10">10dp</dimen>
+    <dimen name="text_view_menu_bar_margin_left_4">4dp</dimen>
+    <dimen name="text_view_menu_bar_margin_left_6">6dp</dimen>
+    <dimen name="frame_header_padding">16dp</dimen>
+    <dimen name="image_view_header_margin">4dp</dimen>
+    <dimen name="text_view_sims_size">36sp</dimen>
+    <dimen name="progress_bar_margin">24dp</dimen>
+</resources>

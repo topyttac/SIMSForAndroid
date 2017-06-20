@@ -28,8 +28,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-import simms.biosci.simsapplication.Manager.FeedCross;
-import simms.biosci.simsapplication.Manager.FeedGermplasm;
+import simms.biosci.simsapplication.Object.FeedCross;
+import simms.biosci.simsapplication.Object.FeedGermplasm;
 import simms.biosci.simsapplication.R;
 
 /**

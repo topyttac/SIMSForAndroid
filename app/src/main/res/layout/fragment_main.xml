@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,19 +40,36 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="8dp"
-                    android:background="@drawable/button_rec_tran_green"
+                    android:background="@drawable/button_rec_green"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
                     android:text="Germplasm"
                     android:textColor="@android:color/white"
-                    android:textSize="16dp" />
+                    android:textSize="16sp" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_view_germplasm"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:scrollbars="none" />
+                    android:layout_height="wrap_content">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recycler_view_germplasm"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="1dp"
+                        android:scrollbars="none" />
+
+                    <TextView
+                        android:id="@+id/tv_result_germplasm"
+                        style="@style/text_view_result"
+                        android:text="@string/no_results_found"
+                        android:visibility="invisible" />
+
+                    <TextView
+                        android:id="@+id/tv_loading_germplasm"
+                        style="@style/text_view_result"
+                        android:text="@string/loading" />
+
+                </RelativeLayout>
 
                 <TextView
                     android:id="@+id/tv_location"
@@ -59,19 +77,36 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="8dp"
-                    android:background="@drawable/button_rec_tran_green"
+                    android:background="@drawable/button_rec_green"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
                     android:text="Location"
                     android:textColor="@android:color/white"
-                    android:textSize="16dp" />
+                    android:textSize="16sp" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_view_location"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:scrollbars="none" />
+                    android:layout_height="wrap_content">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recycler_view_location"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="1dp"
+                        android:scrollbars="none" />
+
+                    <TextView
+                        android:id="@+id/tv_result_location"
+                        style="@style/text_view_result"
+                        android:text="@string/no_results_found"
+                        android:visibility="invisible" />
+
+                    <TextView
+                        android:id="@+id/tv_loading_location"
+                        style="@style/text_view_result"
+                        android:text="@string/loading" />
+
+                </RelativeLayout>
 
                 <TextView
                     android:id="@+id/tv_source"
@@ -79,19 +114,36 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="8dp"
-                    android:background="@drawable/button_rec_tran_green"
+                    android:background="@drawable/button_rec_green"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
                     android:text="Source"
                     android:textColor="@android:color/white"
-                    android:textSize="16dp" />
+                    android:textSize="16sp" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_view_source"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:scrollbars="none" />
+                    android:layout_height="wrap_content">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recycler_view_source"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="1dp"
+                        android:scrollbars="none" />
+
+                    <TextView
+                        android:id="@+id/tv_result_source"
+                        style="@style/text_view_result"
+                        android:text="@string/no_results_found"
+                        android:visibility="invisible" />
+
+                    <TextView
+                        android:id="@+id/tv_loading_source"
+                        style="@style/text_view_result"
+                        android:text="@string/loading" />
+
+                </RelativeLayout>
 
                 <TextView
                     android:id="@+id/tv_cross"
@@ -99,19 +151,36 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="8dp"
-                    android:background="@drawable/button_rec_tran_green"
+                    android:background="@drawable/button_rec_green"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
                     android:text="Cross"
                     android:textColor="@android:color/white"
-                    android:textSize="16dp" />
+                    android:textSize="16sp" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_view_cross"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:scrollbars="none" />
+                    android:layout_height="wrap_content">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recycler_view_cross"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="1dp"
+                        android:scrollbars="none" />
+
+                    <TextView
+                        android:id="@+id/tv_result_cross"
+                        style="@style/text_view_result"
+                        android:text="@string/no_results_found"
+                        android:visibility="invisible" />
+
+                    <TextView
+                        android:id="@+id/tv_loading_cross"
+                        style="@style/text_view_result"
+                        android:text="@string/loading" />
+
+                </RelativeLayout>
             </LinearLayout>
 
 

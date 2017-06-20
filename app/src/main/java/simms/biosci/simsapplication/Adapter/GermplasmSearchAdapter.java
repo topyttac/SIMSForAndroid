@@ -1,8 +1,11 @@
-package simms.biosci.simsapplication.Manager;
+package simms.biosci.simsapplication.Adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +16,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import simms.biosci.simsapplication.Object.FeedGermplasm;
+import simms.biosci.simsapplication.Manager.OnItemClickListener;
 import simms.biosci.simsapplication.R;
 
 /**
@@ -27,6 +33,7 @@ public class GermplasmSearchAdapter extends RecyclerView.Adapter<GermplasmSearch
     private OnItemClickListener onItemClickListener;
     private Context context;
     private Typeface montserrat_regular, montserrat_bold;
+    private String text = "";
 
     public GermplasmSearchAdapter(Context context, List<FeedGermplasm> feedItems) {
         this.context = context;
@@ -47,6 +54,44 @@ public class GermplasmSearchAdapter extends RecyclerView.Adapter<GermplasmSearch
         holder.tv_location.setText(mFilteredList.get(position).getG_location());
         holder.tv_source.setText(mFilteredList.get(position).getG_source());
 
+        FeedGermplasm txt = mFilteredList.get(position);
+        String germplasm = txt.getG_name().toLowerCase(Locale.getDefault());
+        String location = txt.getG_location().toLowerCase(Locale.getDefault());
+        String source = txt.getG_source().toLowerCase(Locale.getDefault());
+        // logic of highlighted text
+        if (germplasm.contains(text)) {
+
+            int startPos = germplasm.indexOf(text);
+            int endPos = startPos + text.length();
+
+            Spannable spanString = Spannable.Factory.getInstance().newSpannable(holder.tv_germplasm.getText());
+            spanString.setSpan(new ForegroundColorSpan(Color.parseColor("#039BE5")), startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            // red color of matching text
+
+            holder.tv_germplasm.setText(spanString);
+        }
+        if (location.contains(text)) {
+
+            int startPos = location.indexOf(text);
+            int endPos = startPos + text.length();
+
+            Spannable spanString = Spannable.Factory.getInstance().newSpannable(holder.tv_location.getText());
+            spanString.setSpan(new ForegroundColorSpan(Color.parseColor("#039BE5")), startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            // red color of matching text
+
+            holder.tv_location.setText(spanString);
+        }
+        if (source.contains(text)) {
+
+            int startPos = source.indexOf(text);
+            int endPos = startPos + text.length();
+
+            Spannable spanString = Spannable.Factory.getInstance().newSpannable(holder.tv_source.getText());
+            spanString.setSpan(new ForegroundColorSpan(Color.parseColor("#039BE5")), startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            // red color of matching text
+
+            holder.tv_source.setText(spanString);
+        }
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,6 +109,7 @@ public class GermplasmSearchAdapter extends RecyclerView.Adapter<GermplasmSearch
             protected FilterResults performFiltering(CharSequence charSequence) {
 
                 String charString = charSequence.toString();
+                text = charString;
 
                 if (charString.isEmpty()) {
 

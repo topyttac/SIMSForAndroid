@@ -36,16 +36,13 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:src="@drawable/cross" />
+                            android:src="@drawable/cross"
+                            android:layout_margin="1dp"/>
 
                         <TextView
                             android:id="@+id/tv_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Cross"
-                            android:textColor="@android:color/white"
-                            android:textSize="30dp"
-                            android:textStyle="bold" />
+                            style="@style/text_view_header"
+                            android:text="@string/cross" />
                     </LinearLayout>
                 </FrameLayout>
 
@@ -60,11 +57,22 @@
                     app:floatingSearch_showSearchKey="true"
                     app:floatingSearch_suggestionsListAnimDuration="250" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_view_cross"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="1dp" />
+                    android:layout_height="match_parent">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recycler_view_cross"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="1dp" />
+
+                    <TextView
+                        android:id="@+id/tv_result_germplasm"
+                        android:text="No results found."
+                        style="@style/text_view_result" />
+                </RelativeLayout>
+
             </LinearLayout>
 
             <android.support.design.widget.FloatingActionButton

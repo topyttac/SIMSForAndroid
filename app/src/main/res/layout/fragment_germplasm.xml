@@ -25,7 +25,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rec_gradients_blue"
-                    android:padding="16dp">
+                    android:padding="@dimen/frame_header_padding">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -36,16 +36,13 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
+                            android:layout_margin="@dimen/image_view_header_margin"
                             android:src="@drawable/seed" />
 
                         <TextView
                             android:id="@+id/tv_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Germplasm"
-                            android:textColor="@android:color/white"
-                            android:textSize="30dp"
-                            android:textStyle="bold" />
+                            android:text="@string/germplasm"
+                            style="@style/text_view_header" />
                     </LinearLayout>
                 </FrameLayout>
 
@@ -60,26 +57,12 @@
                     app:floatingSearch_showSearchKey="true"
                     app:floatingSearch_suggestionsListAnimDuration="250" />
 
-                <RelativeLayout
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_view_germplasm"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        android:id="@+id/tv_result"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_margin="30dp"
-                        android:text="No result found."
-                        android:textSize="20dp" />
-
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/recycler_view_germplasm"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="1dp"
-                        android:scrollbars="vertical" />
-                </RelativeLayout>
+                    android:layout_height="match_parent"
+                    android:layout_margin="1dp"
+                    android:scrollbars="vertical" />
             </LinearLayout>
 
             <android.support.design.widget.FloatingActionButton

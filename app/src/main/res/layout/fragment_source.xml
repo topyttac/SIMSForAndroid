@@ -40,12 +40,8 @@
 
                         <TextView
                             android:id="@+id/tv_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Source"
-                            android:textColor="@android:color/white"
-                            android:textSize="30dp"
-                            android:textStyle="bold" />
+                            style="@style/text_view_header"
+                            android:text="Source" />
                     </LinearLayout>
                 </FrameLayout>
 
@@ -64,7 +60,7 @@
                     android:id="@+id/recycler_view_source"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="1dp"/>
+                    android:layout_margin="1dp" />
             </LinearLayout>
 
             <android.support.design.widget.FloatingActionButton

@@ -31,12 +31,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import simms.biosci.simsapplication.Manager.Amphur;
+import simms.biosci.simsapplication.Object.Amphur;
 import simms.biosci.simsapplication.Manager.DatabaseHelper;
-import simms.biosci.simsapplication.Manager.District;
-import simms.biosci.simsapplication.Manager.FeedGermplasm;
-import simms.biosci.simsapplication.Manager.FeedLocation;
-import simms.biosci.simsapplication.Manager.Province;
+import simms.biosci.simsapplication.Object.District;
+import simms.biosci.simsapplication.Object.FeedGermplasm;
+import simms.biosci.simsapplication.Object.FeedLocation;
+import simms.biosci.simsapplication.Object.Province;
 import simms.biosci.simsapplication.R;
 
 /**

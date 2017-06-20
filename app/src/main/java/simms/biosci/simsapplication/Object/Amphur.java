@@ -1,4 +1,4 @@
-package simms.biosci.simsapplication.Manager;
+package simms.biosci.simsapplication.Object;
 
 import android.os.Parcel;
 import android.os.Parcelable;

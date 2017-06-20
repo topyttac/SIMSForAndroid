@@ -15,4 +15,38 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="menu_bar_image_view">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_gravity">center_vertical|center_horizontal</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="menu_bar_text_view">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_weight">3</item>
+        <item name="android:paddingLeft">6dp</item>
+        <item name="android:textColor">#424242</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="text_view_header">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="text_view_result">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">@dimen/progress_bar_margin</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:textSize">20dp</item>
+    </style>
+
 </resources>

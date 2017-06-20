@@ -32,10 +32,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import simms.biosci.simsapplication.Manager.FeedCross;
-import simms.biosci.simsapplication.Manager.FeedGermplasm;
-import simms.biosci.simsapplication.Manager.FeedLocation;
-import simms.biosci.simsapplication.Manager.FeedSource;
+import simms.biosci.simsapplication.Object.FeedCross;
+import simms.biosci.simsapplication.Object.FeedGermplasm;
+import simms.biosci.simsapplication.Object.FeedLocation;
+import simms.biosci.simsapplication.Object.FeedSource;
 import simms.biosci.simsapplication.R;
 
 

@@ -1,4 +1,4 @@
-package simms.biosci.simsapplication.Manager;
+package simms.biosci.simsapplication.Object;
 
 /**
  * Created by User 2 on 6/12/2017.

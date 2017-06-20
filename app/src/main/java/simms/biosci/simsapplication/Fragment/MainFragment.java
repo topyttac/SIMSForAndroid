@@ -3,6 +3,7 @@ package simms.biosci.simsapplication.Fragment;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,15 +30,15 @@ import simms.biosci.simsapplication.Activity.AddCrossActivity;
 import simms.biosci.simsapplication.Activity.AddGermplasmActivity;
 import simms.biosci.simsapplication.Activity.AddLocationActivity;
 import simms.biosci.simsapplication.Activity.AddSourceActivity;
-import simms.biosci.simsapplication.Manager.CrossSearchAdapter;
-import simms.biosci.simsapplication.Manager.FeedCross;
-import simms.biosci.simsapplication.Manager.FeedGermplasm;
-import simms.biosci.simsapplication.Manager.FeedLocation;
-import simms.biosci.simsapplication.Manager.FeedSource;
-import simms.biosci.simsapplication.Manager.GermplasmSearchAdapter;
-import simms.biosci.simsapplication.Manager.LocationSearchAdapter;
+import simms.biosci.simsapplication.Adapter.CrossSearchAdapter;
+import simms.biosci.simsapplication.Object.FeedCross;
+import simms.biosci.simsapplication.Object.FeedGermplasm;
+import simms.biosci.simsapplication.Object.FeedLocation;
+import simms.biosci.simsapplication.Object.FeedSource;
+import simms.biosci.simsapplication.Adapter.GermplasmSearchAdapter;
+import simms.biosci.simsapplication.Adapter.LocationSearchAdapter;
 import simms.biosci.simsapplication.Manager.OnItemClickListener;
-import simms.biosci.simsapplication.Manager.SourceSearchAdapter;
+import simms.biosci.simsapplication.Adapter.SourceSearchAdapter;
 import simms.biosci.simsapplication.R;
 
 import static android.content.ContentValues.TAG;
@@ -49,6 +50,8 @@ import static android.content.ContentValues.TAG;
 public class MainFragment extends Fragment {
 
     private TextView tv_germplasm, tv_location, tv_source, tv_cross;
+    private TextView tv_result_germplasm, tv_loading_germplasm, tv_result_location, tv_loading_location,
+            tv_result_source, tv_loading_source, tv_result_cross, tv_loading_cross;
     private Typeface montserrat_regular, montserrat_bold;
     private FloatingSearchView floating_search_view;
     private DatabaseReference mRootRef;
@@ -65,6 +68,7 @@ public class MainFragment extends Fragment {
     private List<FeedSource> feedSources;
     private List<FeedCross> feedCrosses;
     private static final int REQUEST_CODE_SHOW = 4;
+    private int time = 100;
 
     public MainFragment() {
         super();
@@ -115,6 +119,14 @@ public class MainFragment extends Fragment {
         tv_location = (TextView) rootView.findViewById(R.id.tv_location);
         tv_source = (TextView) rootView.findViewById(R.id.tv_source);
         tv_cross = (TextView) rootView.findViewById(R.id.tv_cross);
+        tv_result_germplasm = (TextView) rootView.findViewById(R.id.tv_result_germplasm);
+        tv_loading_germplasm = (TextView) rootView.findViewById(R.id.tv_loading_germplasm);
+        tv_result_location = (TextView) rootView.findViewById(R.id.tv_result_location);
+        tv_loading_location = (TextView) rootView.findViewById(R.id.tv_loading_location);
+        tv_result_source = (TextView) rootView.findViewById(R.id.tv_result_source);
+        tv_loading_source = (TextView) rootView.findViewById(R.id.tv_loading_source);
+        tv_result_cross = (TextView) rootView.findViewById(R.id.tv_result_cross);
+        tv_loading_cross = (TextView) rootView.findViewById(R.id.tv_loading_cross);
         floating_search_view = (FloatingSearchView) rootView.findViewById(R.id.floating_search_view);
         recyclerView_germplasm = (RecyclerView) rootView.findViewById(R.id.recycler_view_germplasm);
         recyclerView_location = (RecyclerView) rootView.findViewById(R.id.recycler_view_location);
@@ -125,10 +137,37 @@ public class MainFragment extends Fragment {
         tv_location.setTypeface(montserrat_bold);
         tv_source.setTypeface(montserrat_bold);
         tv_cross.setTypeface(montserrat_bold);
+        tv_result_germplasm.setTypeface(montserrat_bold);
+        tv_loading_germplasm.setTypeface(montserrat_bold);
+        tv_loading_germplasm.setVisibility(View.VISIBLE);
+        tv_result_location.setTypeface(montserrat_bold);
+        tv_loading_location.setTypeface(montserrat_bold);
+        tv_loading_location.setVisibility(View.VISIBLE);
+        tv_result_source.setTypeface(montserrat_bold);
+        tv_loading_source.setTypeface(montserrat_bold);
+        tv_loading_source.setVisibility(View.VISIBLE);
+        tv_result_cross.setTypeface(montserrat_bold);
+        tv_loading_cross.setTypeface(montserrat_bold);
+        tv_loading_cross.setVisibility(View.VISIBLE);
         feedGermplasm = new ArrayList<>();
         feedLocations = new ArrayList<>();
         feedSources = new ArrayList<>();
         feedCrosses = new ArrayList<>();
+
+        new CountDownTimer(800, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                //here you can have your logic to set text to edittext
+            }
+
+            public void onFinish() {
+                tv_loading_germplasm.setVisibility(View.INVISIBLE);
+                tv_loading_location.setVisibility(View.INVISIBLE);
+                tv_loading_source.setVisibility(View.INVISIBLE);
+                tv_loading_cross.setVisibility(View.INVISIBLE);
+            }
+
+        }.start();
 
         germplasmSearchAdapter = new GermplasmSearchAdapter(getContext(), feedGermplasm);
         recyclerView_germplasm.setNestedScrollingEnabled(false);
@@ -169,6 +208,26 @@ public class MainFragment extends Fragment {
                 locationSearchAdapter.getFilter().filter(newQuery.toLowerCase());
                 sourceSearchAdapter.getFilter().filter(newQuery.toLowerCase());
                 crossSearchAdapter.getFilter().filter(newQuery.toLowerCase());
+                if (germplasmSearchAdapter.getItemCount() == 0) {
+                    tv_result_germplasm.setVisibility(View.VISIBLE);
+                } else {
+                    tv_result_germplasm.setVisibility(View.INVISIBLE);
+                }
+                if (locationSearchAdapter.getItemCount() == 0) {
+                    tv_result_location.setVisibility(View.VISIBLE);
+                } else {
+                    tv_result_location.setVisibility(View.INVISIBLE);
+                }
+                if (sourceSearchAdapter.getItemCount() == 0) {
+                    tv_result_source.setVisibility(View.VISIBLE);
+                } else {
+                    tv_result_source.setVisibility(View.INVISIBLE);
+                }
+                if (crossSearchAdapter.getItemCount() == 0) {
+                    tv_result_cross.setVisibility(View.VISIBLE);
+                } else {
+                    tv_result_cross.setVisibility(View.INVISIBLE);
+                }
             }
         });
 
