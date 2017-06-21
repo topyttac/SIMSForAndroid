@@ -146,7 +146,7 @@
             <TextView
                 android:id="@+id/tv_setting"
                 style="@style/menu_bar_text_view"
-                android:text="Settings" />
+                android:text="@string/settings" />
         </LinearLayout>
 
     </LinearLayout>

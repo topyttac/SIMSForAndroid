@@ -1,6 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_general"
+        style="@style/text_view_setting"
+        android:textColor="@color/soft_gray"
+        android:text="@string/general" />
+
+    <LinearLayout
+        android:id="@+id/ll_display_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_background_setting"
+        android:orientation="vertical"
+        android:padding="@dimen/linear_setting_padding">
+
+        <TextView
+            android:id="@+id/tv_display_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/display_type"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_view_setting_type_font_size" />
+
+        <TextView
+            android:id="@+id/tv_display_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_top_setting_result"
+            android:text="Show Results in Card View"
+            android:textSize="@dimen/text_view_setting_result_font_size" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_germplasm_column"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_background_setting"
+        android:orientation="vertical"
+        android:padding="@dimen/linear_setting_padding">
+
+        <TextView
+            android:id="@+id/tv_germplasm_column"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/germplasm_columns"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_view_setting_type_font_size" />
+
+        <TextView
+            android:id="@+id/tv_germplasm_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_top_setting_result"
+            android:text="Show Results"
+            android:textSize="@dimen/text_view_setting_result_font_size" />
+    </LinearLayout>
 
 </LinearLayout>

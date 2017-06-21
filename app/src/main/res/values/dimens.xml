@@ -13,4 +13,8 @@
     <dimen name="image_view_header_margin">4dp</dimen>
     <dimen name="text_view_sims_size">36sp</dimen>
     <dimen name="progress_bar_margin">24dp</dimen>
+    <dimen name="linear_setting_padding">16dp</dimen>
+    <dimen name="text_view_setting_type_font_size">18sp</dimen>
+    <dimen name="text_view_setting_result_font_size">16sp</dimen>
+    <dimen name="margin_top_setting_result">2dp</dimen>
 </resources>

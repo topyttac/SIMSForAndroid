@@ -39,7 +39,7 @@ public class AddCrossActivity extends AppCompatActivity {
 
         }
 
-        setTitle("Add ");
+        setTitle("Add");
     }
 
     private void initInstance() {
