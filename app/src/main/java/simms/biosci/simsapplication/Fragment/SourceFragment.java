@@ -1,6 +1,8 @@
 package simms.biosci.simsapplication.Fragment;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -28,15 +30,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import simms.biosci.simsapplication.Activity.AddSourceActivity;
+import simms.biosci.simsapplication.Adapter.SourceSearchAdapter;
+import simms.biosci.simsapplication.Adapter.SourceSearchTableAdapter;
+import simms.biosci.simsapplication.Manager.IntentIntegrator;
+import simms.biosci.simsapplication.Manager.IntentResult;
+import simms.biosci.simsapplication.Manager.OnItemClickListener;
 import simms.biosci.simsapplication.Object.FeedCross;
 import simms.biosci.simsapplication.Object.FeedGermplasm;
 import simms.biosci.simsapplication.Object.FeedLocation;
 import simms.biosci.simsapplication.Object.FeedSource;
-import simms.biosci.simsapplication.Manager.OnItemClickListener;
-import simms.biosci.simsapplication.Adapter.SourceSearchAdapter;
 import simms.biosci.simsapplication.R;
 
 import static android.content.ContentValues.TAG;
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by nuuneoi on 11/16/2014.
@@ -44,6 +50,8 @@ import static android.content.ContentValues.TAG;
 @SuppressWarnings("unused")
 public class SourceFragment extends Fragment {
 
+    private SharedPreferences display_read;
+    private Boolean card_view_type;
     private Typeface montserrat_regular, montserrat_bold;
     private FloatingSearchView floating_search_view;
     private TextView tv_title;
@@ -52,9 +60,11 @@ public class SourceFragment extends Fragment {
     private static final int REQUEST_CODE_ADD = 3;
     private static final int REQUEST_CODE_SHOW = 6;
     private RecyclerView recyclerView_source;
-    private SourceSearchAdapter sourceAdapter;
+    private SourceSearchAdapter sourceSearchAdapter;
+    private SourceSearchTableAdapter sourceSearchTableAdapter;
     private List<FeedSource> feedSources;
     private DatabaseReference mRootRef, mSourceRef;
+    private IntentIntegrator scanIntegrator;
 
     public SourceFragment() {
         super();
@@ -76,6 +86,7 @@ public class SourceFragment extends Fragment {
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
 
+        scanIntegrator = new IntentIntegrator(this);
         mRootRef = FirebaseDatabase.getInstance().getReference();
         mRootRef.child("source").orderByChild("s_name").addChildEventListener(sourceEventListener);
     }
@@ -107,9 +118,18 @@ public class SourceFragment extends Fragment {
 
         feedSources = new ArrayList<>();
         bottom_sheet.setFab(fab);
+        display_read = getActivity().getSharedPreferences("card_view_type", MODE_PRIVATE);
+        card_view_type = display_read.getBoolean("card_view_type", true);
+        if (card_view_type) {
+            sourceSearchAdapter = new SourceSearchAdapter(getContext(), feedSources);
+            recyclerView_source.setAdapter(sourceSearchAdapter);
+            sourceSearchAdapter.setOnItemClickListener(onItemClickListener);
+        } else {
+            sourceSearchTableAdapter = new SourceSearchTableAdapter(getContext(), feedSources);
+            recyclerView_source.setAdapter(sourceSearchTableAdapter);
+            sourceSearchTableAdapter.setOnItemClickListener(onItemClickListener);
+        }
 
-        sourceAdapter = new SourceSearchAdapter(getContext(), feedSources);
-        recyclerView_source.setAdapter(sourceAdapter);
         recyclerView_source.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setAutoMeasureEnabled(false);
@@ -117,12 +137,15 @@ public class SourceFragment extends Fragment {
 
         bottom_sheet.setFabAnimationEndListener(fab_animation_click);
         fab.setOnClickListener(fab_click);
-        sourceAdapter.setOnItemClickListener(onItemClickListener);
 
         floating_search_view.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
             @Override
             public void onSearchTextChanged(String oldQuery, String newQuery) {
-                sourceAdapter.getFilter().filter(newQuery.toLowerCase());
+                if (card_view_type) {
+                    sourceSearchAdapter.getFilter().filter(newQuery.toLowerCase());
+                } else {
+                    sourceSearchTableAdapter.getFilter().filter(newQuery.toLowerCase());
+                }
             }
         });
 
@@ -130,7 +153,7 @@ public class SourceFragment extends Fragment {
             @Override
             public void onActionMenuItemSelected(MenuItem item) {
                 if (item.getItemId() == R.id.search_camera) {
-                    Toast.makeText(getContext(), "Camera launch.", Toast.LENGTH_SHORT).show();
+                    scanIntegrator.initiateScan();
                 } else if (item.getItemId() == R.id.search_barcode) {
                     Toast.makeText(getContext(), "Barcode launch.", Toast.LENGTH_SHORT).show();
                 }
@@ -189,7 +212,11 @@ public class SourceFragment extends Fragment {
                 try {
                     FeedSource model = dataSnapshot.getValue(FeedSource.class);
                     feedSources.add(model);
-                    sourceAdapter.notifyItemInserted(feedSources.size() - 1);
+                    if (card_view_type) {
+                        sourceSearchAdapter.notifyItemInserted(feedSources.size() - 1);
+                    } else {
+                        sourceSearchTableAdapter.notifyItemInserted(feedSources.size() - 1);
+                    }
                 } catch (Exception ex) {
                     Log.e(TAG, ex.getMessage());
                 }
@@ -205,8 +232,13 @@ public class SourceFragment extends Fragment {
                 if (feedSources.get(i).getS_key().equals(p0.getS_key())) {
                     feedSources.get(i).setS_name(p0.getS_name());
                     feedSources.get(i).setS_desc(p0.getS_desc());
-                    sourceAdapter.notifyDataSetChanged();
-                    sourceAdapter.notifyItemRangeChanged(i, feedSources.size());
+                    if (card_view_type) {
+                        sourceSearchAdapter.notifyDataSetChanged();
+                        sourceSearchAdapter.notifyItemRangeChanged(i, feedSources.size());
+                    } else {
+                        sourceSearchTableAdapter.notifyDataSetChanged();
+                        sourceSearchTableAdapter.notifyItemRangeChanged(i, feedSources.size());
+                    }
                 }
             }
         }
@@ -217,8 +249,13 @@ public class SourceFragment extends Fragment {
             for (int i = 0; i < feedSources.size(); i++) {
                 if (feedSources.get(i).getS_key().equals(p0.getS_key())) {
                     feedSources.remove(i);
-                    sourceAdapter.notifyItemRemoved(i);
-                    sourceAdapter.notifyItemRangeChanged(i, feedSources.size());
+                    if (card_view_type) {
+                        sourceSearchAdapter.notifyItemRemoved(i);
+                        sourceSearchAdapter.notifyItemRangeChanged(i, feedSources.size());
+                    } else {
+                        sourceSearchTableAdapter.notifyItemRemoved(i);
+                        sourceSearchTableAdapter.notifyItemRangeChanged(i, feedSources.size());
+                    }
                 }
             }
         }
@@ -264,7 +301,30 @@ public class SourceFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_ADD) {
             bottom_sheet.contractFab();
-        } else if (requestCode == REQUEST_CODE_SHOW) {
+        } else if (requestCode == IntentIntegrator.REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                IntentResult intentResult =
+                        IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
+                if (intentResult != null) {
+
+                    String contents = intentResult.getContents();
+                    String format = intentResult.getFormatName();
+
+                    floating_search_view.setSearchText(contents);
+                    if (card_view_type) {
+                        sourceSearchAdapter.getFilter().filter(contents.toLowerCase());
+                    } else {
+                        sourceSearchTableAdapter.getFilter().filter(contents.toLowerCase());
+                    }
+                    Log.d("SEARCH_EAN", "OK, EAN: " + contents + ", FORMAT: " + format);
+                } else {
+                    Log.e("SEARCH_EAN", "IntentResult je NULL!");
+                }
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                Log.e("SEARCH_EAN", "CANCEL");
+            }
+        }else if (requestCode == REQUEST_CODE_SHOW) {
             try {
                 String what2do = data.getStringExtra("what2do");
                 if (what2do.toString().equals("update")) {
@@ -275,8 +335,13 @@ public class SourceFragment extends Fragment {
                         if (feedSources.get(i).getS_key().equals(key)) {
                             feedSources.get(i).setS_name(s_name + "");
                             feedSources.get(i).setS_desc(s_desc + "");
-                            sourceAdapter.notifyDataSetChanged();
-                            sourceAdapter.notifyItemRangeChanged(i, feedSources.size());
+                            if(card_view_type){
+                                sourceSearchAdapter.notifyDataSetChanged();
+                                sourceSearchAdapter.notifyItemRangeChanged(i, feedSources.size());
+                            } else{
+                                sourceSearchTableAdapter.notifyDataSetChanged();
+                                sourceSearchTableAdapter.notifyItemRangeChanged(i, feedSources.size());
+                            }
                         }
                     }
                 } else if (what2do.toString().equals("delete")) {
@@ -284,8 +349,13 @@ public class SourceFragment extends Fragment {
                     for (int i = 0; i < feedSources.size(); i++) {
                         if (feedSources.get(i).getS_key().equals(key)) {
                             feedSources.remove(i);
-                            sourceAdapter.notifyItemRemoved(i);
-                            sourceAdapter.notifyItemRangeChanged(i, feedSources.size());
+                            if(card_view_type){
+                                sourceSearchAdapter.notifyItemRemoved(i);
+                                sourceSearchAdapter.notifyItemRangeChanged(i, feedSources.size());
+                            } else{
+                                sourceSearchTableAdapter.notifyItemRemoved(i);
+                                sourceSearchTableAdapter.notifyItemRangeChanged(i, feedSources.size());
+                            }
                         }
                     }
                 }

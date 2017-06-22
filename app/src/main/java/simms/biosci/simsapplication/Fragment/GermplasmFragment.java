@@ -1,6 +1,9 @@
 package simms.biosci.simsapplication.Fragment;
 
+import android.app.Activity;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -28,15 +31,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import simms.biosci.simsapplication.Activity.AddGermplasmActivity;
+import simms.biosci.simsapplication.Adapter.GermplasmSearchAdapter;
+import simms.biosci.simsapplication.Adapter.GermplasmSearchTableAdapter;
+import simms.biosci.simsapplication.Manager.IntentIntegrator;
+import simms.biosci.simsapplication.Manager.IntentResult;
+import simms.biosci.simsapplication.Manager.OnItemClickListener;
 import simms.biosci.simsapplication.Object.FeedCross;
 import simms.biosci.simsapplication.Object.FeedGermplasm;
 import simms.biosci.simsapplication.Object.FeedLocation;
 import simms.biosci.simsapplication.Object.FeedSource;
-import simms.biosci.simsapplication.Adapter.GermplasmSearchAdapter;
-import simms.biosci.simsapplication.Manager.OnItemClickListener;
 import simms.biosci.simsapplication.R;
 
 import static android.content.ContentValues.TAG;
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by nuuneoi on 11/16/2014.
@@ -44,6 +51,8 @@ import static android.content.ContentValues.TAG;
 @SuppressWarnings("unused")
 public class GermplasmFragment extends Fragment {
 
+    private SharedPreferences display_read;
+    private Boolean card_view_type;
     private Typeface montserrat_regular, montserrat_bold;
     private FloatingSearchView floating_search_view;
     private TextView tv_title;
@@ -53,8 +62,11 @@ public class GermplasmFragment extends Fragment {
     private static final int REQUEST_CODE_SHOW = 4;
     private RecyclerView recyclerView_germplasm;
     private GermplasmSearchAdapter germplasmAdapter;
+    private GermplasmSearchTableAdapter germplasmTableAdapter;
     private List<FeedGermplasm> feedGermplasm;
     private DatabaseReference mRootRef, mGermplasmRef;
+    private IntentIntegrator scanIntegrator;
+    private ContextWrapper contextWrapper;
 
     public GermplasmFragment() {
         super();
@@ -76,6 +88,7 @@ public class GermplasmFragment extends Fragment {
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
 
+        scanIntegrator = new IntentIntegrator(this);
         mRootRef = FirebaseDatabase.getInstance().getReference();
         mRootRef.child("germplasm").orderByChild("g_name").addChildEventListener(germplasmEventListener);
     }
@@ -110,8 +123,18 @@ public class GermplasmFragment extends Fragment {
         bottom_sheet.setFab(fab);
         feedGermplasm = new ArrayList<>();
 
-        germplasmAdapter = new GermplasmSearchAdapter(getContext(), feedGermplasm);
-        recyclerView_germplasm.setAdapter(germplasmAdapter);
+        display_read = getActivity().getSharedPreferences("card_view_type", MODE_PRIVATE);
+        card_view_type = display_read.getBoolean("card_view_type", true);
+        if (card_view_type) {
+            germplasmAdapter = new GermplasmSearchAdapter(getContext(), feedGermplasm);
+            recyclerView_germplasm.setAdapter(germplasmAdapter);
+            germplasmAdapter.setOnItemClickListener(onItemClickListener);
+        } else {
+            germplasmTableAdapter = new GermplasmSearchTableAdapter(getContext(), feedGermplasm);
+            recyclerView_germplasm.setAdapter(germplasmTableAdapter);
+            germplasmTableAdapter.setOnItemClickListener(onItemClickListener);
+        }
+
         recyclerView_germplasm.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setAutoMeasureEnabled(false);
@@ -119,12 +142,15 @@ public class GermplasmFragment extends Fragment {
 
         bottom_sheet.setFabAnimationEndListener(fab_animation_click);
         fab.setOnClickListener(fab_click);
-        germplasmAdapter.setOnItemClickListener(onItemClickListener);
 
         floating_search_view.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
             @Override
             public void onSearchTextChanged(String oldQuery, String newQuery) {
-                germplasmAdapter.getFilter().filter(newQuery.toLowerCase());
+                if (card_view_type) {
+                    germplasmAdapter.getFilter().filter(newQuery.toLowerCase());
+                } else {
+                    germplasmTableAdapter.getFilter().filter(newQuery.toLowerCase());
+                }
             }
         });
 
@@ -132,7 +158,7 @@ public class GermplasmFragment extends Fragment {
             @Override
             public void onActionMenuItemSelected(MenuItem item) {
                 if (item.getItemId() == R.id.search_camera) {
-                    Toast.makeText(getContext(), "Camera launch.", Toast.LENGTH_SHORT).show();
+                    scanIntegrator.initiateScan();
                 } else if (item.getItemId() == R.id.search_barcode) {
                     Toast.makeText(getContext(), "Barcode launch.", Toast.LENGTH_SHORT).show();
                 }
@@ -189,6 +215,29 @@ public class GermplasmFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_ADD) {
             bottom_sheet.contractFab();
+        } else if (requestCode == IntentIntegrator.REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                IntentResult intentResult =
+                        IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
+                if (intentResult != null) {
+
+                    String contents = intentResult.getContents();
+                    String format = intentResult.getFormatName();
+
+                    floating_search_view.setSearchText(contents);
+                    if (card_view_type) {
+                        germplasmAdapter.getFilter().filter(contents.toLowerCase());
+                    } else {
+                        germplasmTableAdapter.getFilter().filter(contents.toLowerCase());
+                    }
+                    Log.d("SEARCH_EAN", "OK, EAN: " + contents + ", FORMAT: " + format);
+                } else {
+                    Log.e("SEARCH_EAN", "IntentResult je NULL!");
+                }
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                Log.e("SEARCH_EAN", "CANCEL");
+            }
         } else if (requestCode == REQUEST_CODE_SHOW) {
             try {
                 String what2do = data.getStringExtra("what2do");
@@ -220,8 +269,13 @@ public class GermplasmFragment extends Fragment {
                             feedGermplasm.get(i).setG_row(g_row);
                             feedGermplasm.get(i).setG_box(g_box);
                             feedGermplasm.get(i).setG_note(g_note + "");
-                            germplasmAdapter.notifyDataSetChanged();
-                            germplasmAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                            if (card_view_type) {
+                                germplasmAdapter.notifyDataSetChanged();
+                                germplasmAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                            } else {
+                                germplasmTableAdapter.notifyDataSetChanged();
+                                germplasmTableAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                            }
                         }
                     }
                 } else if (what2do.toString().equals("delete")) {
@@ -229,8 +283,13 @@ public class GermplasmFragment extends Fragment {
                     for (int i = 0; i < feedGermplasm.size(); i++) {
                         if (feedGermplasm.get(i).getG_key().equals(key)) {
                             feedGermplasm.remove(i);
-                            germplasmAdapter.notifyItemRemoved(i);
-                            germplasmAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                            if (card_view_type) {
+                                germplasmAdapter.notifyItemRemoved(i);
+                                germplasmAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                            } else {
+                                germplasmTableAdapter.notifyItemRemoved(i);
+                                germplasmTableAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                            }
                         }
                     }
                 }
@@ -247,7 +306,11 @@ public class GermplasmFragment extends Fragment {
             try {
                 FeedGermplasm model = dataSnapshot.getValue(FeedGermplasm.class);
                 feedGermplasm.add(model);
-                germplasmAdapter.notifyItemInserted(feedGermplasm.size() - 1);
+                if (card_view_type) {
+                    germplasmAdapter.notifyItemInserted(feedGermplasm.size() - 1);
+                } else {
+                    germplasmTableAdapter.notifyItemInserted(feedGermplasm.size() - 1);
+                }
             } catch (Exception ex) {
                 Log.e(TAG, ex.getMessage());
             }
@@ -270,8 +333,13 @@ public class GermplasmFragment extends Fragment {
                     feedGermplasm.get(i).setG_row(p0.getG_row());
                     feedGermplasm.get(i).setG_box(p0.getG_box());
                     feedGermplasm.get(i).setG_note(p0.getG_note());
-                    germplasmAdapter.notifyDataSetChanged();
-                    germplasmAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                    if (card_view_type) {
+                        germplasmAdapter.notifyDataSetChanged();
+                        germplasmAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                    } else {
+                        germplasmTableAdapter.notifyDataSetChanged();
+                        germplasmTableAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                    }
                 }
             }
         }
@@ -282,8 +350,13 @@ public class GermplasmFragment extends Fragment {
             for (int i = 0; i < feedGermplasm.size(); i++) {
                 if (feedGermplasm.get(i).getG_key().equals(p0.getG_key())) {
                     feedGermplasm.remove(i);
-                    germplasmAdapter.notifyItemRemoved(i);
-                    germplasmAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                    if (card_view_type) {
+                        germplasmAdapter.notifyItemRemoved(i);
+                        germplasmAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                    } else {
+                        germplasmTableAdapter.notifyItemRemoved(i);
+                        germplasmTableAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                    }
                 }
             }
         }
@@ -324,4 +397,8 @@ public class GermplasmFragment extends Fragment {
 
         }
     };
+
+    private void showToast(String text) {
+        Toast.makeText(getContext(), text + "", Toast.LENGTH_SHORT).show();
+    }
 }

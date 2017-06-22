@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="header_menu_bar_height">96dp</dimen>
+    <dimen name="header_menu_bar_height">120dp</dimen>
     <dimen name="linear_menu_bar_height">60dp</dimen>
     <dimen name="menu_bar_width">300dp</dimen>
     <dimen name="linear_menu_bar_margin_top">8dp</dimen>

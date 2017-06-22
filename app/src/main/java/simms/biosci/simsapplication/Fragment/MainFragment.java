@@ -1,6 +1,8 @@
 package simms.biosci.simsapplication.Fragment;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -31,17 +33,24 @@ import simms.biosci.simsapplication.Activity.AddGermplasmActivity;
 import simms.biosci.simsapplication.Activity.AddLocationActivity;
 import simms.biosci.simsapplication.Activity.AddSourceActivity;
 import simms.biosci.simsapplication.Adapter.CrossSearchAdapter;
+import simms.biosci.simsapplication.Adapter.CrossSearchTableAdapter;
+import simms.biosci.simsapplication.Adapter.GermplasmSearchAdapter;
+import simms.biosci.simsapplication.Adapter.GermplasmSearchTableAdapter;
+import simms.biosci.simsapplication.Adapter.LocationSearchAdapter;
+import simms.biosci.simsapplication.Adapter.LocationSearchTableAdapter;
+import simms.biosci.simsapplication.Adapter.SourceSearchAdapter;
+import simms.biosci.simsapplication.Adapter.SourceSearchTableAdapter;
+import simms.biosci.simsapplication.Manager.IntentIntegrator;
+import simms.biosci.simsapplication.Manager.IntentResult;
+import simms.biosci.simsapplication.Manager.OnItemClickListener;
 import simms.biosci.simsapplication.Object.FeedCross;
 import simms.biosci.simsapplication.Object.FeedGermplasm;
 import simms.biosci.simsapplication.Object.FeedLocation;
 import simms.biosci.simsapplication.Object.FeedSource;
-import simms.biosci.simsapplication.Adapter.GermplasmSearchAdapter;
-import simms.biosci.simsapplication.Adapter.LocationSearchAdapter;
-import simms.biosci.simsapplication.Manager.OnItemClickListener;
-import simms.biosci.simsapplication.Adapter.SourceSearchAdapter;
 import simms.biosci.simsapplication.R;
 
 import static android.content.ContentValues.TAG;
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by nuuneoi on 11/16/2014.
@@ -49,6 +58,8 @@ import static android.content.ContentValues.TAG;
 @SuppressWarnings("unused")
 public class MainFragment extends Fragment {
 
+    private SharedPreferences display_read;
+    private Boolean card_view_type;
     private TextView tv_germplasm, tv_location, tv_source, tv_cross;
     private TextView tv_result_germplasm, tv_loading_germplasm, tv_result_location, tv_loading_location,
             tv_result_source, tv_loading_source, tv_result_cross, tv_loading_cross;
@@ -63,12 +74,16 @@ public class MainFragment extends Fragment {
     private LocationSearchAdapter locationSearchAdapter;
     private SourceSearchAdapter sourceSearchAdapter;
     private CrossSearchAdapter crossSearchAdapter;
+    private GermplasmSearchTableAdapter germplasmSearchTableAdapter;
+    private LocationSearchTableAdapter locationSearchTableAdapter;
+    private SourceSearchTableAdapter sourceSearchTableAdapter;
+    private CrossSearchTableAdapter crossSearchTableAdapter;
     private List<FeedGermplasm> feedGermplasm;
     private List<FeedLocation> feedLocations;
     private List<FeedSource> feedSources;
     private List<FeedCross> feedCrosses;
     private static final int REQUEST_CODE_SHOW = 4;
-    private int time = 100;
+    private IntentIntegrator scanIntegrator;
 
     public MainFragment() {
         super();
@@ -90,6 +105,7 @@ public class MainFragment extends Fragment {
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
 
+        scanIntegrator = new IntentIntegrator(this);
         mRootRef = FirebaseDatabase.getInstance().getReference();
         mRootRef.child("germplasm").orderByChild("g_name").addChildEventListener(germplasmEventListener);
         mRootRef.child("location").orderByChild("l_name").addChildEventListener(locationEventListener);
@@ -169,33 +185,62 @@ public class MainFragment extends Fragment {
 
         }.start();
 
-        germplasmSearchAdapter = new GermplasmSearchAdapter(getContext(), feedGermplasm);
+        display_read = getActivity().getSharedPreferences("card_view_type", MODE_PRIVATE);
+        card_view_type = display_read.getBoolean("card_view_type", true);
+        if (card_view_type) {
+            germplasmSearchAdapter = new GermplasmSearchAdapter(getContext(), feedGermplasm);
+            recyclerView_germplasm.setAdapter(germplasmSearchAdapter);
+            germplasmSearchAdapter.setOnItemClickListener(germplasmClickListener);
+
+            locationSearchAdapter = new LocationSearchAdapter(getContext(), feedLocations);
+            recyclerView_location.setAdapter(locationSearchAdapter);
+            locationSearchAdapter.setOnItemClickListener(locationClickListener);
+
+            sourceSearchAdapter = new SourceSearchAdapter(getContext(), feedSources);
+            recyclerView_source.setAdapter(sourceSearchAdapter);
+            sourceSearchAdapter.setOnItemClickListener(sourceClickListener);
+
+            crossSearchAdapter = new CrossSearchAdapter(getContext(), feedCrosses);
+            recyclerView_cross.setAdapter(crossSearchAdapter);
+            crossSearchAdapter.setOnItemClickListener(crossClickListener);
+
+        } else {
+            germplasmSearchTableAdapter = new GermplasmSearchTableAdapter(getContext(), feedGermplasm);
+            recyclerView_germplasm.setAdapter(germplasmSearchTableAdapter);
+            germplasmSearchTableAdapter.setOnItemClickListener(germplasmClickListener);
+
+            locationSearchTableAdapter = new LocationSearchTableAdapter(getContext(), feedLocations);
+            recyclerView_location.setAdapter(locationSearchTableAdapter);
+            locationSearchTableAdapter.setOnItemClickListener(locationClickListener);
+
+            sourceSearchTableAdapter = new SourceSearchTableAdapter(getContext(), feedSources);
+            recyclerView_source.setAdapter(sourceSearchTableAdapter);
+            sourceSearchTableAdapter.setOnItemClickListener(sourceClickListener);
+
+            crossSearchTableAdapter = new CrossSearchTableAdapter(getContext(), feedCrosses);
+            recyclerView_cross.setAdapter(crossSearchTableAdapter);
+            crossSearchTableAdapter.setOnItemClickListener(crossClickListener);
+        }
+
         recyclerView_germplasm.setNestedScrollingEnabled(false);
-        recyclerView_germplasm.setAdapter(germplasmSearchAdapter);
         recyclerView_germplasm.setHasFixedSize(true);
         LinearLayoutManager llm_germplasm = new simms.biosci.simsapplication.Manager.LinearLayoutManager(getActivity(), 1, false);
         llm_germplasm.setAutoMeasureEnabled(false);
         recyclerView_germplasm.setLayoutManager(llm_germplasm);
 
-        locationSearchAdapter = new LocationSearchAdapter(getContext(), feedLocations);
         recyclerView_location.setNestedScrollingEnabled(false);
-        recyclerView_location.setAdapter(locationSearchAdapter);
         recyclerView_location.setHasFixedSize(true);
         LinearLayoutManager llm_location = new simms.biosci.simsapplication.Manager.LinearLayoutManager(getActivity(), 1, false);
         llm_location.setAutoMeasureEnabled(false);
         recyclerView_location.setLayoutManager(llm_location);
 
-        sourceSearchAdapter = new SourceSearchAdapter(getContext(), feedSources);
         recyclerView_source.setNestedScrollingEnabled(false);
-        recyclerView_source.setAdapter(sourceSearchAdapter);
         recyclerView_source.setHasFixedSize(true);
         LinearLayoutManager llm_source = new simms.biosci.simsapplication.Manager.LinearLayoutManager(getActivity(), 1, false);
         llm_source.setAutoMeasureEnabled(false);
         recyclerView_source.setLayoutManager(llm_source);
 
-        crossSearchAdapter = new CrossSearchAdapter(getContext(), feedCrosses);
         recyclerView_cross.setNestedScrollingEnabled(false);
-        recyclerView_cross.setAdapter(crossSearchAdapter);
         recyclerView_cross.setHasFixedSize(true);
         LinearLayoutManager llm_cross = new simms.biosci.simsapplication.Manager.LinearLayoutManager(getActivity(), 1, false);
         llm_cross.setAutoMeasureEnabled(false);
@@ -204,29 +249,56 @@ public class MainFragment extends Fragment {
         floating_search_view.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
             @Override
             public void onSearchTextChanged(String oldQuery, String newQuery) {
-                germplasmSearchAdapter.getFilter().filter(newQuery.toLowerCase());
-                locationSearchAdapter.getFilter().filter(newQuery.toLowerCase());
-                sourceSearchAdapter.getFilter().filter(newQuery.toLowerCase());
-                crossSearchAdapter.getFilter().filter(newQuery.toLowerCase());
-                if (germplasmSearchAdapter.getItemCount() == 0) {
-                    tv_result_germplasm.setVisibility(View.VISIBLE);
+                if (card_view_type) {
+                    germplasmSearchAdapter.getFilter().filter(newQuery.toLowerCase());
+                    locationSearchAdapter.getFilter().filter(newQuery.toLowerCase());
+                    sourceSearchAdapter.getFilter().filter(newQuery.toLowerCase());
+                    crossSearchAdapter.getFilter().filter(newQuery.toLowerCase());
+                    if (germplasmSearchAdapter.getItemCount() == 0) {
+                        tv_result_germplasm.setVisibility(View.VISIBLE);
+                    } else {
+                        tv_result_germplasm.setVisibility(View.INVISIBLE);
+                    }
+                    if (locationSearchAdapter.getItemCount() == 0) {
+                        tv_result_location.setVisibility(View.VISIBLE);
+                    } else {
+                        tv_result_location.setVisibility(View.INVISIBLE);
+                    }
+                    if (sourceSearchAdapter.getItemCount() == 0) {
+                        tv_result_source.setVisibility(View.VISIBLE);
+                    } else {
+                        tv_result_source.setVisibility(View.INVISIBLE);
+                    }
+                    if (crossSearchAdapter.getItemCount() == 0) {
+                        tv_result_cross.setVisibility(View.VISIBLE);
+                    } else {
+                        tv_result_cross.setVisibility(View.INVISIBLE);
+                    }
                 } else {
-                    tv_result_germplasm.setVisibility(View.INVISIBLE);
-                }
-                if (locationSearchAdapter.getItemCount() == 0) {
-                    tv_result_location.setVisibility(View.VISIBLE);
-                } else {
-                    tv_result_location.setVisibility(View.INVISIBLE);
-                }
-                if (sourceSearchAdapter.getItemCount() == 0) {
-                    tv_result_source.setVisibility(View.VISIBLE);
-                } else {
-                    tv_result_source.setVisibility(View.INVISIBLE);
-                }
-                if (crossSearchAdapter.getItemCount() == 0) {
-                    tv_result_cross.setVisibility(View.VISIBLE);
-                } else {
-                    tv_result_cross.setVisibility(View.INVISIBLE);
+                    germplasmSearchTableAdapter.getFilter().filter(newQuery.toLowerCase());
+                    locationSearchTableAdapter.getFilter().filter(newQuery.toLowerCase());
+                    sourceSearchTableAdapter.getFilter().filter(newQuery.toLowerCase());
+                    crossSearchTableAdapter.getFilter().filter(newQuery.toLowerCase());
+                    if (germplasmSearchTableAdapter.getItemCount() == 0) {
+                        tv_result_germplasm.setVisibility(View.VISIBLE);
+                    } else {
+                        tv_result_germplasm.setVisibility(View.INVISIBLE);
+                    }
+                    if (locationSearchTableAdapter.getItemCount() == 0) {
+                        tv_result_location.setVisibility(View.VISIBLE);
+                    } else {
+                        tv_result_location.setVisibility(View.INVISIBLE);
+                    }
+                    if (sourceSearchTableAdapter.getItemCount() == 0) {
+                        tv_result_source.setVisibility(View.VISIBLE);
+                    } else {
+                        tv_result_source.setVisibility(View.INVISIBLE);
+                    }
+                    if (crossSearchTableAdapter.getItemCount() == 0) {
+                        tv_result_cross.setVisibility(View.VISIBLE);
+                    } else {
+                        tv_result_cross.setVisibility(View.INVISIBLE);
+                    }
                 }
             }
         });
@@ -235,17 +307,12 @@ public class MainFragment extends Fragment {
             @Override
             public void onActionMenuItemSelected(MenuItem item) {
                 if (item.getItemId() == R.id.search_camera) {
-                    Toast.makeText(getContext(), "Camera launch.", Toast.LENGTH_SHORT).show();
+                    scanIntegrator.initiateScan();
                 } else if (item.getItemId() == R.id.search_barcode) {
                     Toast.makeText(getContext(), "Barcode launch.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
-        germplasmSearchAdapter.setOnItemClickListener(germplasmClickListener);
-        locationSearchAdapter.setOnItemClickListener(locationClickListener);
-        sourceSearchAdapter.setOnItemClickListener(sourceClickListener);
-        crossSearchAdapter.setOnItemClickListener(crossClickListener);
     }
 
     @Override
@@ -281,7 +348,11 @@ public class MainFragment extends Fragment {
             try {
                 FeedGermplasm model = dataSnapshot.getValue(FeedGermplasm.class);
                 feedGermplasm.add(model);
-                germplasmSearchAdapter.notifyItemInserted(feedGermplasm.size() - 1);
+                if (card_view_type) {
+                    germplasmSearchAdapter.notifyItemInserted(feedGermplasm.size() - 1);
+                } else {
+                    germplasmSearchTableAdapter.notifyItemInserted(feedGermplasm.size() - 1);
+                }
             } catch (Exception ex) {
                 Log.e(TAG, ex.getMessage());
             }
@@ -304,8 +375,13 @@ public class MainFragment extends Fragment {
                     feedGermplasm.get(i).setG_row(p0.getG_row());
                     feedGermplasm.get(i).setG_box(p0.getG_box());
                     feedGermplasm.get(i).setG_note(p0.getG_note());
-                    germplasmSearchAdapter.notifyDataSetChanged();
-                    germplasmSearchAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                    if (card_view_type) {
+                        germplasmSearchAdapter.notifyDataSetChanged();
+                        germplasmSearchAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                    } else {
+                        germplasmSearchTableAdapter.notifyDataSetChanged();
+                        germplasmSearchTableAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                    }
                 }
             }
         }
@@ -316,8 +392,13 @@ public class MainFragment extends Fragment {
             for (int i = 0; i < feedGermplasm.size(); i++) {
                 if (feedGermplasm.get(i).getG_key().equals(p0.getG_key())) {
                     feedGermplasm.remove(i);
-                    germplasmSearchAdapter.notifyItemRemoved(i);
-                    germplasmSearchAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                    if (card_view_type) {
+                        germplasmSearchAdapter.notifyItemRemoved(i);
+                        germplasmSearchAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                    } else {
+                        germplasmSearchTableAdapter.notifyItemRemoved(i);
+                        germplasmSearchTableAdapter.notifyItemRangeChanged(i, feedGermplasm.size());
+                    }
                 }
             }
         }
@@ -390,7 +471,11 @@ public class MainFragment extends Fragment {
                 try {
                     FeedLocation model = dataSnapshot.getValue(FeedLocation.class);
                     feedLocations.add(model);
-                    locationSearchAdapter.notifyItemInserted(feedLocations.size() - 1);
+                    if (card_view_type) {
+                        locationSearchAdapter.notifyItemInserted(feedLocations.size() - 1);
+                    } else {
+                        locationSearchTableAdapter.notifyItemInserted(feedLocations.size() - 1);
+                    }
                 } catch (Exception ex) {
                     Log.e(TAG, ex.getMessage());
                 }
@@ -406,8 +491,13 @@ public class MainFragment extends Fragment {
                     feedLocations.get(i).setL_province(p0.getL_province());
                     feedLocations.get(i).setL_district(p0.getL_district());
                     feedLocations.get(i).setL_sub_district(p0.getL_sub_district());
-                    locationSearchAdapter.notifyDataSetChanged();
-                    locationSearchAdapter.notifyItemRangeChanged(i, feedLocations.size());
+                    if (card_view_type) {
+                        locationSearchAdapter.notifyDataSetChanged();
+                        locationSearchAdapter.notifyItemRangeChanged(i, feedLocations.size());
+                    } else {
+                        locationSearchTableAdapter.notifyDataSetChanged();
+                        locationSearchTableAdapter.notifyItemRangeChanged(i, feedLocations.size());
+                    }
                 }
             }
         }
@@ -418,8 +508,13 @@ public class MainFragment extends Fragment {
             for (int i = 0; i < feedLocations.size(); i++) {
                 if (feedLocations.get(i).getL_key().equals(p0.getL_key())) {
                     feedLocations.remove(i);
-                    locationSearchAdapter.notifyItemRemoved(i);
-                    locationSearchAdapter.notifyItemRangeChanged(i, feedLocations.size());
+                    if (card_view_type) {
+                        locationSearchAdapter.notifyItemRemoved(i);
+                        locationSearchAdapter.notifyItemRangeChanged(i, feedLocations.size());
+                    } else {
+                        locationSearchTableAdapter.notifyItemRemoved(i);
+                        locationSearchTableAdapter.notifyItemRangeChanged(i, feedLocations.size());
+                    }
                 }
             }
         }
@@ -442,7 +537,11 @@ public class MainFragment extends Fragment {
                 try {
                     FeedSource model = dataSnapshot.getValue(FeedSource.class);
                     feedSources.add(model);
-                    sourceSearchAdapter.notifyItemInserted(feedSources.size() - 1);
+                    if (card_view_type) {
+                        sourceSearchAdapter.notifyItemInserted(feedSources.size() - 1);
+                    } else {
+                        sourceSearchTableAdapter.notifyItemInserted(feedSources.size() - 1);
+                    }
                 } catch (Exception ex) {
                     Log.e(TAG, ex.getMessage());
                 }
@@ -456,8 +555,13 @@ public class MainFragment extends Fragment {
                 if (feedSources.get(i).getS_key().equals(p0.getS_key())) {
                     feedSources.get(i).setS_name(p0.getS_name());
                     feedSources.get(i).setS_desc(p0.getS_desc());
-                    sourceSearchAdapter.notifyDataSetChanged();
-                    sourceSearchAdapter.notifyItemRangeChanged(i, feedSources.size());
+                    if (card_view_type) {
+                        sourceSearchAdapter.notifyDataSetChanged();
+                        sourceSearchAdapter.notifyItemRangeChanged(i, feedSources.size());
+                    } else {
+                        sourceSearchTableAdapter.notifyDataSetChanged();
+                        sourceSearchTableAdapter.notifyItemRangeChanged(i, feedSources.size());
+                    }
                 }
             }
         }
@@ -468,8 +572,13 @@ public class MainFragment extends Fragment {
             for (int i = 0; i < feedSources.size(); i++) {
                 if (feedSources.get(i).getS_key().equals(p0.getS_key())) {
                     feedSources.remove(i);
-                    sourceSearchAdapter.notifyItemRemoved(i);
-                    sourceSearchAdapter.notifyItemRangeChanged(i, feedSources.size());
+                    if (card_view_type) {
+                        sourceSearchAdapter.notifyItemRemoved(i);
+                        sourceSearchAdapter.notifyItemRangeChanged(i, feedSources.size());
+                    } else {
+                        sourceSearchTableAdapter.notifyItemRemoved(i);
+                        sourceSearchTableAdapter.notifyItemRangeChanged(i, feedSources.size());
+                    }
                 }
             }
         }
@@ -516,7 +625,11 @@ public class MainFragment extends Fragment {
                 try {
                     FeedCross model = dataSnapshot.getValue(FeedCross.class);
                     feedCrosses.add(model);
-                    crossSearchAdapter.notifyItemInserted(feedCrosses.size() - 1);
+                    if (card_view_type) {
+                        crossSearchAdapter.notifyItemInserted(feedCrosses.size() - 1);
+                    } else {
+                        crossSearchTableAdapter.notifyItemInserted(feedCrosses.size() - 1);
+                    }
                 } catch (Exception ex) {
                     Log.e(TAG, ex.getMessage());
                 }
@@ -530,8 +643,13 @@ public class MainFragment extends Fragment {
                 if (feedCrosses.get(i).getC_key().equals(p0.getC_key())) {
                     feedCrosses.get(i).setC_name(p0.getC_name());
                     feedCrosses.get(i).setC_desc(p0.getC_desc());
-                    crossSearchAdapter.notifyDataSetChanged();
-                    crossSearchAdapter.notifyItemRangeChanged(i, feedCrosses.size());
+                    if (card_view_type) {
+                        crossSearchAdapter.notifyDataSetChanged();
+                        crossSearchAdapter.notifyItemRangeChanged(i, feedCrosses.size());
+                    } else {
+                        crossSearchTableAdapter.notifyDataSetChanged();
+                        crossSearchTableAdapter.notifyItemRangeChanged(i, feedCrosses.size());
+                    }
                 }
             }
         }
@@ -542,8 +660,13 @@ public class MainFragment extends Fragment {
             for (int i = 0; i < feedCrosses.size(); i++) {
                 if (feedCrosses.get(i).getC_key().equals(p0.getC_key())) {
                     feedCrosses.remove(i);
-                    crossSearchAdapter.notifyItemRemoved(i);
-                    crossSearchAdapter.notifyItemRangeChanged(i, feedCrosses.size());
+                    if (card_view_type) {
+                        crossSearchAdapter.notifyItemRemoved(i);
+                        crossSearchAdapter.notifyItemRangeChanged(i, feedCrosses.size());
+                    } else {
+                        crossSearchTableAdapter.notifyItemRemoved(i);
+                        crossSearchTableAdapter.notifyItemRangeChanged(i, feedCrosses.size());
+                    }
                 }
             }
         }
@@ -583,4 +706,40 @@ public class MainFragment extends Fragment {
             startActivityForResult(intent, 8);
         }
     };
+
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        switch (requestCode) {
+            case IntentIntegrator.REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    IntentResult intentResult =
+                            IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+
+                    if (intentResult != null) {
+
+                        String contents = intentResult.getContents();
+                        String format = intentResult.getFormatName();
+
+                        floating_search_view.setSearchText(contents);
+                        if (card_view_type) {
+                            germplasmSearchAdapter.getFilter().filter(contents.toLowerCase());
+                            locationSearchAdapter.getFilter().filter(contents.toLowerCase());
+                            sourceSearchAdapter.getFilter().filter(contents.toLowerCase());
+                            crossSearchAdapter.getFilter().filter(contents.toLowerCase());
+                        } else {
+                            germplasmSearchTableAdapter.getFilter().filter(contents.toLowerCase());
+                            locationSearchTableAdapter.getFilter().filter(contents.toLowerCase());
+                            sourceSearchTableAdapter.getFilter().filter(contents.toLowerCase());
+                            crossSearchTableAdapter.getFilter().filter(contents.toLowerCase());
+                        }
+//                        this.elemQuery.setText(contents);
+//                        this.resume = false;
+                        Log.d("SEARCH_EAN", "OK, EAN: " + contents + ", FORMAT: " + format);
+                    } else {
+                        Log.e("SEARCH_EAN", "IntentResult je NULL!");
+                    }
+                } else if (resultCode == Activity.RESULT_CANCELED) {
+                    Log.e("SEARCH_EAN", "CANCEL");
+                }
+        }
+    }
 }

@@ -33,20 +33,26 @@
         android:background="#ffffff"
         android:orientation="vertical">
 
-        <FrameLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/header_menu_bar_height"
-            android:background="@drawable/rec_gradients_blue">
+            android:layout_height="@dimen/header_menu_bar_height">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/germplasm" />
 
             <TextView
                 android:id="@+id/tv_sims"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:textSize="@dimen/text_view_sims_size"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
                 android:text="@string/sims"
-                android:textColor="@color/white"/>
-        </FrameLayout>
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_view_sims_size" />
+        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/ll_germplasm"
@@ -135,8 +141,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/linear_menu_bar_height"
             android:layout_marginTop="@dimen/linear_menu_bar_margin_top"
-            android:orientation="horizontal"
-            android:background="@drawable/selector_background_setting">
+            android:background="@drawable/selector_background_setting"
+            android:orientation="horizontal">
 
             <ImageView
                 style="@style/menu_bar_image_view"

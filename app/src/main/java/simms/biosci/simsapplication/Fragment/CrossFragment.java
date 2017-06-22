@@ -1,6 +1,8 @@
 package simms.biosci.simsapplication.Fragment;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -29,14 +31,18 @@ import java.util.List;
 
 import simms.biosci.simsapplication.Activity.AddCrossActivity;
 import simms.biosci.simsapplication.Adapter.CrossSearchAdapter;
+import simms.biosci.simsapplication.Adapter.CrossSearchTableAdapter;
+import simms.biosci.simsapplication.Manager.IntentIntegrator;
+import simms.biosci.simsapplication.Manager.IntentResult;
+import simms.biosci.simsapplication.Manager.OnItemClickListener;
 import simms.biosci.simsapplication.Object.FeedCross;
 import simms.biosci.simsapplication.Object.FeedGermplasm;
 import simms.biosci.simsapplication.Object.FeedLocation;
 import simms.biosci.simsapplication.Object.FeedSource;
-import simms.biosci.simsapplication.Manager.OnItemClickListener;
 import simms.biosci.simsapplication.R;
 
 import static android.content.ContentValues.TAG;
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by nuuneoi on 11/16/2014.
@@ -44,6 +50,8 @@ import static android.content.ContentValues.TAG;
 @SuppressWarnings("unused")
 public class CrossFragment extends Fragment {
 
+    private SharedPreferences display_read;
+    private Boolean card_view_type;
     private Typeface montserrat_regular, montserrat_bold;
     private FloatingSearchView floating_search_view;
     private TextView tv_title, tv_result;
@@ -52,9 +60,11 @@ public class CrossFragment extends Fragment {
     private static final int REQUEST_CODE_ADD = 7;
     private static final int REQUEST_CODE_SHOW = 8;
     private RecyclerView recyclerView_cross;
-    private CrossSearchAdapter crossAdapter;
+    private CrossSearchAdapter crossSearchAdapter;
+    private CrossSearchTableAdapter crossSearchTableAdapter;
     private List<FeedCross> feedCrosses;
     private DatabaseReference mRootRef, mCrossRef;
+    private IntentIntegrator scanIntegrator;
 
     public CrossFragment() {
         super();
@@ -76,6 +86,7 @@ public class CrossFragment extends Fragment {
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
 
+        scanIntegrator = new IntentIntegrator(this);
         mRootRef = FirebaseDatabase.getInstance().getReference();
         mRootRef.child("cross").orderByChild("c_name").addChildEventListener(crossEventListener);
     }
@@ -111,9 +122,19 @@ public class CrossFragment extends Fragment {
 
         feedCrosses = new ArrayList<>();
         bottom_sheet.setFab(fab);
+        display_read = getActivity().getSharedPreferences("card_view_type", MODE_PRIVATE);
+        card_view_type = display_read.getBoolean("card_view_type", true);
+        if (card_view_type) {
+            crossSearchAdapter = new CrossSearchAdapter(getContext(), feedCrosses);
+            recyclerView_cross.setAdapter(crossSearchAdapter);
+            crossSearchAdapter.setOnItemClickListener(onItemClickListener);
+        } else {
+            crossSearchTableAdapter = new CrossSearchTableAdapter(getContext(), feedCrosses);
+            recyclerView_cross.setAdapter(crossSearchTableAdapter);
+            crossSearchTableAdapter.setOnItemClickListener(onItemClickListener);
+        }
 
-        crossAdapter = new CrossSearchAdapter(getContext(), feedCrosses);
-        recyclerView_cross.setAdapter(crossAdapter);
+
         recyclerView_cross.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setAutoMeasureEnabled(false);
@@ -121,12 +142,15 @@ public class CrossFragment extends Fragment {
 
         bottom_sheet.setFabAnimationEndListener(fab_animation_click);
         fab.setOnClickListener(fab_click);
-        crossAdapter.setOnItemClickListener(onItemClickListener);
 
         floating_search_view.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
             @Override
             public void onSearchTextChanged(String oldQuery, String newQuery) {
-                crossAdapter.getFilter().filter(newQuery.toLowerCase());
+                if(card_view_type){
+                    crossSearchAdapter.getFilter().filter(newQuery.toLowerCase());
+                } else{
+                    crossSearchTableAdapter.getFilter().filter(newQuery.toLowerCase());
+                }
             }
         });
 
@@ -134,7 +158,7 @@ public class CrossFragment extends Fragment {
             @Override
             public void onActionMenuItemSelected(MenuItem item) {
                 if (item.getItemId() == R.id.search_camera) {
-                    Toast.makeText(getContext(), "Camera launch.", Toast.LENGTH_SHORT).show();
+                    scanIntegrator.initiateScan();
                 } else if (item.getItemId() == R.id.search_barcode) {
                     Toast.makeText(getContext(), "Barcode launch.", Toast.LENGTH_SHORT).show();
                 }
@@ -192,7 +216,11 @@ public class CrossFragment extends Fragment {
                 try {
                     FeedCross model = dataSnapshot.getValue(FeedCross.class);
                     feedCrosses.add(model);
-                    crossAdapter.notifyItemInserted(feedCrosses.size() - 1);
+                    if(card_view_type){
+                        crossSearchAdapter.notifyItemInserted(feedCrosses.size() - 1);
+                    } else{
+                        crossSearchTableAdapter.notifyItemInserted(feedCrosses.size() - 1);
+                    }
                 } catch (Exception ex) {
                     Log.e(TAG, ex.getMessage());
                 }
@@ -208,8 +236,13 @@ public class CrossFragment extends Fragment {
                 if (feedCrosses.get(i).getC_key().equals(p0.getC_key())) {
                     feedCrosses.get(i).setC_name(p0.getC_name());
                     feedCrosses.get(i).setC_desc(p0.getC_desc());
-                    crossAdapter.notifyDataSetChanged();
-                    crossAdapter.notifyItemRangeChanged(i, feedCrosses.size());
+                    if(card_view_type){
+                        crossSearchAdapter.notifyDataSetChanged();
+                        crossSearchAdapter.notifyItemRangeChanged(i, feedCrosses.size());
+                    } else{
+                        crossSearchTableAdapter.notifyDataSetChanged();
+                        crossSearchTableAdapter.notifyItemRangeChanged(i, feedCrosses.size());
+                    }
                 }
             }
         }
@@ -220,8 +253,13 @@ public class CrossFragment extends Fragment {
             for (int i = 0; i < feedCrosses.size(); i++) {
                 if (feedCrosses.get(i).getC_key().equals(p0.getC_key())) {
                     feedCrosses.remove(i);
-                    crossAdapter.notifyItemRemoved(i);
-                    crossAdapter.notifyItemRangeChanged(i, feedCrosses.size());
+                    if(card_view_type){
+                        crossSearchAdapter.notifyItemRemoved(i);
+                        crossSearchAdapter.notifyItemRangeChanged(i, feedCrosses.size());
+                    } else{
+                        crossSearchTableAdapter.notifyItemRemoved(i);
+                        crossSearchTableAdapter.notifyItemRangeChanged(i, feedCrosses.size());
+                    }
                 }
             }
         }
@@ -267,7 +305,30 @@ public class CrossFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_ADD) {
             bottom_sheet.contractFab();
-        } else if (requestCode == REQUEST_CODE_SHOW) {
+        } else if (requestCode == IntentIntegrator.REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                IntentResult intentResult =
+                        IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
+                if (intentResult != null) {
+
+                    String contents = intentResult.getContents();
+                    String format = intentResult.getFormatName();
+
+                    floating_search_view.setSearchText(contents);
+                    if (card_view_type) {
+                        crossSearchAdapter.getFilter().filter(contents.toLowerCase());
+                    } else {
+                        crossSearchTableAdapter.getFilter().filter(contents.toLowerCase());
+                    }
+                    Log.d("SEARCH_EAN", "OK, EAN: " + contents + ", FORMAT: " + format);
+                } else {
+                    Log.e("SEARCH_EAN", "IntentResult je NULL!");
+                }
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                Log.e("SEARCH_EAN", "CANCEL");
+            }
+        }else if (requestCode == REQUEST_CODE_SHOW) {
             try {
                 String what2do = data.getStringExtra("what2do");
                 if (what2do.toString().equals("update")) {
@@ -278,8 +339,13 @@ public class CrossFragment extends Fragment {
                         if (feedCrosses.get(i).getC_key().equals(key)) {
                             feedCrosses.get(i).setC_name(c_name + "");
                             feedCrosses.get(i).setC_desc(c_desc + "");
-                            crossAdapter.notifyDataSetChanged();
-                            crossAdapter.notifyItemRangeChanged(i, feedCrosses.size());
+                            if(card_view_type){
+                                crossSearchAdapter.notifyDataSetChanged();
+                                crossSearchAdapter.notifyItemRangeChanged(i, feedCrosses.size());
+                            } else{
+                                crossSearchTableAdapter.notifyDataSetChanged();
+                                crossSearchTableAdapter.notifyItemRangeChanged(i, feedCrosses.size());
+                            }
                         }
                     }
                 } else if (what2do.toString().equals("delete")) {
@@ -287,8 +353,13 @@ public class CrossFragment extends Fragment {
                     for (int i = 0; i < feedCrosses.size(); i++) {
                         if (feedCrosses.get(i).getC_key().equals(key)) {
                             feedCrosses.remove(i);
-                            crossAdapter.notifyItemRemoved(i);
-                            crossAdapter.notifyItemRangeChanged(i, feedCrosses.size());
+                            if(card_view_type){
+                                crossSearchAdapter.notifyItemRemoved(i);
+                                crossSearchAdapter.notifyItemRangeChanged(i, feedCrosses.size());
+                            } else{
+                                crossSearchTableAdapter.notifyItemRemoved(i);
+                                crossSearchTableAdapter.notifyItemRangeChanged(i, feedCrosses.size());
+                            }
                         }
                     }
                 }
