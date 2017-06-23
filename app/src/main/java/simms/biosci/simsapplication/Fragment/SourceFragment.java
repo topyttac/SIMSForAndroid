@@ -1,7 +1,11 @@
 package simms.biosci.simsapplication.Fragment;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -11,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +41,7 @@ import simms.biosci.simsapplication.Adapter.SourceSearchTableAdapter;
 import simms.biosci.simsapplication.Manager.IntentIntegrator;
 import simms.biosci.simsapplication.Manager.IntentResult;
 import simms.biosci.simsapplication.Manager.OnItemClickListener;
+import simms.biosci.simsapplication.Manager.ScannerInterface;
 import simms.biosci.simsapplication.Object.FeedCross;
 import simms.biosci.simsapplication.Object.FeedGermplasm;
 import simms.biosci.simsapplication.Object.FeedLocation;
@@ -69,6 +75,12 @@ public class SourceFragment extends Fragment {
     private int pastVisiblesItems, visibleItemCount, totalItemCount;
     private LinearLayoutManager llm;
     private LinearLayout ll_table_header;
+    private ScannerInterface scanner;
+    private IntentFilter intentFilter;
+    private BroadcastReceiver scanReceiver;
+    private boolean isContinue = false;
+    private static final String RES_ACTION = "android.intent.action.SCANRESULT";
+    private ContextWrapper contextWrapper;
 
     public SourceFragment() {
         super();
@@ -90,6 +102,7 @@ public class SourceFragment extends Fragment {
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
 
+        contextWrapper = new ContextWrapper(getContext());
         scanIntegrator = new IntentIntegrator(this);
         mRootRef = FirebaseDatabase.getInstance().getReference();
         mRootRef.child("source").orderByChild("s_name").addChildEventListener(sourceEventListener);
@@ -128,6 +141,8 @@ public class SourceFragment extends Fragment {
 
         feedSources = new ArrayList<>();
         bottom_sheet.setFab(fab);
+        initScanner();
+
         display_read = getActivity().getSharedPreferences("card_view_type", MODE_PRIVATE);
         card_view_type = display_read.getBoolean("card_view_type", true);
         if (card_view_type) {
@@ -397,4 +412,91 @@ public class SourceFragment extends Fragment {
             }
         }
     };
+
+    private void initScanner() {
+        scanner = new ScannerInterface(getContext());
+        scanner.open();
+        scanner.enablePlayBeep(true);
+        scanner.enableFailurePlayBeep(false);
+        scanner.enablePlayVibrate(true);
+        scanner.setCharSetMode(4);
+        scanner.enablShowAPPIcon(false);
+        scanner.enablShowNoticeIcon(false);
+        scanner.enableAddKeyValue(1);
+        scanner.timeOutSet(2);
+        scanner.intervalSet(10);
+        scanner.lightSet(false);
+        scanner.enablePower(true);
+        scanner.addPrefix("AAA");
+        scanner.addSuffix("BBB");
+        scanner.interceptTrimleft(2);
+        scanner.interceptTrimright(3);
+        scanner.filterCharacter("R");
+        scanner.SetErrorBroadCast(true);
+
+
+        scanner.lockScanKey();
+        scanner.setOutputMode(1);
+
+
+        intentFilter = new IntentFilter(RES_ACTION);
+        scanReceiver = new ScannerResultReceiver();
+        contextWrapper.registerReceiver(scanReceiver, intentFilter);
+        contextWrapper.registerReceiver(scanReceiver, intentFilter);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        finishScanner();
+    }
+
+    private void finishScanner() {
+        scanner.scan_stop();
+        contextWrapper.unregisterReceiver(scanReceiver);
+        scanner.continceScan(false);
+
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == 139 && event.getRepeatCount() == 0) {
+            scanner.scan_start();
+        }
+        return onKeyDown(keyCode, event);
+    }
+
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == 139) {
+            scanner.scan_stop();
+        } else if (keyCode == 140) {
+            scanner.scan_stop();
+
+            isContinue = !isContinue;
+            if (isContinue) {
+                scanner.continceScan(true);
+            } else {
+                scanner.continceScan(false);
+            }
+        }
+        return onKeyUp(keyCode, event);
+    }
+
+    public void singleScan(View v) {
+        scanner.scan_start();
+    }
+
+
+    private class ScannerResultReceiver extends BroadcastReceiver {
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(RES_ACTION)) {
+                String scanResult = intent.getStringExtra("value");
+                floating_search_view.setSearchText(scanResult);
+                if (card_view_type) {
+                    sourceSearchAdapter.getFilter().filter(scanResult.toLowerCase());
+                } else {
+                    sourceSearchTableAdapter.getFilter().filter(scanResult.toLowerCase());
+                }
+            }
+        }
+    }
 }

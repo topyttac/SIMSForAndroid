@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:floatingSearch_close_search_on_keyboard_dismiss="true"
-            app:floatingSearch_leftActionMode="showSearch"
+            app:floatingSearch_leftActionMode="showHome"
             app:floatingSearch_menu="@menu/menu_search"
             app:floatingSearch_searchHint="Search..."
             app:floatingSearch_showSearchKey="true"
@@ -60,10 +60,67 @@
                         android:textColor="@android:color/white"
                         android:textSize="16sp" />
 
-                    <android.support.v7.widget.CardView
+                    <LinearLayout
+                        android:id="@+id/ll_germplasm_header"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
+                        android:background="@color/green"
+                        android:paddingBottom="4dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:paddingTop="4dp">
+
+                        <TextView
+                            android:id="@+id/tv_germplasm_header"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="2"
+                            android:gravity="center_horizontal"
+                            android:text="GERMPLASM"
+                            android:textColor="@color/white"
+                            android:textSize="14dp"
+                            android:textStyle="bold" />
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/line_gray" />
+
+                        <TextView
+                            android:id="@+id/tv_one"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1.25"
+                            android:gravity="center"
+                            android:text="ONE"
+                            android:textColor="@color/white"
+                            android:textSize="14dp"
+                            android:textStyle="bold" />
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/line_gray" />
+
+                        <TextView
+                            android:id="@+id/tv_two"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1.25"
+                            android:gravity="center"
+                            android:text="TWO"
+                            android:textColor="@color/white"
+                            android:textSize="14dp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         app:cardCornerRadius="5dp"
                         app:cardElevation="3dp">
 
@@ -101,10 +158,51 @@
                         android:textColor="@android:color/white"
                         android:textSize="16sp" />
 
-                    <android.support.v7.widget.CardView
+                    <LinearLayout
+                        android:id="@+id/ll_location_header"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
+                        android:background="@color/green"
+                        android:paddingBottom="4dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:paddingTop="4dp">
+
+                        <TextView
+                            android:id="@+id/tv_location_header"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="2"
+                            android:gravity="center_horizontal"
+                            android:text="LOCATION"
+                            android:textColor="@color/white"
+                            android:textSize="14dp"
+                            android:textStyle="bold" />
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/line_gray" />
+
+                        <TextView
+                            android:id="@+id/tv_address"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="3"
+                            android:gravity="center"
+                            android:text="ADDRESS"
+                            android:textColor="@color/white"
+                            android:textSize="14dp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         app:cardCornerRadius="5dp"
                         app:cardElevation="3dp">
 
@@ -142,10 +240,50 @@
                         android:textColor="@android:color/white"
                         android:textSize="16sp" />
 
-                    <android.support.v7.widget.CardView
+                    <LinearLayout
+                        android:id="@+id/ll_source_header"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
+                        android:background="@color/green"
+                        android:paddingBottom="4dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:paddingTop="4dp">
+
+                        <TextView
+                            android:id="@+id/tv_source_header"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="2"
+                            android:gravity="center_horizontal"
+                            android:text="SOURCE"
+                            android:textColor="@color/white"
+                            android:textSize="14dp"
+                            android:textStyle="bold" />
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/line_gray" />
+
+                        <TextView
+                            android:id="@+id/tv_source_desc"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="2"
+                            android:gravity="center"
+                            android:text="DESCRIPTION"
+                            android:textColor="@color/white"
+                            android:textSize="14dp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         app:cardCornerRadius="5dp"
                         app:cardElevation="3dp">
 
@@ -183,10 +321,50 @@
                         android:textColor="@android:color/white"
                         android:textSize="16sp" />
 
-                    <android.support.v7.widget.CardView
+                    <LinearLayout
+                        android:id="@+id/ll_cross_header"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
+                        android:background="@color/green"
+                        android:paddingBottom="4dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:paddingTop="4dp">
+
+                        <TextView
+                            android:id="@+id/tv_cross_header"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="2"
+                            android:gravity="center_horizontal"
+                            android:text="CROSS"
+                            android:textColor="@color/white"
+                            android:textSize="14dp"
+                            android:textStyle="bold" />
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/line_gray" />
+
+                        <TextView
+                            android:id="@+id/tv_cross_desc"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="2"
+                            android:gravity="center"
+                            android:text="DESCRIPTION"
+                            android:textColor="@color/white"
+                            android:textSize="14dp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         app:cardCornerRadius="5dp"
                         app:cardElevation="3dp">
 
