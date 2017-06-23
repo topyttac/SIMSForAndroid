@@ -22,6 +22,12 @@
             app:floatingSearch_showSearchKey="true"
             app:floatingSearch_suggestionsListAnimDuration="250" />
 
+        <TextView
+            android:id="@+id/tv_result"
+            style="@style/text_view_result"
+            android:text="@string/no_results_found"
+            android:visibility="gone" />
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -35,156 +41,170 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tv_germplasm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/button_rec_green"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:text="Germplasm"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp" />
-
-                <RelativeLayout
+                <LinearLayout
+                    android:id="@+id/ll_germplasm"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/recycler_view_germplasm"
+                    <TextView
+                        android:id="@+id/tv_germplasm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/button_rec_green"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:text="Germplasm"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp" />
+
+                    <android.support.v7.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="1dp"
-                        android:scrollbars="none" />
+                        android:layout_marginTop="4dp"
+                        app:cardCornerRadius="5dp"
+                        app:cardElevation="3dp">
 
-                    <TextView
-                        android:id="@+id/tv_result_germplasm"
-                        style="@style/text_view_result"
-                        android:text="@string/no_results_found"
-                        android:visibility="invisible" />
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/recycler_view_germplasm"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="1dp"
+                            android:scrollbars="none" />
 
-                    <TextView
-                        android:id="@+id/tv_loading_germplasm"
-                        style="@style/text_view_result"
-                        android:text="@string/loading" />
+                        <TextView
+                            android:id="@+id/tv_loading_germplasm"
+                            style="@style/text_view_result"
+                            android:text="@string/loading" />
 
-                </RelativeLayout>
+                    </android.support.v7.widget.CardView>
+                </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tv_location"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/button_rec_green"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:text="Location"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp" />
-
-                <RelativeLayout
+                <LinearLayout
+                    android:id="@+id/ll_location"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/recycler_view_location"
+                    <TextView
+                        android:id="@+id/tv_location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/button_rec_green"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:text="Location"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp" />
+
+                    <android.support.v7.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="1dp"
-                        android:scrollbars="none" />
+                        android:layout_marginTop="4dp"
+                        app:cardCornerRadius="5dp"
+                        app:cardElevation="3dp">
 
-                    <TextView
-                        android:id="@+id/tv_result_location"
-                        style="@style/text_view_result"
-                        android:text="@string/no_results_found"
-                        android:visibility="invisible" />
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/recycler_view_location"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="1dp"
+                            android:scrollbars="none" />
 
-                    <TextView
-                        android:id="@+id/tv_loading_location"
-                        style="@style/text_view_result"
-                        android:text="@string/loading" />
+                        <TextView
+                            android:id="@+id/tv_loading_location"
+                            style="@style/text_view_result"
+                            android:text="@string/loading" />
 
-                </RelativeLayout>
+                    </android.support.v7.widget.CardView>
+                </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tv_source"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/button_rec_green"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:text="Source"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp" />
-
-                <RelativeLayout
+                <LinearLayout
+                    android:id="@+id/ll_source"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/recycler_view_source"
+                    <TextView
+                        android:id="@+id/tv_source"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/button_rec_green"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:text="Source"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp" />
+
+                    <android.support.v7.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="1dp"
-                        android:scrollbars="none" />
+                        android:layout_marginTop="4dp"
+                        app:cardCornerRadius="5dp"
+                        app:cardElevation="3dp">
 
-                    <TextView
-                        android:id="@+id/tv_result_source"
-                        style="@style/text_view_result"
-                        android:text="@string/no_results_found"
-                        android:visibility="invisible" />
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/recycler_view_source"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="1dp"
+                            android:scrollbars="none" />
 
-                    <TextView
-                        android:id="@+id/tv_loading_source"
-                        style="@style/text_view_result"
-                        android:text="@string/loading" />
+                        <TextView
+                            android:id="@+id/tv_loading_source"
+                            style="@style/text_view_result"
+                            android:text="@string/loading" />
 
-                </RelativeLayout>
+                    </android.support.v7.widget.CardView>
+                </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tv_cross"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/button_rec_green"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:text="Cross"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp" />
-
-                <RelativeLayout
+                <LinearLayout
+                    android:id="@+id/ll_cross"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/recycler_view_cross"
+                    <TextView
+                        android:id="@+id/tv_cross"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/button_rec_green"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:text="Cross"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp" />
+
+                    <android.support.v7.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="1dp"
-                        android:scrollbars="none" />
+                        android:layout_marginTop="4dp"
+                        app:cardCornerRadius="5dp"
+                        app:cardElevation="3dp">
 
-                    <TextView
-                        android:id="@+id/tv_result_cross"
-                        style="@style/text_view_result"
-                        android:text="@string/no_results_found"
-                        android:visibility="invisible" />
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/recycler_view_cross"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="1dp"
+                            android:scrollbars="none" />
 
-                    <TextView
-                        android:id="@+id/tv_loading_cross"
-                        style="@style/text_view_result"
-                        android:text="@string/loading" />
+                        <TextView
+                            android:id="@+id/tv_loading_cross"
+                            style="@style/text_view_result"
+                            android:text="@string/loading" />
 
-                </RelativeLayout>
+                    </android.support.v7.widget.CardView>
+                </LinearLayout>
             </LinearLayout>
-
-
         </ScrollView>
     </LinearLayout>
 </RelativeLayout>

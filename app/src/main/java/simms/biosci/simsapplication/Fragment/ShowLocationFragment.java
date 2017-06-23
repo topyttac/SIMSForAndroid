@@ -31,8 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import simms.biosci.simsapplication.Object.Amphur;
 import simms.biosci.simsapplication.Manager.DatabaseHelper;
+import simms.biosci.simsapplication.Object.Amphur;
 import simms.biosci.simsapplication.Object.District;
 import simms.biosci.simsapplication.Object.FeedGermplasm;
 import simms.biosci.simsapplication.Object.FeedLocation;
@@ -485,4 +485,5 @@ public class ShowLocationFragment extends Fragment {
 
         }
     };
+
 }

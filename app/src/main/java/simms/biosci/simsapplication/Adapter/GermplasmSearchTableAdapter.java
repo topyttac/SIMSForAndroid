@@ -38,7 +38,7 @@ public class GermplasmSearchTableAdapter extends RecyclerView.Adapter<GermplasmS
     private OnItemClickListener onItemClickListener;
     private Context context;
     private Typeface montserrat_regular, montserrat_bold;
-    private String text = "";
+    private String text = "", one = "", two = "", germplasm = "";
 
     public GermplasmSearchTableAdapter(Context context, List<FeedGermplasm> feedItems) {
         this.context = context;
@@ -56,9 +56,7 @@ public class GermplasmSearchTableAdapter extends RecyclerView.Adapter<GermplasmS
     @Override
     public void onBindViewHolder(CustomViewHolder holder, final int position) {
         FeedGermplasm txt = mFilteredList.get(position);
-        String germplasm = txt.getG_name().toLowerCase(Locale.getDefault());
-        String one = "";
-        String two = "";
+        germplasm = txt.getG_name().toLowerCase(Locale.getDefault());
 
         holder.tv_germplasm.setText(mFilteredList.get(position).getG_name());
 
@@ -193,7 +191,7 @@ public class GermplasmSearchTableAdapter extends RecyclerView.Adapter<GermplasmS
 
                     for (FeedGermplasm feedGermplasm : mArrayList) {
 
-                        if (feedGermplasm.getG_name().toLowerCase().contains(charString) || feedGermplasm.getG_source().toLowerCase().contains(charString) || feedGermplasm.getG_location().toLowerCase().contains(charString)) {
+                        if (feedGermplasm.getG_name().toLowerCase().contains(charString) || one.toLowerCase().contains(charString) || feedGermplasm.getG_location().toLowerCase().contains(charString)) {
 
                             filteredList.add(feedGermplasm);
                         }

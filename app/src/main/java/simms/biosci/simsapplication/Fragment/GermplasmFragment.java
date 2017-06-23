@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,11 +52,11 @@ import static android.content.Context.MODE_PRIVATE;
 @SuppressWarnings("unused")
 public class GermplasmFragment extends Fragment {
 
-    private SharedPreferences display_read;
+    private SharedPreferences display_read, germplasm_one_read, germplasm_two_read;
     private Boolean card_view_type;
     private Typeface montserrat_regular, montserrat_bold;
     private FloatingSearchView floating_search_view;
-    private TextView tv_title;
+    private TextView tv_title, tv_one, tv_two, tv_germplasm;
     private SheetLayout bottom_sheet;
     private FloatingActionButton fab;
     private static final int REQUEST_CODE_ADD = 1;
@@ -67,6 +68,10 @@ public class GermplasmFragment extends Fragment {
     private DatabaseReference mRootRef, mGermplasmRef;
     private IntentIntegrator scanIntegrator;
     private ContextWrapper contextWrapper;
+    private int pastVisiblesItems, visibleItemCount, totalItemCount;
+    private int germplasm_which_one, germplasm_which_two;
+    private LinearLayoutManager llm;
+    private LinearLayout ll_table_header;
 
     public GermplasmFragment() {
         super();
@@ -118,10 +123,26 @@ public class GermplasmFragment extends Fragment {
         bottom_sheet = (SheetLayout) rootView.findViewById(R.id.bottom_sheet);
         fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         recyclerView_germplasm = (RecyclerView) rootView.findViewById(R.id.recycler_view_germplasm);
+        tv_germplasm = (TextView) rootView.findViewById(R.id.tv_germplasm);
+        tv_one = (TextView) rootView.findViewById(R.id.tv_one);
+        tv_two = (TextView) rootView.findViewById(R.id.tv_two);
+        ll_table_header = (LinearLayout) rootView.findViewById(R.id.ll_table_header);
+
         tv_title.setTypeface(montserrat_bold);
+        tv_germplasm.setTypeface(montserrat_bold);
+        tv_one.setTypeface(montserrat_bold);
+        tv_two.setTypeface(montserrat_bold);
 
         bottom_sheet.setFab(fab);
         feedGermplasm = new ArrayList<>();
+
+        String[] germplasm_columns = getResources().getStringArray(R.array.germplasm_column);
+        germplasm_one_read = getActivity().getSharedPreferences("germplasm_which_one", MODE_PRIVATE);
+        germplasm_which_one = germplasm_one_read.getInt("germplasm_which_one", 2);
+        germplasm_two_read = getActivity().getSharedPreferences("germplasm_which_two", MODE_PRIVATE);
+        germplasm_which_two = germplasm_two_read.getInt("germplasm_which_two", 4);
+        tv_one.setText(germplasm_columns[germplasm_which_one]);
+        tv_two.setText(germplasm_columns[germplasm_which_two]);
 
         display_read = getActivity().getSharedPreferences("card_view_type", MODE_PRIVATE);
         card_view_type = display_read.getBoolean("card_view_type", true);
@@ -129,14 +150,16 @@ public class GermplasmFragment extends Fragment {
             germplasmAdapter = new GermplasmSearchAdapter(getContext(), feedGermplasm);
             recyclerView_germplasm.setAdapter(germplasmAdapter);
             germplasmAdapter.setOnItemClickListener(onItemClickListener);
+            ll_table_header.setVisibility(View.GONE);
         } else {
             germplasmTableAdapter = new GermplasmSearchTableAdapter(getContext(), feedGermplasm);
             recyclerView_germplasm.setAdapter(germplasmTableAdapter);
             germplasmTableAdapter.setOnItemClickListener(onItemClickListener);
+            ll_table_header.setVisibility(View.VISIBLE);
         }
 
         recyclerView_germplasm.setHasFixedSize(true);
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        llm = new LinearLayoutManager(getActivity());
         llm.setAutoMeasureEnabled(false);
         recyclerView_germplasm.setLayoutManager(llm);
 
@@ -165,6 +188,7 @@ public class GermplasmFragment extends Fragment {
             }
         });
 
+        recyclerView_germplasm.addOnScrollListener(recyclerViewScrollListener);
     }
 
     @Override
@@ -401,4 +425,22 @@ public class GermplasmFragment extends Fragment {
     private void showToast(String text) {
         Toast.makeText(getContext(), text + "", Toast.LENGTH_SHORT).show();
     }
+
+    RecyclerView.OnScrollListener recyclerViewScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            if (dy > 0) //check for scroll down
+            {
+                visibleItemCount = llm.getChildCount();
+                totalItemCount = llm.getItemCount();
+                pastVisiblesItems = llm.findFirstVisibleItemPosition();
+
+                if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                    fab.animate().translationY(200);
+                }
+            } else if (dy < 0) {
+                fab.animate().translationY(0);
+            }
+        }
+    };
 }

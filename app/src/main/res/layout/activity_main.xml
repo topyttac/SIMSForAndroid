@@ -134,7 +134,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="@dimen/linear_menu_bar_margin_top"
-            android:background="#E0E0E0" />
+            android:background="@color/line_gray" />
 
         <LinearLayout
             android:id="@+id/ll_setting"

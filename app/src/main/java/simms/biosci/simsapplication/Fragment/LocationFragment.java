@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,7 +55,7 @@ public class LocationFragment extends Fragment {
     private Boolean card_view_type;
     private Typeface montserrat_regular, montserrat_bold;
     private FloatingSearchView floating_search_view;
-    private TextView tv_title;
+    private TextView tv_title, tv_location, tv_address;
     private SheetLayout bottom_sheet;
     private FloatingActionButton fab;
     private static final int REQUEST_CODE_ADD = 2;
@@ -65,6 +66,9 @@ public class LocationFragment extends Fragment {
     private List<FeedLocation> feedLocations;
     private DatabaseReference mRootRef, mLocationRef;
     private IntentIntegrator scanIntegrator;
+    private int pastVisiblesItems, visibleItemCount, totalItemCount;
+    private LinearLayoutManager llm;
+    private LinearLayout ll_table_header;
 
     public LocationFragment() {
         super();
@@ -114,7 +118,13 @@ public class LocationFragment extends Fragment {
         bottom_sheet = (SheetLayout) rootView.findViewById(R.id.bottom_sheet);
         fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         recyclerView_location = (RecyclerView) rootView.findViewById(R.id.recycler_view_location);
+        tv_location = (TextView) rootView.findViewById(R.id.tv_location);
+        tv_address = (TextView) rootView.findViewById(R.id.tv_address);
+        ll_table_header = (LinearLayout) rootView.findViewById(R.id.ll_table_header);
+
         tv_title.setTypeface(montserrat_bold);
+        tv_location.setTypeface(montserrat_bold);
+        tv_address.setTypeface(montserrat_bold);
 
         bottom_sheet.setFab(fab);
         feedLocations = new ArrayList<>();
@@ -124,15 +134,17 @@ public class LocationFragment extends Fragment {
             locationSearchAdapter = new LocationSearchAdapter(getContext(), feedLocations);
             recyclerView_location.setAdapter(locationSearchAdapter);
             locationSearchAdapter.setOnItemClickListener(onItemClickListener);
+            ll_table_header.setVisibility(View.GONE);
         } else {
             locationSearchTableAdapter = new LocationSearchTableAdapter(getContext(), feedLocations);
             recyclerView_location.setAdapter(locationSearchTableAdapter);
             locationSearchTableAdapter.setOnItemClickListener(onItemClickListener);
+            ll_table_header.setVisibility(View.VISIBLE);
         }
 
 
         recyclerView_location.setHasFixedSize(true);
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        llm = new LinearLayoutManager(getActivity());
         llm.setAutoMeasureEnabled(false);
         recyclerView_location.setLayoutManager(llm);
 
@@ -160,6 +172,8 @@ public class LocationFragment extends Fragment {
                 }
             }
         });
+
+        recyclerView_location.addOnScrollListener(recyclerViewScrollListener);
     }
 
     @Override
@@ -367,6 +381,24 @@ public class LocationFragment extends Fragment {
         @Override
         public void onCancelled(DatabaseError databaseError) {
             Log.d(TAG, databaseError.getMessage());
+        }
+    };
+
+    RecyclerView.OnScrollListener recyclerViewScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            if (dy > 0) //check for scroll down
+            {
+                visibleItemCount = llm.getChildCount();
+                totalItemCount = llm.getItemCount();
+                pastVisiblesItems = llm.findFirstVisibleItemPosition();
+
+                if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                    fab.animate().translationY(200);
+                }
+            } else if (dy < 0) {
+                fab.animate().translationY(0);
+            }
         }
     };
 }

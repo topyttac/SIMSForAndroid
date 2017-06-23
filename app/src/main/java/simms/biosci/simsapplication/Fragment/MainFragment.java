@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,8 +62,7 @@ public class MainFragment extends Fragment {
     private SharedPreferences display_read;
     private Boolean card_view_type;
     private TextView tv_germplasm, tv_location, tv_source, tv_cross;
-    private TextView tv_result_germplasm, tv_loading_germplasm, tv_result_location, tv_loading_location,
-            tv_result_source, tv_loading_source, tv_result_cross, tv_loading_cross;
+    private TextView tv_loading_germplasm, tv_loading_location, tv_loading_source, tv_loading_cross, tv_result;
     private Typeface montserrat_regular, montserrat_bold;
     private FloatingSearchView floating_search_view;
     private DatabaseReference mRootRef;
@@ -84,6 +84,7 @@ public class MainFragment extends Fragment {
     private List<FeedCross> feedCrosses;
     private static final int REQUEST_CODE_SHOW = 4;
     private IntentIntegrator scanIntegrator;
+    private LinearLayout ll_germplasm, ll_location, ll_source, ll_cross;
 
     public MainFragment() {
         super();
@@ -135,34 +136,32 @@ public class MainFragment extends Fragment {
         tv_location = (TextView) rootView.findViewById(R.id.tv_location);
         tv_source = (TextView) rootView.findViewById(R.id.tv_source);
         tv_cross = (TextView) rootView.findViewById(R.id.tv_cross);
-        tv_result_germplasm = (TextView) rootView.findViewById(R.id.tv_result_germplasm);
         tv_loading_germplasm = (TextView) rootView.findViewById(R.id.tv_loading_germplasm);
-        tv_result_location = (TextView) rootView.findViewById(R.id.tv_result_location);
         tv_loading_location = (TextView) rootView.findViewById(R.id.tv_loading_location);
-        tv_result_source = (TextView) rootView.findViewById(R.id.tv_result_source);
         tv_loading_source = (TextView) rootView.findViewById(R.id.tv_loading_source);
-        tv_result_cross = (TextView) rootView.findViewById(R.id.tv_result_cross);
+        tv_result = (TextView) rootView.findViewById(R.id.tv_result);
         tv_loading_cross = (TextView) rootView.findViewById(R.id.tv_loading_cross);
         floating_search_view = (FloatingSearchView) rootView.findViewById(R.id.floating_search_view);
         recyclerView_germplasm = (RecyclerView) rootView.findViewById(R.id.recycler_view_germplasm);
         recyclerView_location = (RecyclerView) rootView.findViewById(R.id.recycler_view_location);
         recyclerView_source = (RecyclerView) rootView.findViewById(R.id.recycler_view_source);
         recyclerView_cross = (RecyclerView) rootView.findViewById(R.id.recycler_view_cross);
+        ll_germplasm = (LinearLayout) rootView.findViewById(R.id.ll_germplasm);
+        ll_location = (LinearLayout) rootView.findViewById(R.id.ll_location);
+        ll_source = (LinearLayout) rootView.findViewById(R.id.ll_source);
+        ll_cross = (LinearLayout) rootView.findViewById(R.id.ll_cross);
 
         tv_germplasm.setTypeface(montserrat_bold);
         tv_location.setTypeface(montserrat_bold);
         tv_source.setTypeface(montserrat_bold);
         tv_cross.setTypeface(montserrat_bold);
-        tv_result_germplasm.setTypeface(montserrat_bold);
         tv_loading_germplasm.setTypeface(montserrat_bold);
         tv_loading_germplasm.setVisibility(View.VISIBLE);
-        tv_result_location.setTypeface(montserrat_bold);
         tv_loading_location.setTypeface(montserrat_bold);
         tv_loading_location.setVisibility(View.VISIBLE);
-        tv_result_source.setTypeface(montserrat_bold);
         tv_loading_source.setTypeface(montserrat_bold);
         tv_loading_source.setVisibility(View.VISIBLE);
-        tv_result_cross.setTypeface(montserrat_bold);
+        tv_result.setTypeface(montserrat_bold);
         tv_loading_cross.setTypeface(montserrat_bold);
         tv_loading_cross.setVisibility(View.VISIBLE);
         feedGermplasm = new ArrayList<>();
@@ -177,10 +176,10 @@ public class MainFragment extends Fragment {
             }
 
             public void onFinish() {
-                tv_loading_germplasm.setVisibility(View.INVISIBLE);
-                tv_loading_location.setVisibility(View.INVISIBLE);
-                tv_loading_source.setVisibility(View.INVISIBLE);
-                tv_loading_cross.setVisibility(View.INVISIBLE);
+                tv_loading_germplasm.setVisibility(View.GONE);
+                tv_loading_location.setVisibility(View.GONE);
+                tv_loading_source.setVisibility(View.GONE);
+                tv_loading_cross.setVisibility(View.GONE);
             }
 
         }.start();
@@ -254,50 +253,62 @@ public class MainFragment extends Fragment {
                     locationSearchAdapter.getFilter().filter(newQuery.toLowerCase());
                     sourceSearchAdapter.getFilter().filter(newQuery.toLowerCase());
                     crossSearchAdapter.getFilter().filter(newQuery.toLowerCase());
-                    if (germplasmSearchAdapter.getItemCount() == 0) {
-                        tv_result_germplasm.setVisibility(View.VISIBLE);
+                    if (germplasmSearchAdapter.getItemCount() == 0 && locationSearchAdapter.getItemCount() == 0 && sourceSearchAdapter.getItemCount() == 0
+                            && crossSearchAdapter.getItemCount() == 0) {
+                        tv_result.setVisibility(View.VISIBLE);
                     } else {
-                        tv_result_germplasm.setVisibility(View.INVISIBLE);
+                        tv_result.setVisibility(View.GONE);
+                    }
+                    if (germplasmSearchAdapter.getItemCount() == 0) {
+                        ll_germplasm.setVisibility(View.GONE);
+                    } else {
+                        ll_germplasm.setVisibility(View.VISIBLE);
                     }
                     if (locationSearchAdapter.getItemCount() == 0) {
-                        tv_result_location.setVisibility(View.VISIBLE);
+                        ll_location.setVisibility(View.GONE);
                     } else {
-                        tv_result_location.setVisibility(View.INVISIBLE);
+                        ll_location.setVisibility(View.VISIBLE);
                     }
                     if (sourceSearchAdapter.getItemCount() == 0) {
-                        tv_result_source.setVisibility(View.VISIBLE);
+                        ll_source.setVisibility(View.GONE);
                     } else {
-                        tv_result_source.setVisibility(View.INVISIBLE);
+                        ll_source.setVisibility(View.VISIBLE);
                     }
                     if (crossSearchAdapter.getItemCount() == 0) {
-                        tv_result_cross.setVisibility(View.VISIBLE);
+                        ll_cross.setVisibility(View.GONE);
                     } else {
-                        tv_result_cross.setVisibility(View.INVISIBLE);
+                        ll_cross.setVisibility(View.VISIBLE);
                     }
                 } else {
                     germplasmSearchTableAdapter.getFilter().filter(newQuery.toLowerCase());
                     locationSearchTableAdapter.getFilter().filter(newQuery.toLowerCase());
                     sourceSearchTableAdapter.getFilter().filter(newQuery.toLowerCase());
                     crossSearchTableAdapter.getFilter().filter(newQuery.toLowerCase());
-                    if (germplasmSearchTableAdapter.getItemCount() == 0) {
-                        tv_result_germplasm.setVisibility(View.VISIBLE);
+                    if (germplasmSearchTableAdapter.getItemCount() == 0 && locationSearchTableAdapter.getItemCount() == 0 && sourceSearchTableAdapter.getItemCount() == 0
+                            && crossSearchTableAdapter.getItemCount() == 0) {
+                        tv_result.setVisibility(View.VISIBLE);
                     } else {
-                        tv_result_germplasm.setVisibility(View.INVISIBLE);
+                        tv_result.setVisibility(View.GONE);
+                    }
+                    if (germplasmSearchTableAdapter.getItemCount() == 0) {
+                        ll_germplasm.setVisibility(View.GONE);
+                    } else {
+                        ll_germplasm.setVisibility(View.VISIBLE);
                     }
                     if (locationSearchTableAdapter.getItemCount() == 0) {
-                        tv_result_location.setVisibility(View.VISIBLE);
+                        ll_location.setVisibility(View.GONE);
                     } else {
-                        tv_result_location.setVisibility(View.INVISIBLE);
+                        ll_location.setVisibility(View.VISIBLE);
                     }
                     if (sourceSearchTableAdapter.getItemCount() == 0) {
-                        tv_result_source.setVisibility(View.VISIBLE);
+                        ll_source.setVisibility(View.GONE);
                     } else {
-                        tv_result_source.setVisibility(View.INVISIBLE);
+                        ll_source.setVisibility(View.VISIBLE);
                     }
                     if (crossSearchTableAdapter.getItemCount() == 0) {
-                        tv_result_cross.setVisibility(View.VISIBLE);
+                        ll_cross.setVisibility(View.GONE);
                     } else {
-                        tv_result_cross.setVisibility(View.INVISIBLE);
+                        ll_cross.setVisibility(View.VISIBLE);
                     }
                 }
             }
