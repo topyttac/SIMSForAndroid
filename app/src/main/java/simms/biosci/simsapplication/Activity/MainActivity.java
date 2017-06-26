@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private LinearLayout ll_germplasm, ll_location, ll_resource, ll_cross, ll_setting;
     private Typeface montserrat_regular, montserrat_bold;
-    private TextView tv_sims, tv_germplasm, tv_location, tv_resource, tv_cross, tv_setting;
+    private TextView tv_sims, tv_germplasm, tv_location, tv_resource, tv_cross, tv_setting, tv_released;
     private static final int REQUEST_CODE = 2;
 
     @Override
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         tv_resource = (TextView) findViewById(R.id.tv_resource);
         tv_cross = (TextView) findViewById(R.id.tv_cross);
         tv_setting = (TextView) findViewById(R.id.tv_setting);
+        tv_released = (TextView) findViewById(R.id.tv_released);
 
         tv_sims.setTypeface(montserrat_bold);
         tv_germplasm.setTypeface(montserrat_bold);
@@ -72,7 +74,9 @@ public class MainActivity extends AppCompatActivity {
         tv_resource.setTypeface(montserrat_bold);
         tv_cross.setTypeface(montserrat_bold);
         tv_setting.setTypeface(montserrat_bold);
+        tv_released.setTypeface(montserrat_regular);
 
+        drawerLayout.openDrawer(Gravity.LEFT);
         ll_germplasm.setBackgroundColor(Color.parseColor("#EEEEEE"));
         setSupportActionBar(toolbar); // set toolbar
 

@@ -180,17 +180,9 @@
 
                     <Button
                         android:id="@+id/btn_reset"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
+                        style="@style/button_order"
                         android:background="@drawable/selector_background_button_reset"
-                        android:paddingBottom="16dp"
-                        android:paddingLeft="18dp"
-                        android:paddingRight="18dp"
-                        android:paddingTop="16dp"
-                        android:text="RESET"
-                        android:textColor="@drawable/selector_font_button_reset"
-                        android:textSize="20sp" />
+                        android:text="RESET" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -200,17 +192,9 @@
 
                     <Button
                         android:id="@+id/btn_add"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
+                        style="@style/button_order"
                         android:background="@drawable/selector_background_button_add"
-                        android:paddingBottom="16dp"
-                        android:paddingLeft="18dp"
-                        android:paddingRight="18dp"
-                        android:paddingTop="16dp"
-                        android:text="ADD"
-                        android:textColor="@drawable/selector_font_button_add"
-                        android:textSize="20sp" />
+                        android:text="ADD" />
                 </FrameLayout>
             </LinearLayout>
         </LinearLayout>

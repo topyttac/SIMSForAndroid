@@ -26,134 +26,157 @@
             android:layout_height="match_parent" />
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="@dimen/menu_bar_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#ffffff"
-        android:orientation="vertical">
+        android:background="#ffffff">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/header_menu_bar_height">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <ImageView
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/germplasm" />
+                android:layout_height="@dimen/header_menu_bar_height">
 
-            <TextView
-                android:id="@+id/tv_sims"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:text="@string/sims"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_view_sims_size" />
-        </RelativeLayout>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/germplasm" />
 
-        <LinearLayout
-            android:id="@+id/ll_germplasm"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/linear_menu_bar_height"
-            android:layout_marginTop="@dimen/linear_menu_bar_margin_top"
-            android:orientation="horizontal">
+                <ImageView
+                    android:id="@+id/iv_biosci_logo"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="4dp"
+                    android:src="@drawable/biosci_logo" />
 
-            <ImageView
-                style="@style/menu_bar_image_view"
-                android:layout_margin="@dimen/image_view_menu_bar_margin_12"
-                android:src="@drawable/seed" />
+                <TextView
+                    android:id="@+id/tv_sims"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/iv_biosci_logo"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/sims"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_view_sims_size" />
+            </RelativeLayout>
 
-            <TextView
-                android:id="@+id/tv_germplasm"
-                style="@style/menu_bar_text_view"
-                android:layout_marginLeft="@dimen/text_view_menu_bar_margin_left_4"
-                android:text="Germplasm" />
+            <LinearLayout
+                android:id="@+id/ll_germplasm"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/linear_menu_bar_height"
+                android:layout_marginTop="@dimen/linear_menu_bar_margin_top"
+                android:orientation="horizontal">
+
+                <ImageView
+                    style="@style/menu_bar_image_view"
+                    android:layout_margin="@dimen/image_view_menu_bar_margin_12"
+                    android:src="@drawable/seed" />
+
+                <TextView
+                    android:id="@+id/tv_germplasm"
+                    style="@style/menu_bar_text_view"
+                    android:layout_marginLeft="@dimen/text_view_menu_bar_margin_left_4"
+                    android:text="Germplasm" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_location"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/linear_menu_bar_height"
+                android:layout_marginTop="@dimen/linear_menu_bar_margin_top"
+                android:orientation="horizontal">
+
+                <ImageView
+                    style="@style/menu_bar_image_view"
+                    android:layout_margin="@dimen/image_view_menu_bar_margin_12"
+                    android:src="@drawable/location" />
+
+                <TextView
+                    android:id="@+id/tv_location"
+                    style="@style/menu_bar_text_view"
+                    android:layout_marginLeft="@dimen/text_view_menu_bar_margin_left_4"
+                    android:text="Locations" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_resource"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/linear_menu_bar_height"
+                android:layout_marginTop="@dimen/linear_menu_bar_margin_top"
+                android:orientation="horizontal">
+
+                <ImageView
+                    style="@style/menu_bar_image_view"
+                    android:layout_margin="@dimen/image_view_menu_bar_margin_10"
+                    android:src="@drawable/resource" />
+
+                <TextView
+                    android:id="@+id/tv_resource"
+                    style="@style/menu_bar_text_view"
+                    android:layout_marginLeft="@dimen/text_view_menu_bar_margin_left_6"
+                    android:text="Sources" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_cross"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/linear_menu_bar_height"
+                android:layout_marginTop="@dimen/linear_menu_bar_margin_top"
+                android:orientation="horizontal">
+
+                <ImageView
+                    style="@style/menu_bar_image_view"
+                    android:layout_margin="@dimen/image_view_menu_bar_margin_10"
+                    android:src="@drawable/cross" />
+
+                <TextView
+                    android:id="@+id/tv_cross"
+                    style="@style/menu_bar_text_view"
+                    android:layout_marginLeft="@dimen/text_view_menu_bar_margin_left_6"
+                    android:text="Cross" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/linear_menu_bar_margin_top"
+                android:background="@color/line_gray" />
+
+            <LinearLayout
+                android:id="@+id/ll_setting"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/linear_menu_bar_height"
+                android:layout_marginTop="@dimen/linear_menu_bar_margin_top"
+                android:background="@drawable/selector_background_setting"
+                android:orientation="horizontal">
+
+                <ImageView
+                    style="@style/menu_bar_image_view"
+                    android:layout_margin="@dimen/image_view_menu_bar_margin_16"
+                    android:src="@drawable/setting" />
+
+                <TextView
+                    android:id="@+id/tv_setting"
+                    style="@style/menu_bar_text_view"
+                    android:text="@string/settings" />
+            </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/ll_location"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/linear_menu_bar_height"
-            android:layout_marginTop="@dimen/linear_menu_bar_margin_top"
-            android:orientation="horizontal">
-
-            <ImageView
-                style="@style/menu_bar_image_view"
-                android:layout_margin="@dimen/image_view_menu_bar_margin_12"
-                android:src="@drawable/location" />
-
-            <TextView
-                android:id="@+id/tv_location"
-                style="@style/menu_bar_text_view"
-                android:layout_marginLeft="@dimen/text_view_menu_bar_margin_left_4"
-                android:text="Locations" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_resource"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/linear_menu_bar_height"
-            android:layout_marginTop="@dimen/linear_menu_bar_margin_top"
-            android:orientation="horizontal">
-
-            <ImageView
-                style="@style/menu_bar_image_view"
-                android:layout_margin="@dimen/image_view_menu_bar_margin_10"
-                android:src="@drawable/resource" />
-
-            <TextView
-                android:id="@+id/tv_resource"
-                style="@style/menu_bar_text_view"
-                android:layout_marginLeft="@dimen/text_view_menu_bar_margin_left_6"
-                android:text="Sources" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_cross"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/linear_menu_bar_height"
-            android:layout_marginTop="@dimen/linear_menu_bar_margin_top"
-            android:orientation="horizontal">
-
-            <ImageView
-                style="@style/menu_bar_image_view"
-                android:layout_margin="@dimen/image_view_menu_bar_margin_10"
-                android:src="@drawable/cross" />
-
-            <TextView
-                android:id="@+id/tv_cross"
-                style="@style/menu_bar_text_view"
-                android:layout_marginLeft="@dimen/text_view_menu_bar_margin_left_6"
-                android:text="Cross" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="@dimen/linear_menu_bar_margin_top"
-            android:background="@color/line_gray" />
-
-        <LinearLayout
-            android:id="@+id/ll_setting"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/linear_menu_bar_height"
-            android:layout_marginTop="@dimen/linear_menu_bar_margin_top"
-            android:background="@drawable/selector_background_setting"
-            android:orientation="horizontal">
-
-            <ImageView
-                style="@style/menu_bar_image_view"
-                android:layout_margin="@dimen/image_view_menu_bar_margin_16"
-                android:src="@drawable/setting" />
-
-            <TextView
-                android:id="@+id/tv_setting"
-                style="@style/menu_bar_text_view"
-                android:text="@string/settings" />
-        </LinearLayout>
-
-    </LinearLayout>
+        <TextView
+            android:id="@+id/tv_released"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="12dp"
+            android:text="@string/released"
+            android:textSize="9dp" />
+    </RelativeLayout>
 </android.support.v4.widget.DrawerLayout>

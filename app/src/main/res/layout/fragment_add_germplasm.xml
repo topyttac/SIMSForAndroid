@@ -25,12 +25,14 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_gravity="center_horizontal">
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="horizontal">
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:src="@drawable/add_menu"/>
+                        android:src="@drawable/add_menu" />
+
                     <TextView
                         android:id="@+id/tv_title"
                         android:layout_width="wrap_content"
@@ -240,8 +242,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint=""
-                                android:lines="1"
                                 android:inputType="number"
+                                android:lines="1"
                                 android:singleLine="true"
                                 android:textColor="@color/black"
                                 android:textColorHint="#BDBDBD"
@@ -388,9 +390,9 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint=""
+                                android:inputType="number"
                                 android:lines="1"
                                 android:singleLine="true"
-                                android:inputType="number"
                                 android:textColor="@color/black"
                                 android:textColorHint="#BDBDBD"
                                 android:textSize="18dp" />
@@ -439,8 +441,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint=""
-                                android:lines="1"
                                 android:inputType="number"
+                                android:lines="1"
                                 android:singleLine="true"
                                 android:textColor="@color/black"
                                 android:textColorHint="#BDBDBD"
@@ -490,8 +492,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint=""
-                                android:lines="1"
                                 android:inputType="number"
+                                android:lines="1"
                                 android:singleLine="true"
                                 android:textColor="@color/black"
                                 android:textColorHint="#BDBDBD"
@@ -541,8 +543,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint=""
-                                android:lines="1"
                                 android:inputType="number"
+                                android:lines="1"
                                 android:singleLine="true"
                                 android:textColor="@color/black"
                                 android:textColorHint="#BDBDBD"
@@ -592,8 +594,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint=""
-                                android:lines="1"
                                 android:inputType="number"
+                                android:lines="1"
                                 android:singleLine="true"
                                 android:textColor="@color/black"
                                 android:textColorHint="#BDBDBD"
@@ -604,8 +606,8 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
                         android:layout_marginBottom="16dp"
+                        android:layout_marginTop="16dp"
                         android:orientation="horizontal">
 
                         <FrameLayout
@@ -676,17 +678,9 @@
 
                     <Button
                         android:id="@+id/btn_reset"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
+                        style="@style/button_order"
                         android:background="@drawable/selector_background_button_reset"
-                        android:paddingBottom="16dp"
-                        android:paddingLeft="18dp"
-                        android:paddingRight="18dp"
-                        android:paddingTop="16dp"
-                        android:text="RESET"
-                        android:textColor="@drawable/selector_font_button_reset"
-                        android:textSize="20sp" />
+                        android:text="RESET" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -696,17 +690,9 @@
 
                     <Button
                         android:id="@+id/btn_add"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
+                        style="@style/button_order"
                         android:background="@drawable/selector_background_button_add"
-                        android:paddingBottom="16dp"
-                        android:paddingLeft="18dp"
-                        android:paddingRight="18dp"
-                        android:paddingTop="16dp"
-                        android:text="ADD"
-                        android:textColor="@drawable/selector_font_button_add"
-                        android:textSize="20sp" />
+                        android:text="ADD" />
                 </FrameLayout>
             </LinearLayout>
         </LinearLayout>
