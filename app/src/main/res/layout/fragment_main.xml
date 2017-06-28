@@ -7,6 +7,7 @@
     android:background="#F5F5F5">
 
     <LinearLayout
+        android:id="@+id/ll_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -67,8 +68,8 @@
                         android:layout_marginTop="4dp"
                         android:background="@color/green"
                         android:paddingBottom="4dp"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="4dp"
                         android:paddingTop="4dp">
 
                         <TextView
@@ -385,4 +386,13 @@
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="@string/loading"
+        android:textSize="20dp" />
 </RelativeLayout>

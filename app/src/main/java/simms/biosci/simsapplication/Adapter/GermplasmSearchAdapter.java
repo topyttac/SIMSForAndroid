@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Locale;
 
 import simms.biosci.simsapplication.Object.FeedGermplasm;
-import simms.biosci.simsapplication.Manager.OnItemClickListener;
+import simms.biosci.simsapplication.Interface.OnItemClickListener;
 import simms.biosci.simsapplication.R;
 
 /**

@@ -40,7 +40,7 @@ import simms.biosci.simsapplication.Adapter.CrossSearchAdapter;
 import simms.biosci.simsapplication.Adapter.CrossSearchTableAdapter;
 import simms.biosci.simsapplication.Manager.IntentIntegrator;
 import simms.biosci.simsapplication.Manager.IntentResult;
-import simms.biosci.simsapplication.Manager.OnItemClickListener;
+import simms.biosci.simsapplication.Interface.OnItemClickListener;
 import simms.biosci.simsapplication.Manager.ScannerInterface;
 import simms.biosci.simsapplication.Object.FeedCross;
 import simms.biosci.simsapplication.Object.FeedGermplasm;
@@ -61,7 +61,7 @@ public class CrossFragment extends Fragment {
     private Boolean card_view_type;
     private Typeface montserrat_regular, montserrat_bold;
     private FloatingSearchView floating_search_view;
-    private TextView tv_title, tv_cross, tv_desc;
+    private TextView tv_cross, tv_desc;
     private SheetLayout bottom_sheet;
     private FloatingActionButton fab;
     private static final int REQUEST_CODE_ADD = 7;
@@ -127,7 +127,6 @@ public class CrossFragment extends Fragment {
         montserrat_bold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-SemiBold.ttf");
 
         floating_search_view = (FloatingSearchView) rootView.findViewById(R.id.floating_search_view);
-        tv_title = (TextView) rootView.findViewById(R.id.tv_title);
         recyclerView_cross = (RecyclerView) rootView.findViewById(R.id.recycler_view_cross);
         bottom_sheet = (SheetLayout) rootView.findViewById(R.id.bottom_sheet);
         fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
@@ -135,7 +134,6 @@ public class CrossFragment extends Fragment {
         tv_desc = (TextView) rootView.findViewById(R.id.tv_desc);
         ll_table_header = (LinearLayout) rootView.findViewById(R.id.ll_table_header);
 
-        tv_title.setTypeface(montserrat_bold);
         tv_cross.setTypeface(montserrat_bold);
         tv_desc.setTypeface(montserrat_bold);
 

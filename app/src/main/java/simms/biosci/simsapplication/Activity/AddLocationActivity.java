@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.view.MenuItem;
 
 import simms.biosci.simsapplication.Fragment.AddLocationFragment;
 import simms.biosci.simsapplication.Fragment.ShowLocationFragment;
+import simms.biosci.simsapplication.Manager.TypefaceSpan;
 import simms.biosci.simsapplication.R;
 
 public class AddLocationActivity extends AppCompatActivity {
@@ -30,16 +32,22 @@ public class AddLocationActivity extends AppCompatActivity {
                         .add(R.id.contentContainer,
                                 AddLocationFragment.newInstance())
                         .commit();
+                SpannableString s = new SpannableString("Add Location");
+                s.setSpan(new TypefaceSpan(AddLocationActivity.this, "Montserrat-SemiBold.ttf"), 0, s.length(),
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                getSupportActionBar().setTitle(s);
             } else if (REQUEST_CODE == 5) {
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.contentContainer,
                                 ShowLocationFragment.newInstance(key))
                         .commit();
+                SpannableString s = new SpannableString("Detail");
+                s.setSpan(new TypefaceSpan(AddLocationActivity.this, "Montserrat-SemiBold.ttf"), 0, s.length(),
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                getSupportActionBar().setTitle(s);
             }
 
         }
-
-        setTitle("Add");
     }
 
     private void initInstance() {
@@ -50,21 +58,9 @@ public class AddLocationActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_add, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
-            return true;
-        } else if (item.getItemId() == R.id.menu_home) {
-            finish();
-            Intent intent = new Intent(AddLocationActivity.this, SearchActivity.class);
-            startActivity(intent);
-            overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -48,7 +48,7 @@ import simms.biosci.simsapplication.Adapter.SourceSearchAdapter;
 import simms.biosci.simsapplication.Adapter.SourceSearchTableAdapter;
 import simms.biosci.simsapplication.Manager.IntentIntegrator;
 import simms.biosci.simsapplication.Manager.IntentResult;
-import simms.biosci.simsapplication.Manager.OnItemClickListener;
+import simms.biosci.simsapplication.Interface.OnItemClickListener;
 import simms.biosci.simsapplication.Manager.ScannerInterface;
 import simms.biosci.simsapplication.Object.FeedCross;
 import simms.biosci.simsapplication.Object.FeedGermplasm;
@@ -68,7 +68,7 @@ public class MainFragment extends Fragment {
     private SharedPreferences display_read, germplasm_one_read, germplasm_two_read;
     private Boolean card_view_type;
     private int germplasm_which_one, germplasm_which_two;
-    private TextView tv_germplasm, tv_location, tv_source, tv_cross, tv_germplasm_header, tv_one, tv_two, tv_location_header,
+    private TextView tv_loading, tv_germplasm, tv_location, tv_source, tv_cross, tv_germplasm_header, tv_one, tv_two, tv_location_header,
             tv_address, tv_source_header, tv_source_desc, tv_cross_header, tv_cross_desc;
     private TextView tv_loading_germplasm, tv_loading_location, tv_loading_source, tv_loading_cross, tv_result;
     private Typeface montserrat_regular, montserrat_bold;
@@ -93,7 +93,7 @@ public class MainFragment extends Fragment {
     private static final int REQUEST_CODE_SHOW = 4;
     private IntentIntegrator scanIntegrator;
     private LinearLayout ll_germplasm, ll_location, ll_source, ll_cross, ll_germplasm_header, ll_location_header,
-            ll_source_header, ll_cross_header;
+            ll_source_header, ll_cross_header, ll_content;
     private ScannerInterface scanner;
     private IntentFilter intentFilter;
     private BroadcastReceiver scanReceiver;
@@ -179,7 +179,10 @@ public class MainFragment extends Fragment {
         tv_cross_header = (TextView) rootView.findViewById(R.id.tv_cross_header);
         tv_cross_desc = (TextView) rootView.findViewById(R.id.tv_cross_desc);
         ll_cross_header = (LinearLayout) rootView.findViewById(R.id.ll_cross_header);
+        tv_loading = (TextView) rootView.findViewById(R.id.tv_loading);
+        ll_content = (LinearLayout) rootView.findViewById(R.id.ll_content);
 
+        ll_content.setVisibility(View.GONE);
         tv_germplasm.setTypeface(montserrat_bold);
         tv_location.setTypeface(montserrat_bold);
         tv_source.setTypeface(montserrat_bold);
@@ -202,6 +205,7 @@ public class MainFragment extends Fragment {
         tv_result.setTypeface(montserrat_bold);
         tv_loading_cross.setTypeface(montserrat_bold);
         tv_loading_cross.setVisibility(View.VISIBLE);
+        tv_loading.setTypeface(montserrat_bold);
         feedGermplasm = new ArrayList<>();
         feedLocations = new ArrayList<>();
         feedSources = new ArrayList<>();
@@ -228,6 +232,8 @@ public class MainFragment extends Fragment {
                 tv_loading_location.setVisibility(View.GONE);
                 tv_loading_source.setVisibility(View.GONE);
                 tv_loading_cross.setVisibility(View.GONE);
+                tv_loading.setVisibility(View.GONE);
+                ll_content.setVisibility(View.VISIBLE);
             }
 
         }.start();

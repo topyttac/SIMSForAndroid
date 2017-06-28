@@ -3,195 +3,166 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EEEEEE">
+    android:background="@color/white">
 
-    <android.support.v7.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="8dp"
-        app:cardCornerRadius="10dp">
+        android:layout_margin="4dp"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rec_gradients_blue"
-                android:padding="16dp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tv_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Details"
-                        android:textColor="@android:color/white"
-                        android:textSize="30dp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </FrameLayout>
-
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:fillViewport="true">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:orientation="horizontal">
-
-                        <FrameLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1.5">
-
-                            <TextView
-                                android:id="@+id/tv_cross_name"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical|right"
-                                android:gravity="right"
-                                android:text="Cross Name"
-                                android:textColor="@color/green"
-                                android:textSize="18dp" />
-                        </FrameLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:text=" : "
-                            android:textColor="@color/green"
-                            android:textSize="18dp"
-                            android:textStyle="bold" />
-
-                        <FrameLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="25dp"
-                            android:layout_weight="2">
-
-                            <EditText
-                                android:id="@+id/et_cross_name"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint=""
-                                android:lines="1"
-                                android:singleLine="true"
-                                android:textColor="@color/black"
-                                android:textColorHint="#BDBDBD"
-                                android:textSize="18dp" />
-                        </FrameLayout>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:orientation="horizontal">
-
-                        <FrameLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1.5">
-
-                            <TextView
-                                android:id="@+id/tv_cross_desc"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical|right"
-                                android:gravity="right"
-                                android:text="Description"
-                                android:textColor="@color/green"
-                                android:textSize="18dp" />
-                        </FrameLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:text=" : "
-                            android:textColor="@color/green"
-                            android:textSize="18dp"
-                            android:textStyle="bold" />
-
-                        <FrameLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="25dp"
-                            android:layout_weight="2">
-
-                            <EditText
-                                android:id="@+id/et_cross_desc"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint=""
-                                android:lines="1"
-                                android:singleLine="true"
-                                android:textColor="@color/black"
-                                android:textColorHint="#BDBDBD"
-                                android:textSize="18dp" />
-                        </FrameLayout>
-                    </LinearLayout>
-                </LinearLayout>
-
-            </ScrollView>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:background="#E0E0E0" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:background="#EEEEEE"
-                android:orientation="horizontal"
-                android:paddingBottom="6dp"
-                android:paddingTop="8dp"
-                android:weightSum="2">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                <FrameLayout
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1">
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
 
-                    <Button
-                        android:id="@+id/btn_delete"
-                        style="@style/button_order"
-                        android:background="@drawable/selector_background_button_reset"
-                        android:text="DELETE" />
-                </FrameLayout>
+                    <FrameLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.5">
 
-                <FrameLayout
-                    android:layout_width="0dp"
+                        <TextView
+                            android:id="@+id/tv_cross_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical|right"
+                            android:gravity="right"
+                            android:text="Cross Name"
+                            android:textColor="@color/green"
+                            android:textSize="18dp" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text=" : "
+                        android:textColor="@color/green"
+                        android:textSize="18dp"
+                        android:textStyle="bold" />
+
+                    <FrameLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="25dp"
+                        android:layout_weight="2">
+
+                        <EditText
+                            android:id="@+id/et_cross_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint=""
+                            android:lines="1"
+                            android:singleLine="true"
+                            android:textColor="@color/black"
+                            android:textColorHint="#BDBDBD"
+                            android:textSize="18dp" />
+                    </FrameLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1">
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
 
-                    <Button
-                        android:id="@+id/btn_update"
-                        style="@style/button_order"
-                        android:background="@drawable/selector_background_button_add"
-                        android:text="UPDATE" />
-                </FrameLayout>
+                    <FrameLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.5">
+
+                        <TextView
+                            android:id="@+id/tv_cross_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical|right"
+                            android:gravity="right"
+                            android:text="Description"
+                            android:textColor="@color/green"
+                            android:textSize="18dp" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text=" : "
+                        android:textColor="@color/green"
+                        android:textSize="18dp"
+                        android:textStyle="bold" />
+
+                    <FrameLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="25dp"
+                        android:layout_weight="2">
+
+                        <EditText
+                            android:id="@+id/et_cross_desc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint=""
+                            android:lines="1"
+                            android:singleLine="true"
+                            android:textColor="@color/black"
+                            android:textColorHint="#BDBDBD"
+                            android:textSize="18dp" />
+                    </FrameLayout>
+                </LinearLayout>
             </LinearLayout>
+
+        </ScrollView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#E0E0E0" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="#EEEEEE"
+            android:orientation="horizontal"
+            android:paddingBottom="6dp"
+            android:paddingTop="8dp"
+            android:weightSum="2">
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/btn_delete"
+                    style="@style/button_order"
+                    android:background="@drawable/selector_background_button_reset"
+                    android:text="DELETE" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/btn_update"
+                    style="@style/button_order"
+                    android:background="@drawable/selector_background_button_add"
+                    android:text="UPDATE" />
+            </FrameLayout>
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+    </LinearLayout>
 </RelativeLayout>

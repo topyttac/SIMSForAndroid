@@ -83,7 +83,7 @@
                     android:id="@+id/tv_germplasm"
                     style="@style/menu_bar_text_view"
                     android:layout_marginLeft="@dimen/text_view_menu_bar_margin_left_4"
-                    android:text="Germplasm" />
+                    android:text="@string/germplasm" />
             </LinearLayout>
 
             <LinearLayout
@@ -102,7 +102,7 @@
                     android:id="@+id/tv_location"
                     style="@style/menu_bar_text_view"
                     android:layout_marginLeft="@dimen/text_view_menu_bar_margin_left_4"
-                    android:text="Locations" />
+                    android:text="@string/location" />
             </LinearLayout>
 
             <LinearLayout
@@ -121,7 +121,7 @@
                     android:id="@+id/tv_resource"
                     style="@style/menu_bar_text_view"
                     android:layout_marginLeft="@dimen/text_view_menu_bar_margin_left_6"
-                    android:text="Sources" />
+                    android:text="@string/source" />
             </LinearLayout>
 
             <LinearLayout
@@ -140,7 +140,7 @@
                     android:id="@+id/tv_cross"
                     style="@style/menu_bar_text_view"
                     android:layout_marginLeft="@dimen/text_view_menu_bar_margin_left_6"
-                    android:text="Cross" />
+                    android:text="@string/cross" />
             </LinearLayout>
 
             <View

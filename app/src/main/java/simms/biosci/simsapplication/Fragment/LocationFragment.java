@@ -40,7 +40,7 @@ import simms.biosci.simsapplication.Adapter.LocationSearchAdapter;
 import simms.biosci.simsapplication.Adapter.LocationSearchTableAdapter;
 import simms.biosci.simsapplication.Manager.IntentIntegrator;
 import simms.biosci.simsapplication.Manager.IntentResult;
-import simms.biosci.simsapplication.Manager.OnItemClickListener;
+import simms.biosci.simsapplication.Interface.OnItemClickListener;
 import simms.biosci.simsapplication.Manager.ScannerInterface;
 import simms.biosci.simsapplication.Object.FeedCross;
 import simms.biosci.simsapplication.Object.FeedGermplasm;
@@ -61,7 +61,7 @@ public class LocationFragment extends Fragment {
     private Boolean card_view_type;
     private Typeface montserrat_regular, montserrat_bold;
     private FloatingSearchView floating_search_view;
-    private TextView tv_title, tv_location, tv_address;
+    private TextView tv_location, tv_address;
     private SheetLayout bottom_sheet;
     private FloatingActionButton fab;
     private static final int REQUEST_CODE_ADD = 2;
@@ -127,7 +127,6 @@ public class LocationFragment extends Fragment {
         montserrat_bold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-SemiBold.ttf");
 
         floating_search_view = (FloatingSearchView) rootView.findViewById(R.id.floating_search_view);
-        tv_title = (TextView) rootView.findViewById(R.id.tv_title);
         bottom_sheet = (SheetLayout) rootView.findViewById(R.id.bottom_sheet);
         fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         recyclerView_location = (RecyclerView) rootView.findViewById(R.id.recycler_view_location);
@@ -135,7 +134,6 @@ public class LocationFragment extends Fragment {
         tv_address = (TextView) rootView.findViewById(R.id.tv_address);
         ll_table_header = (LinearLayout) rootView.findViewById(R.id.ll_table_header);
 
-        tv_title.setTypeface(montserrat_bold);
         tv_location.setTypeface(montserrat_bold);
         tv_address.setTypeface(montserrat_bold);
 

@@ -7,10 +7,13 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +26,7 @@ import simms.biosci.simsapplication.Fragment.CrossFragment;
 import simms.biosci.simsapplication.Fragment.GermplasmFragment;
 import simms.biosci.simsapplication.Fragment.LocationFragment;
 import simms.biosci.simsapplication.Fragment.SourceFragment;
+import simms.biosci.simsapplication.Manager.TypefaceSpan;
 import simms.biosci.simsapplication.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -93,6 +97,12 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //end hamburger
 
+        SpannableString s = new SpannableString("Germplasm");
+        s.setSpan(new TypefaceSpan(this, "Montserrat-SemiBold.ttf"), 0, s.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        getSupportActionBar().setTitle(s);
+
         ll_germplasm.setOnClickListener(ll_germplasm_click);
         ll_location.setOnClickListener(ll_location_click);
         ll_resource.setOnClickListener(ll_resource_click);
@@ -127,11 +137,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
             return true;
-        } else if (item.getItemId() == R.id.menu_add) {
-            Intent intent = new Intent(MainActivity.this, AddGermplasmActivity.class);
-            startActivity(intent);
-            overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
-            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -141,6 +146,11 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener ll_germplasm_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            SpannableString s = new SpannableString("Germplasm");
+            s.setSpan(new TypefaceSpan(MainActivity.this, "Montserrat-SemiBold.ttf"), 0, s.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            getSupportActionBar().setTitle(s);
+
             ll_germplasm.setBackgroundColor(Color.parseColor("#EEEEEE"));
             ll_location.setBackgroundColor(Color.parseColor("#FFFFFF"));
             ll_resource.setBackgroundColor(Color.parseColor("#FFFFFF"));
@@ -156,6 +166,11 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener ll_location_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            SpannableString s = new SpannableString("Location");
+            s.setSpan(new TypefaceSpan(MainActivity.this, "Montserrat-SemiBold.ttf"), 0, s.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            getSupportActionBar().setTitle(s);
+
             ll_germplasm.setBackgroundColor(Color.parseColor("#FFFFFF"));
             ll_location.setBackgroundColor(Color.parseColor("#EEEEEE"));
             ll_resource.setBackgroundColor(Color.parseColor("#FFFFFF"));
@@ -171,6 +186,11 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener ll_resource_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            SpannableString s = new SpannableString("Source");
+            s.setSpan(new TypefaceSpan(MainActivity.this, "Montserrat-SemiBold.ttf"), 0, s.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            getSupportActionBar().setTitle(s);
+
             ll_germplasm.setBackgroundColor(Color.parseColor("#FFFFFF"));
             ll_location.setBackgroundColor(Color.parseColor("#FFFFFF"));
             ll_resource.setBackgroundColor(Color.parseColor("#EEEEEE"));
@@ -186,6 +206,11 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener ll_cross_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            SpannableString s = new SpannableString("Cross");
+            s.setSpan(new TypefaceSpan(MainActivity.this, "Montserrat-SemiBold.ttf"), 0, s.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            getSupportActionBar().setTitle(s);
+
             ll_germplasm.setBackgroundColor(Color.parseColor("#FFFFFF"));
             ll_location.setBackgroundColor(Color.parseColor("#FFFFFF"));
             ll_resource.setBackgroundColor(Color.parseColor("#FFFFFF"));
@@ -225,6 +250,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Press Back again to Exit.",
                     Toast.LENGTH_SHORT).show();
+            drawerLayout.openDrawer(GravityCompat.START);
             exit = true;
             new Handler().postDelayed(new Runnable() {
                 @Override

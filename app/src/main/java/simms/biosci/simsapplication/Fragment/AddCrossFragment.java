@@ -30,7 +30,7 @@ import simms.biosci.simsapplication.R;
 public class AddCrossFragment extends Fragment {
 
     private Typeface montserrat_regular, montserrat_bold;
-    private TextView tv_title, tv_cross_name, tv_cross_desc;
+    private TextView tv_cross_name, tv_cross_desc;
     private Button btn_add, btn_reset;
     private EditText et_cross_name, et_cross_desc;
     private DatabaseReference mRootRef, mCrossRef;
@@ -78,7 +78,6 @@ public class AddCrossFragment extends Fragment {
         montserrat_regular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-Regular.ttf");
         montserrat_bold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-SemiBold.ttf");
 
-        tv_title = (TextView) rootView.findViewById(R.id.tv_title);
         btn_add = (Button) rootView.findViewById(R.id.btn_add);
         btn_reset = (Button) rootView.findViewById(R.id.btn_reset);
         tv_cross_name = (TextView) rootView.findViewById(R.id.tv_cross_name);
@@ -88,7 +87,6 @@ public class AddCrossFragment extends Fragment {
 
         btn_add.setTypeface(montserrat_bold);
         btn_reset.setTypeface(montserrat_bold);
-        tv_title.setTypeface(montserrat_bold);
         tv_cross_name.setTypeface(montserrat_bold);
         et_cross_name.setTypeface(montserrat_regular);
         tv_cross_desc.setTypeface(montserrat_bold);

@@ -47,7 +47,7 @@ public class ShowLocationFragment extends Fragment {
 
     private DatabaseHelper databaseHelper;
     private Typeface montserrat_regular, montserrat_bold, prompt_regular;
-    private TextView tv_title, tv_location_name, tv_province, tv_district, tv_sub_district,
+    private TextView tv_location_name, tv_province, tv_district, tv_sub_district,
             tv_select_province, tv_select_district, tv_select_sub_district;
     private Button btn_update, btn_delete;
     private EditText et_location_name;
@@ -119,7 +119,6 @@ public class ShowLocationFragment extends Fragment {
         montserrat_bold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-SemiBold.ttf");
         prompt_regular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Prompt-Regular.ttf");
 
-        tv_title = (TextView) rootView.findViewById(R.id.tv_title);
         btn_update = (Button) rootView.findViewById(R.id.btn_update);
         btn_delete = (Button) rootView.findViewById(R.id.btn_delete);
         tv_location_name = (TextView) rootView.findViewById(R.id.tv_location_name);
@@ -133,7 +132,6 @@ public class ShowLocationFragment extends Fragment {
 
         btn_update.setTypeface(montserrat_bold);
         btn_delete.setTypeface(montserrat_bold);
-        tv_title.setTypeface(montserrat_bold);
         tv_location_name.setTypeface(montserrat_bold);
         tv_province.setTypeface(montserrat_bold);
         tv_district.setTypeface(montserrat_bold);

@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.view.MenuItem;
 
 import simms.biosci.simsapplication.Fragment.AddSourceFragment;
 import simms.biosci.simsapplication.Fragment.ShowSourceFragment;
+import simms.biosci.simsapplication.Manager.TypefaceSpan;
 import simms.biosci.simsapplication.R;
 
 public class AddSourceActivity extends AppCompatActivity {
@@ -30,16 +32,22 @@ public class AddSourceActivity extends AppCompatActivity {
                         .add(R.id.contentContainer,
                                 AddSourceFragment.newInstance())
                         .commit();
+                SpannableString s = new SpannableString("Add Source");
+                s.setSpan(new TypefaceSpan(AddSourceActivity.this, "Montserrat-SemiBold.ttf"), 0, s.length(),
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                getSupportActionBar().setTitle(s);
             } else if (REQUEST_CODE == 6) {
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.contentContainer,
                                 ShowSourceFragment.newInstance(key))
                         .commit();
+                SpannableString s = new SpannableString("Add Source");
+                s.setSpan(new TypefaceSpan(AddSourceActivity.this, "Montserrat-SemiBold.ttf"), 0, s.length(),
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                getSupportActionBar().setTitle(s);
             }
 
         }
-
-        setTitle("Add");
     }
 
     private void initInstance() {
@@ -50,21 +58,10 @@ public class AddSourceActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_add, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
             return true;
-        } else if (item.getItemId() == R.id.menu_home) {
-            finish();
-            Intent intent = new Intent(AddSourceActivity.this, SearchActivity.class);
-            startActivity(intent);
-            overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
         }
         return super.onOptionsItemSelected(item);
     }

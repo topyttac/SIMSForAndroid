@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
+            android:layout_marginRight="4dp"
             android:orientation="vertical"
             android:padding="8dp">
 
@@ -24,9 +24,10 @@
                 android:id="@+id/tv_germplasm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="1"
                 android:text="Germplasm"
                 android:textColor="@color/green"
-                android:textSize="18dp"
+                android:textSize="16dp"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -38,7 +39,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.35">
+                    android:layout_weight="1">
 
                     <TextView
                         android:id="@+id/tv_title_location"

@@ -25,8 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import simms.biosci.simsapplication.Object.Amphur;
 import simms.biosci.simsapplication.Manager.DatabaseHelper;
+import simms.biosci.simsapplication.Object.Amphur;
 import simms.biosci.simsapplication.Object.District;
 import simms.biosci.simsapplication.Object.Province;
 import simms.biosci.simsapplication.R;
@@ -39,7 +39,7 @@ public class AddLocationFragment extends Fragment {
 
     private DatabaseHelper databaseHelper;
     private Typeface montserrat_regular, montserrat_bold, prompt_regular, prompt_bold;
-    private TextView tv_title, tv_location_name, tv_province, tv_district, tv_sub_district,
+    private TextView tv_location_name, tv_province, tv_district, tv_sub_district,
             tv_select_province, tv_select_district, tv_select_sub_district;
     private Button btn_add, btn_reset;
     private EditText et_location_name;
@@ -99,7 +99,6 @@ public class AddLocationFragment extends Fragment {
         mRootRef = FirebaseDatabase.getInstance().getReference();
         mLocationRef = mRootRef.child("location");
 
-        tv_title = (TextView) rootView.findViewById(R.id.tv_title);
         btn_add = (Button) rootView.findViewById(R.id.btn_add);
         btn_reset = (Button) rootView.findViewById(R.id.btn_reset);
         tv_location_name = (TextView) rootView.findViewById(R.id.tv_location_name);
@@ -113,7 +112,6 @@ public class AddLocationFragment extends Fragment {
 
         btn_add.setTypeface(montserrat_bold);
         btn_reset.setTypeface(montserrat_bold);
-        tv_title.setTypeface(montserrat_bold);
         tv_location_name.setTypeface(montserrat_bold);
         tv_province.setTypeface(montserrat_bold);
         tv_district.setTypeface(montserrat_bold);

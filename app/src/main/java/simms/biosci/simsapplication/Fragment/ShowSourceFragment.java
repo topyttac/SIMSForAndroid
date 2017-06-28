@@ -39,7 +39,7 @@ import simms.biosci.simsapplication.R;
 public class ShowSourceFragment extends Fragment {
 
     private Typeface montserrat_regular, montserrat_bold;
-    private TextView tv_title, tv_source_name, tv_source_desc;
+    private TextView tv_source_name, tv_source_desc;
     private Button btn_update, btn_delete;
     private EditText et_source_name, et_source_desc;
     private DatabaseReference mRootRef, mGermplasmRef;
@@ -92,7 +92,6 @@ public class ShowSourceFragment extends Fragment {
         montserrat_regular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-Regular.ttf");
         montserrat_bold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-SemiBold.ttf");
 
-        tv_title = (TextView) rootView.findViewById(R.id.tv_title);
         btn_update = (Button) rootView.findViewById(R.id.btn_update);
         btn_delete = (Button) rootView.findViewById(R.id.btn_delete);
         tv_source_name = (TextView) rootView.findViewById(R.id.tv_source_name);
@@ -102,7 +101,6 @@ public class ShowSourceFragment extends Fragment {
 
         btn_update.setTypeface(montserrat_bold);
         btn_delete.setTypeface(montserrat_bold);
-        tv_title.setTypeface(montserrat_bold);
         tv_source_name.setTypeface(montserrat_bold);
         et_source_name.setTypeface(montserrat_regular);
         tv_source_desc.setTypeface(montserrat_bold);

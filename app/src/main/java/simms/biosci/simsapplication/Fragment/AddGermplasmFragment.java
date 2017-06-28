@@ -41,7 +41,7 @@ import simms.biosci.simsapplication.R;
 public class AddGermplasmFragment extends Fragment {
 
     private Typeface montserrat_regular, montserrat_bold;
-    private TextView tv_title, tv_germplasm, tv_cross, tv_source, tv_select_source, tv_lot, tv_location, tv_select_location, tv_stock,
+    private TextView tv_germplasm, tv_cross, tv_source, tv_select_source, tv_lot, tv_location, tv_select_location, tv_stock,
             tv_balance, tv_room, tv_shelf, tv_row, tv_box, tv_note, tv_select_cross;
     private EditText et_germplasm, et_lot, et_stock, et_balance, et_room, et_shelf, et_row, et_box, et_note;
     private Button btn_add, btn_reset;
@@ -97,7 +97,6 @@ public class AddGermplasmFragment extends Fragment {
         montserrat_regular = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-Regular.ttf");
         montserrat_bold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-SemiBold.ttf");
 
-        tv_title = (TextView) rootView.findViewById(R.id.tv_title);
         btn_add = (Button) rootView.findViewById(R.id.btn_add);
         btn_reset = (Button) rootView.findViewById(R.id.btn_reset);
         tv_germplasm = (TextView) rootView.findViewById(R.id.tv_germplasm);
@@ -127,7 +126,6 @@ public class AddGermplasmFragment extends Fragment {
 
         btn_add.setTypeface(montserrat_bold);
         btn_reset.setTypeface(montserrat_bold);
-        tv_title.setTypeface(montserrat_bold);
         tv_germplasm.setTypeface(montserrat_bold);
         tv_cross.setTypeface(montserrat_bold);
         tv_source.setTypeface(montserrat_bold);

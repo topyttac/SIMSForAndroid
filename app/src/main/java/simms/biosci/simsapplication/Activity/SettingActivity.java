@@ -3,10 +3,13 @@ package simms.biosci.simsapplication.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import simms.biosci.simsapplication.Fragment.SettingFragment;
+import simms.biosci.simsapplication.Manager.TypefaceSpan;
 import simms.biosci.simsapplication.R;
 
 public class SettingActivity extends AppCompatActivity {
@@ -22,7 +25,11 @@ public class SettingActivity extends AppCompatActivity {
                     .commit();
         }
 
-        setTitle("Settings");
+        SpannableString s = new SpannableString("Settings");
+        s.setSpan(new TypefaceSpan(SettingActivity.this, "Montserrat-SemiBold.ttf"), 0, s.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        getSupportActionBar().setTitle(s);
+
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
@@ -38,12 +45,6 @@ public class SettingActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.menu_home) {
             finish();
             Intent intent = new Intent(SettingActivity.this, SearchActivity.class);
-            startActivity(intent);
-            overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
-            return true;
-        } else if (item.getItemId() == R.id.menu_add) {
-            finish();
-            Intent intent = new Intent(SettingActivity.this, AddGermplasmActivity.class);
             startActivity(intent);
             overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
             return true;

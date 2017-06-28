@@ -40,7 +40,7 @@ import simms.biosci.simsapplication.Adapter.GermplasmSearchAdapter;
 import simms.biosci.simsapplication.Adapter.GermplasmSearchTableAdapter;
 import simms.biosci.simsapplication.Manager.IntentIntegrator;
 import simms.biosci.simsapplication.Manager.IntentResult;
-import simms.biosci.simsapplication.Manager.OnItemClickListener;
+import simms.biosci.simsapplication.Interface.OnItemClickListener;
 import simms.biosci.simsapplication.Manager.ScannerInterface;
 import simms.biosci.simsapplication.Object.FeedCross;
 import simms.biosci.simsapplication.Object.FeedGermplasm;
@@ -61,7 +61,7 @@ public class GermplasmFragment extends Fragment {
     private Boolean card_view_type;
     private Typeface montserrat_regular, montserrat_bold;
     private FloatingSearchView floating_search_view;
-    private TextView tv_title, tv_one, tv_two, tv_germplasm;
+    private TextView tv_one, tv_two, tv_germplasm;
     private SheetLayout bottom_sheet;
     private FloatingActionButton fab;
     private static final int REQUEST_CODE_ADD = 1;
@@ -130,7 +130,6 @@ public class GermplasmFragment extends Fragment {
         montserrat_bold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-SemiBold.ttf");
 
         floating_search_view = (FloatingSearchView) rootView.findViewById(R.id.floating_search_view);
-        tv_title = (TextView) rootView.findViewById(R.id.tv_title);
         bottom_sheet = (SheetLayout) rootView.findViewById(R.id.bottom_sheet);
         fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         recyclerView_germplasm = (RecyclerView) rootView.findViewById(R.id.recycler_view_germplasm);
@@ -139,7 +138,6 @@ public class GermplasmFragment extends Fragment {
         tv_two = (TextView) rootView.findViewById(R.id.tv_two);
         ll_table_header = (LinearLayout) rootView.findViewById(R.id.ll_table_header);
 
-        tv_title.setTypeface(montserrat_bold);
         tv_germplasm.setTypeface(montserrat_bold);
         tv_one.setTypeface(montserrat_bold);
         tv_two.setTypeface(montserrat_bold);
