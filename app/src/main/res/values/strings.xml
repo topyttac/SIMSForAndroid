@@ -16,8 +16,36 @@
     <string name="general">General</string>
     <string name="display_type">Display Type</string>
     <string name="settings">Settings</string>
-    <string name="released">Version 2 released on June 26, 2017</string>
+    <string name="released">Version 2 released on June 30, 2017</string>
     <string name="source">Source</string>
+    <string name="user">User</string>
+    <string name="sign_in_as">Sign in as :</string>
+    <string name="account">Account</string>
+    <string name="change_password">Change password</string>
+    <string name="change_password_detail">It\'s a good idea to use a strong password that you\'re not using elsewhere.</string>
+    <string name="gender">Gender</string>
+    <string name="show_password">Show password</string>
+    <string name="cross_name">Cross Name</string>
+    <string name="description">Description</string>
+    <string name="location_name">Location Name</string>
+    <string name="province">Province</string>
+    <string name="district">District</string>
+    <string name="sub_district">Sub-district</string>
+    <string name="source_name">Source Name</string>
+    <string name="lot">Lot</string>
+    <string name="stock">Stock</string>
+    <string name="balance">Balance</string>
+    <string name="room">Room</string>
+    <string name="shelf">Shelf</string>
+    <string name="row">Row</string>
+    <string name="box">Box</string>
+    <string name="note">Note</string>
+    <string name="create_account">No account yet? Create one</string>
+    <string name="forgot_password">Forgot your password?</string>
+    <string name="reset">Reset</string>
+    <string name="email">Email</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="sign_up">SIGN UP</string>
     <string-array name="germplasm_column">
         <item>Germplasm</item>
         <item>Cross</item>

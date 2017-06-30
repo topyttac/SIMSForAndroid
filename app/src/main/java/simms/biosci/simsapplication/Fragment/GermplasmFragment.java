@@ -38,10 +38,11 @@ import java.util.List;
 import simms.biosci.simsapplication.Activity.AddGermplasmActivity;
 import simms.biosci.simsapplication.Adapter.GermplasmSearchAdapter;
 import simms.biosci.simsapplication.Adapter.GermplasmSearchTableAdapter;
+import simms.biosci.simsapplication.Interface.OnItemClickListener;
 import simms.biosci.simsapplication.Manager.IntentIntegrator;
 import simms.biosci.simsapplication.Manager.IntentResult;
-import simms.biosci.simsapplication.Interface.OnItemClickListener;
 import simms.biosci.simsapplication.Manager.ScannerInterface;
+import simms.biosci.simsapplication.Manager.SingletonSIMS;
 import simms.biosci.simsapplication.Object.FeedCross;
 import simms.biosci.simsapplication.Object.FeedGermplasm;
 import simms.biosci.simsapplication.Object.FeedLocation;
@@ -57,6 +58,7 @@ import static android.content.Context.MODE_PRIVATE;
 @SuppressWarnings("unused")
 public class GermplasmFragment extends Fragment {
 
+    private SingletonSIMS sims;
     private SharedPreferences display_read, germplasm_one_read, germplasm_two_read;
     private Boolean card_view_type;
     private Typeface montserrat_regular, montserrat_bold;
@@ -103,10 +105,12 @@ public class GermplasmFragment extends Fragment {
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
 
+        sims = SingletonSIMS.getInstance();
         contextWrapper = new ContextWrapper(getContext());
         scanIntegrator = new IntentIntegrator(this);
         mRootRef = FirebaseDatabase.getInstance().getReference();
-        mRootRef.child("germplasm").orderByChild("g_name").addChildEventListener(germplasmEventListener);
+        Log.i("hello", sims.getUser() + "");
+        mRootRef.child(sims.getUser()).child("germplasm").orderByChild("g_name").addChildEventListener(germplasmEventListener);
     }
 
     @Override

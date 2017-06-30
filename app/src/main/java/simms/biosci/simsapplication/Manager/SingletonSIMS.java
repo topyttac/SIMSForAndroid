@@ -9,9 +9,9 @@ import com.inthecheesefactory.thecheeselibrary.manager.Contextor;
  */
 public class SingletonSIMS {
 
+    private String user;
+
     private static SingletonSIMS instance;
-    private int selectedType;
-    private String selectedTypeName;
     public static SingletonSIMS getInstance() {
         if (instance == null)
             instance = new SingletonSIMS();
@@ -24,19 +24,11 @@ public class SingletonSIMS {
         mContext = Contextor.getInstance().getContext();
     }
 
-    public int getSelectedType() {
-        return selectedType;
+    public String getUser() {
+        return user;
     }
 
-    public void setSelectedType(int selectedType) {
-        this.selectedType = selectedType;
-    }
-
-    public String getSelectedTypeName() {
-        return selectedTypeName;
-    }
-
-    public void setSelectedTypeName(String selectedTypeName) {
-        this.selectedTypeName = selectedTypeName;
+    public void setUser(String user) {
+        this.user = user;
     }
 }

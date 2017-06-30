@@ -17,4 +17,5 @@
     <dimen name="text_view_setting_type_font_size">18sp</dimen>
     <dimen name="text_view_setting_result_font_size">16sp</dimen>
     <dimen name="margin_top_setting_result">2dp</dimen>
+    <dimen name="text_input_layout_size">18sp</dimen>
 </resources>

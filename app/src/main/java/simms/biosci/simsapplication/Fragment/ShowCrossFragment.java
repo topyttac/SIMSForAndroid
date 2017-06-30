@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,6 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.BounceInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -28,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
+import simms.biosci.simsapplication.Manager.SingletonSIMS;
 import simms.biosci.simsapplication.Object.FeedCross;
 import simms.biosci.simsapplication.Object.FeedGermplasm;
 import simms.biosci.simsapplication.R;
@@ -38,8 +39,9 @@ import simms.biosci.simsapplication.R;
 @SuppressWarnings("unused")
 public class ShowCrossFragment extends Fragment {
 
+    private SingletonSIMS sims;
     private Typeface montserrat_regular, montserrat_bold;
-    private TextView tv_cross_name, tv_cross_desc;
+    private TextInputLayout tv_cross_name, tv_cross_desc;
     private Button btn_update, btn_delete;
     private EditText et_cross_name, et_cross_desc;
     private DatabaseReference mRootRef;
@@ -67,8 +69,9 @@ public class ShowCrossFragment extends Fragment {
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
 
+        sims = SingletonSIMS.getInstance();
         mRootRef = FirebaseDatabase.getInstance().getReference();
-        mRootRef.child("cross").orderByChild("c_key").equalTo(key).addChildEventListener(show_cross_click);
+        mRootRef.child(sims.getUser()).child("cross").orderByChild("c_key").equalTo(key).addChildEventListener(show_cross_click);
     }
 
     @Override
@@ -93,9 +96,9 @@ public class ShowCrossFragment extends Fragment {
 
         btn_update = (Button) rootView.findViewById(R.id.btn_update);
         btn_delete = (Button) rootView.findViewById(R.id.btn_delete);
-        tv_cross_name = (TextView) rootView.findViewById(R.id.tv_cross_name);
+        tv_cross_name = (TextInputLayout) rootView.findViewById(R.id.tv_cross_name);
         et_cross_name = (EditText) rootView.findViewById(R.id.et_cross_name);
-        tv_cross_desc = (TextView) rootView.findViewById(R.id.tv_cross_desc);
+        tv_cross_desc = (TextInputLayout) rootView.findViewById(R.id.tv_cross_desc);
         et_cross_desc = (EditText) rootView.findViewById(R.id.et_cross_desc);
 
         btn_update.setTypeface(montserrat_bold);
@@ -164,8 +167,8 @@ public class ShowCrossFragment extends Fragment {
                                 cross.put("c_key", key);
                                 Map<String, Object> child = new HashMap<>();
                                 child.put(key, cross);
-                                mRootRef.child("cross").updateChildren(child);
-                                mRootRef.child("germplasm").orderByChild("g_cross").equalTo(crossName).addChildEventListener(new ChildEventListener() {
+                                mRootRef.child(sims.getUser()).child("cross").updateChildren(child);
+                                mRootRef.child(sims.getUser()).child("germplasm").orderByChild("g_cross").equalTo(crossName).addChildEventListener(new ChildEventListener() {
                                     @Override
                                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                                         FeedGermplasm model = dataSnapshot.getValue(FeedGermplasm.class);
@@ -242,7 +245,7 @@ public class ShowCrossFragment extends Fragment {
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            mRootRef.child("cross").child(key).removeValue();
+                            mRootRef.child(sims.getUser()).child("cross").child(key).removeValue();
 //                            mRootRef.child("germplasm").orderByChild("g_source").equalTo(sourceName).addChildEventListener(new ChildEventListener() {
 //                                @Override
 //                                public void onChildAdded(DataSnapshot dataSnapshot, String s) {

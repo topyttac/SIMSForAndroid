@@ -26,6 +26,8 @@ import android.widget.Toast;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
 import com.github.fabtransitionactivity.SheetLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,10 +40,11 @@ import java.util.List;
 import simms.biosci.simsapplication.Activity.AddLocationActivity;
 import simms.biosci.simsapplication.Adapter.LocationSearchAdapter;
 import simms.biosci.simsapplication.Adapter.LocationSearchTableAdapter;
+import simms.biosci.simsapplication.Interface.OnItemClickListener;
 import simms.biosci.simsapplication.Manager.IntentIntegrator;
 import simms.biosci.simsapplication.Manager.IntentResult;
-import simms.biosci.simsapplication.Interface.OnItemClickListener;
 import simms.biosci.simsapplication.Manager.ScannerInterface;
+import simms.biosci.simsapplication.Manager.SingletonSIMS;
 import simms.biosci.simsapplication.Object.FeedCross;
 import simms.biosci.simsapplication.Object.FeedGermplasm;
 import simms.biosci.simsapplication.Object.FeedLocation;
@@ -57,6 +60,10 @@ import static android.content.Context.MODE_PRIVATE;
 @SuppressWarnings("unused")
 public class LocationFragment extends Fragment {
 
+    private SingletonSIMS sims;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseUser user;
     private SharedPreferences display_read;
     private Boolean card_view_type;
     private Typeface montserrat_regular, montserrat_bold;
@@ -102,10 +109,11 @@ public class LocationFragment extends Fragment {
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
 
+        sims = SingletonSIMS.getInstance();
         contextWrapper = new ContextWrapper(getContext());
         scanIntegrator = new IntentIntegrator(this);
         mRootRef = FirebaseDatabase.getInstance().getReference();
-        mRootRef.child("location").orderByChild("l_name").addChildEventListener(locationEventListener);
+        mRootRef.child(sims.getUser()).child("location").orderByChild("l_name").addChildEventListener(locationEventListener);
     }
 
     @Override

@@ -8,7 +8,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="4dp"
         android:orientation="vertical">
 
         <ScrollView
@@ -23,603 +22,131 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.5">
-
-                        <TextView
-                            android:id="@+id/tv_germplasm"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:gravity="right"
-                            android:text="Germplasm"
-                            android:textColor="@color/green"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text=" : "
-                        android:textColor="@color/green"
-                        android:textSize="18dp"
-                        android:textStyle="bold" />
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="25dp"
-                        android:layout_weight="2">
-
-                        <EditText
-                            android:id="@+id/et_germplasm"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint=""
-                            android:lines="1"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textColorHint="#BDBDBD"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.5">
-
-                        <TextView
-                            android:id="@+id/tv_cross"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:gravity="right"
-                            android:text="Cross"
-                            android:textColor="@color/green"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text=" : "
-                        android:textColor="@color/green"
-                        android:textSize="18dp"
-                        android:textStyle="bold" />
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="25dp"
-                        android:layout_weight="2">
-
-                        <TextView
-                            android:id="@+id/tv_select_cross"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Tap to select"
-                            android:textColor="@color/soft_gray"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.5">
-
-                        <TextView
-                            android:id="@+id/tv_source"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:gravity="right"
-                            android:text="Source"
-                            android:textColor="@color/green"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text=" : "
-                        android:textColor="@color/green"
-                        android:textSize="18dp"
-                        android:textStyle="bold" />
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="25dp"
-                        android:layout_weight="2">
-
-                        <TextView
-                            android:id="@+id/tv_select_source"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Tap to select"
-                            android:textColor="@color/soft_gray"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.5">
-
-                        <TextView
-                            android:id="@+id/tv_lot"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:gravity="right"
-                            android:text="Lot"
-                            android:textColor="@color/green"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text=" : "
-                        android:textColor="@color/green"
-                        android:textSize="18dp"
-                        android:textStyle="bold" />
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="25dp"
-                        android:layout_weight="2">
-
-                        <EditText
-                            android:id="@+id/et_lot"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint=""
-                            android:inputType="number"
-                            android:lines="1"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textColorHint="#BDBDBD"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.5">
-
-                        <TextView
-                            android:id="@+id/tv_location"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:gravity="right"
-                            android:text="Location"
-                            android:textColor="@color/green"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text=" : "
-                        android:textColor="@color/green"
-                        android:textSize="18dp"
-                        android:textStyle="bold" />
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="25dp"
-                        android:layout_weight="2">
-
-                        <TextView
-                            android:id="@+id/tv_select_location"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Tap to select"
-                            android:textColor="@color/soft_gray"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.5">
-
-                        <TextView
-                            android:id="@+id/tv_stock"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:gravity="right"
-                            android:text="Stock"
-                            android:textColor="@color/green"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text=" : "
-                        android:textColor="@color/green"
-                        android:textSize="18dp"
-                        android:textStyle="bold" />
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="25dp"
-                        android:layout_weight="2">
-
-                        <EditText
-                            android:id="@+id/et_stock"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint=""
-                            android:lines="1"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textColorHint="#BDBDBD"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.5">
-
-                        <TextView
-                            android:id="@+id/tv_balance"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:gravity="right"
-                            android:text="Balance"
-                            android:textColor="@color/green"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text=" : "
-                        android:textColor="@color/green"
-                        android:textSize="18dp"
-                        android:textStyle="bold" />
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="25dp"
-                        android:layout_weight="2">
-
-                        <EditText
-                            android:id="@+id/et_balance"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint=""
-                            android:inputType="number"
-                            android:lines="1"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textColorHint="#BDBDBD"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.5">
-
-                        <TextView
-                            android:id="@+id/tv_room"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:gravity="right"
-                            android:text="Room"
-                            android:textColor="@color/green"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text=" : "
-                        android:textColor="@color/green"
-                        android:textSize="18dp"
-                        android:textStyle="bold" />
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="25dp"
-                        android:layout_weight="2">
-
-                        <EditText
-                            android:id="@+id/et_room"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint=""
-                            android:inputType="number"
-                            android:lines="1"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textColorHint="#BDBDBD"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.5">
-
-                        <TextView
-                            android:id="@+id/tv_shelf"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:gravity="right"
-                            android:text="Shelf"
-                            android:textColor="@color/green"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text=" : "
-                        android:textColor="@color/green"
-                        android:textSize="18dp"
-                        android:textStyle="bold" />
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="25dp"
-                        android:layout_weight="2">
-
-                        <EditText
-                            android:id="@+id/et_shelf"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint=""
-                            android:inputType="number"
-                            android:lines="1"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textColorHint="#BDBDBD"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.5">
-
-                        <TextView
-                            android:id="@+id/tv_row"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:gravity="right"
-                            android:text="Row"
-                            android:textColor="@color/green"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text=" : "
-                        android:textColor="@color/green"
-                        android:textSize="18dp"
-                        android:textStyle="bold" />
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="25dp"
-                        android:layout_weight="2">
-
-                        <EditText
-                            android:id="@+id/et_row"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint=""
-                            android:inputType="number"
-                            android:lines="1"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textColorHint="#BDBDBD"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.5">
-
-                        <TextView
-                            android:id="@+id/tv_box"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:gravity="right"
-                            android:text="Box"
-                            android:textColor="@color/green"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text=" : "
-                        android:textColor="@color/green"
-                        android:textSize="18dp"
-                        android:textStyle="bold" />
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="25dp"
-                        android:layout_weight="2">
-
-                        <EditText
-                            android:id="@+id/et_box"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint=""
-                            android:inputType="number"
-                            android:lines="1"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textColorHint="#BDBDBD"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.5">
-
-                        <TextView
-                            android:id="@+id/tv_note"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:gravity="right"
-                            android:text="Note"
-                            android:textColor="@color/green"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text=" : "
-                        android:textColor="@color/green"
-                        android:textSize="18dp"
-                        android:textStyle="bold" />
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="25dp"
-                        android:layout_weight="2">
-
-                        <EditText
-                            android:id="@+id/et_note"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint=""
-                            android:lines="1"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textColorHint="#BDBDBD"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-                </LinearLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tv_germplasm"
+                    style="@style/text_input_layout">
+
+                    <EditText
+                        android:id="@+id/et_germplasm"
+                        style="@style/edit_text_input_layout"
+                        android:hint="@string/germplasm" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tv_cross"
+                    style="@style/text_input_layout">
+
+                    <EditText
+                        android:id="@+id/tv_select_cross"
+                        style="@style/edit_text_input_layout"
+                        android:hint="@string/cross" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tv_source"
+                    style="@style/text_input_layout">
+
+                    <EditText
+                        android:id="@+id/tv_select_source"
+                        style="@style/edit_text_input_layout"
+                        android:hint="@string/source" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tv_location"
+                    style="@style/text_input_layout">
+
+                    <EditText
+                        android:id="@+id/tv_select_location"
+                        style="@style/edit_text_input_layout"
+                        android:hint="@string/location" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tv_lot"
+                    style="@style/text_input_layout">
+
+                    <EditText
+                        android:id="@+id/et_lot"
+                        style="@style/edit_text_input_layout"
+                        android:hint="@string/lot"
+                        android:inputType="number" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tv_stock"
+                    style="@style/text_input_layout">
+
+                    <EditText
+                        android:id="@+id/et_stock"
+                        style="@style/edit_text_input_layout"
+                        android:hint="@string/stock" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tv_balance"
+                    style="@style/text_input_layout">
+
+                    <EditText
+                        android:id="@+id/et_balance"
+                        style="@style/edit_text_input_layout"
+                        android:hint="@string/balance"
+                        android:inputType="numberDecimal" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tv_room"
+                    style="@style/text_input_layout">
+
+                    <EditText
+                        android:id="@+id/et_room"
+                        style="@style/edit_text_input_layout"
+                        android:hint="@string/room"
+                        android:inputType="number" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tv_shelf"
+                    style="@style/text_input_layout">
+
+                    <EditText
+                        android:id="@+id/et_shelf"
+                        style="@style/edit_text_input_layout"
+                        android:hint="@string/shelf"
+                        android:inputType="number" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tv_row"
+                    style="@style/text_input_layout">
+
+                    <EditText
+                        android:id="@+id/et_row"
+                        style="@style/edit_text_input_layout"
+                        android:hint="@string/row"
+                        android:inputType="number" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tv_box"
+                    style="@style/text_input_layout">
+
+                    <EditText
+                        android:id="@+id/et_box"
+                        style="@style/edit_text_input_layout"
+                        android:hint="@string/box"
+                        android:inputType="number" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tv_note"
+                    style="@style/text_input_layout">
+
+                    <EditText
+                        android:id="@+id/et_note"
+                        style="@style/edit_text_input_layout"
+                        android:hint="@string/note" />
+                </android.support.design.widget.TextInputLayout>
             </LinearLayout>
         </ScrollView>
 
@@ -647,7 +174,8 @@
                     android:id="@+id/btn_delete"
                     style="@style/button_order"
                     android:background="@drawable/selector_background_button_reset"
-                    android:text="DELETE" />
+                    android:text="DELETE"
+                    android:textColor="@drawable/selector_font_button_reset" />
             </FrameLayout>
 
             <FrameLayout
@@ -659,7 +187,8 @@
                     android:id="@+id/btn_update"
                     style="@style/button_order"
                     android:background="@drawable/selector_background_button_add"
-                    android:text="UPDATE" />
+                    android:text="UPDATE"
+                    android:textColor="@drawable/selector_font_button_add" />
             </FrameLayout>
         </LinearLayout>
     </LinearLayout>

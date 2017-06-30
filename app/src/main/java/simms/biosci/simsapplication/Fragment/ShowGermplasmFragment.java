@@ -6,8 +6,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +16,6 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.BounceInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -32,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import simms.biosci.simsapplication.Manager.SingletonSIMS;
 import simms.biosci.simsapplication.Object.FeedCross;
 import simms.biosci.simsapplication.Object.FeedGermplasm;
 import simms.biosci.simsapplication.Object.FeedLocation;
@@ -45,10 +45,12 @@ import simms.biosci.simsapplication.R;
 @SuppressWarnings("unused")
 public class ShowGermplasmFragment extends Fragment {
 
+    private SingletonSIMS sims;
     private Typeface montserrat_regular, montserrat_bold;
-    private TextView tv_germplasm, tv_cross, tv_source, tv_select_source, tv_lot, tv_location, tv_select_location, tv_stock,
-            tv_balance, tv_room, tv_shelf, tv_row, tv_box, tv_note, tv_select_cross;
-    private EditText et_germplasm, et_lot, et_stock, et_balance, et_room, et_shelf, et_row, et_box, et_note;
+    private TextInputLayout tv_germplasm, tv_cross, tv_source, tv_lot, tv_location, tv_stock,
+            tv_balance, tv_room, tv_shelf, tv_row, tv_box, tv_note;
+    private EditText et_germplasm, et_lot, et_stock, et_balance, et_room, et_shelf, et_row, et_box,
+            et_note, tv_select_source, tv_select_location, tv_select_cross;
     private Button btn_update, btn_delete;
     private int source = -1, location = -1, cross = -1;
     private DatabaseReference mRootRef, mGermplasmRef;
@@ -80,12 +82,13 @@ public class ShowGermplasmFragment extends Fragment {
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
 
+        sims = SingletonSIMS.getInstance();
         mRootRef = FirebaseDatabase.getInstance().getReference();
-        mGermplasmRef = mRootRef.child("germplasm");
-        mRootRef.child("cross").orderByChild("c_name").addChildEventListener(select_cross_click);
-        mRootRef.child("source").orderByChild("s_name").addChildEventListener(select_source_click);
-        mRootRef.child("location").orderByChild("l_name").addChildEventListener(select_location_click);
-        mRootRef.child("germplasm").orderByChild("g_key").equalTo(key).addChildEventListener(show_germplasm_listener);
+        mGermplasmRef = mRootRef.child(sims.getUser()).child("germplasm");
+        mRootRef.child(sims.getUser()).child("cross").orderByChild("c_name").addChildEventListener(select_cross_click);
+        mRootRef.child(sims.getUser()).child("source").orderByChild("s_name").addChildEventListener(select_source_click);
+        mRootRef.child(sims.getUser()).child("location").orderByChild("l_name").addChildEventListener(select_location_click);
+        mRootRef.child(sims.getUser()).child("germplasm").orderByChild("g_key").equalTo(key).addChildEventListener(show_germplasm_listener);
     }
 
     @Override
@@ -110,22 +113,22 @@ public class ShowGermplasmFragment extends Fragment {
 
         btn_update = (Button) rootView.findViewById(R.id.btn_update);
         btn_delete = (Button) rootView.findViewById(R.id.btn_delete);
-        tv_germplasm = (TextView) rootView.findViewById(R.id.tv_germplasm);
-        tv_cross = (TextView) rootView.findViewById(R.id.tv_cross);
-        tv_source = (TextView) rootView.findViewById(R.id.tv_source);
-        tv_select_source = (TextView) rootView.findViewById(R.id.tv_select_source);
-        tv_lot = (TextView) rootView.findViewById(R.id.tv_lot);
-        tv_location = (TextView) rootView.findViewById(R.id.tv_location);
-        tv_select_location = (TextView) rootView.findViewById(R.id.tv_select_location);
-        tv_stock = (TextView) rootView.findViewById(R.id.tv_stock);
-        tv_balance = (TextView) rootView.findViewById(R.id.tv_balance);
-        tv_room = (TextView) rootView.findViewById(R.id.tv_room);
-        tv_shelf = (TextView) rootView.findViewById(R.id.tv_shelf);
-        tv_row = (TextView) rootView.findViewById(R.id.tv_row);
-        tv_box = (TextView) rootView.findViewById(R.id.tv_box);
-        tv_note = (TextView) rootView.findViewById(R.id.tv_note);
+        tv_germplasm = (TextInputLayout) rootView.findViewById(R.id.tv_germplasm);
+        tv_cross = (TextInputLayout) rootView.findViewById(R.id.tv_cross);
+        tv_source = (TextInputLayout) rootView.findViewById(R.id.tv_source);
+        tv_select_source = (EditText) rootView.findViewById(R.id.tv_select_source);
+        tv_lot = (TextInputLayout) rootView.findViewById(R.id.tv_lot);
+        tv_location = (TextInputLayout) rootView.findViewById(R.id.tv_location);
+        tv_select_location = (EditText) rootView.findViewById(R.id.tv_select_location);
+        tv_stock = (TextInputLayout) rootView.findViewById(R.id.tv_stock);
+        tv_balance = (TextInputLayout) rootView.findViewById(R.id.tv_balance);
+        tv_room = (TextInputLayout) rootView.findViewById(R.id.tv_room);
+        tv_shelf = (TextInputLayout) rootView.findViewById(R.id.tv_shelf);
+        tv_row = (TextInputLayout) rootView.findViewById(R.id.tv_row);
+        tv_box = (TextInputLayout) rootView.findViewById(R.id.tv_box);
+        tv_note = (TextInputLayout) rootView.findViewById(R.id.tv_note);
         et_germplasm = (EditText) rootView.findViewById(R.id.et_germplasm);
-        tv_select_cross = (TextView) rootView.findViewById(R.id.tv_select_cross);
+        tv_select_cross = (EditText) rootView.findViewById(R.id.tv_select_cross);
         et_lot = (EditText) rootView.findViewById(R.id.et_lot);
         et_stock = (EditText) rootView.findViewById(R.id.et_stock);
         et_balance = (EditText) rootView.findViewById(R.id.et_balance);
@@ -166,16 +169,21 @@ public class ShowGermplasmFragment extends Fragment {
         feedSources = new ArrayList<>();
         feedCrosses = new ArrayList<>();
 
-        tv_select_cross.setText(Html.fromHtml("<u>Tap to select</u>"));
-        tv_select_location.setText(Html.fromHtml("<u>Tap to select</u>"));
-        tv_select_source.setText(Html.fromHtml("<u>Tap to select</u>"));
+        tv_select_cross.setText("Tap to select");
+        tv_select_location.setText("Tap to select");
+        tv_select_source.setText("Tap to select");
+        tv_select_cross.setKeyListener(null);
+        tv_select_source.setKeyListener(null);
+        tv_select_location.setKeyListener(null);
 
         btn_update.setOnClickListener(btn_update_click);
         btn_delete.setOnClickListener(btn_delete_click);
         tv_select_location.setOnClickListener(tv_select_location_click);
         tv_select_source.setOnClickListener(tv_select_source_click);
         tv_select_cross.setOnClickListener(tv_select_cross_click);
-
+        tv_select_cross.setOnFocusChangeListener(tv_select_cross_focus);
+        tv_select_source.setOnFocusChangeListener(tv_select_source_focus);
+        tv_select_location.setOnFocusChangeListener(tv_select_location_focus);
         new LoadingFireBase().execute("");
     }
 
@@ -187,6 +195,12 @@ public class ShowGermplasmFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        if (select_cross_click != null)
+            mRootRef.removeEventListener(select_cross_click);
+        if (select_location_click != null)
+            mRootRef.removeEventListener(select_location_click);
+        if (select_source_click != null)
+            mRootRef.removeEventListener(select_source_click);
     }
 
     /*
@@ -237,7 +251,7 @@ public class ShowGermplasmFragment extends Fragment {
                                 germplasm.put("g_lot", Integer.parseInt(et_lot.getText().toString()));
                                 germplasm.put("g_location", tv_select_location.getText().toString());
                                 germplasm.put("g_stock", et_stock.getText().toString());
-                                germplasm.put("g_balance", Integer.parseInt(et_balance.getText().toString()));
+                                germplasm.put("g_balance", Float.parseFloat(et_balance.getText().toString()));
                                 germplasm.put("g_room", Integer.parseInt(et_room.getText().toString()));
                                 germplasm.put("g_shelf", Integer.parseInt(et_shelf.getText().toString()));
                                 germplasm.put("g_row", Integer.parseInt(et_row.getText().toString()));
@@ -246,7 +260,7 @@ public class ShowGermplasmFragment extends Fragment {
                                 germplasm.put("g_key", key);
                                 Map<String, Object> child = new HashMap<>();
                                 child.put(key, germplasm);
-                                mRootRef.child("germplasm").updateChildren(child);
+                                mRootRef.child(sims.getUser()).child("germplasm").updateChildren(child);
                                 Toast.makeText(getContext(), "Update germplasm successfully.", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent();
                                 intent.putExtra("KEY", key);
@@ -288,7 +302,7 @@ public class ShowGermplasmFragment extends Fragment {
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            mRootRef.child("germplasm").child(key).removeValue();
+                            mRootRef.child(sims.getUser()).child("germplasm").child(key).removeValue();
                             Toast.makeText(getContext(), "Delete germplasm successfully.", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent();
                             intent.putExtra("KEY", key);
@@ -301,14 +315,33 @@ public class ShowGermplasmFragment extends Fragment {
         }
     };
 
+    View.OnFocusChangeListener tv_select_cross_focus = new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (hasFocus) {
+                MaterialDialog.Builder builder = new MaterialDialog.Builder(getContext());
+                builder
+                        .title("Select Source")
+                        .items(crossList)
+                        .typeface("Montserrat-Regular.ttf", "Montserrat-Regular.ttf")
+                        .itemsCallbackSingleChoice(cross, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                tv_select_cross.setText(text + "");
+                                tv_select_cross.setTextColor(getResources().getColor(R.color.light_blue));
+                                cross = which;
+                                return true;
+                            }
+                        })
+                        .negativeText("cancel")
+                        .show();
+            }
+        }
+    };
+
     View.OnClickListener tv_select_cross_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.bounce);
-            BounceInterpolator interpolator = new BounceInterpolator();
-            anim.setInterpolator(interpolator);
-            tv_select_cross.startAnimation(anim);
-
             MaterialDialog.Builder builder = new MaterialDialog.Builder(getContext());
             builder
                     .title("Select Source")
@@ -317,7 +350,7 @@ public class ShowGermplasmFragment extends Fragment {
                     .itemsCallbackSingleChoice(cross, new MaterialDialog.ListCallbackSingleChoice() {
                         @Override
                         public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                            tv_select_cross.setText(Html.fromHtml("<u>" + text + "</u>"));
+                            tv_select_cross.setText(text + "");
                             tv_select_cross.setTextColor(getResources().getColor(R.color.light_blue));
                             cross = which;
                             return true;
@@ -328,14 +361,33 @@ public class ShowGermplasmFragment extends Fragment {
         }
     };
 
+    View.OnFocusChangeListener tv_select_location_focus = new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (hasFocus) {
+                MaterialDialog.Builder builder = new MaterialDialog.Builder(getContext());
+                builder
+                        .title("Select Source")
+                        .items(locationList)
+                        .typeface("Montserrat-Regular.ttf", "Montserrat-Regular.ttf")
+                        .itemsCallbackSingleChoice(location, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                tv_select_location.setText(text + "");
+                                tv_select_location.setTextColor(getResources().getColor(R.color.light_blue));
+                                location = which;
+                                return true;
+                            }
+                        })
+                        .negativeText("cancel")
+                        .show();
+            }
+        }
+    };
+
     View.OnClickListener tv_select_location_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.bounce);
-            BounceInterpolator interpolator = new BounceInterpolator();
-            anim.setInterpolator(interpolator);
-            tv_select_location.startAnimation(anim);
-
             MaterialDialog.Builder builder = new MaterialDialog.Builder(getContext());
             builder
                     .title("Select Source")
@@ -344,7 +396,7 @@ public class ShowGermplasmFragment extends Fragment {
                     .itemsCallbackSingleChoice(location, new MaterialDialog.ListCallbackSingleChoice() {
                         @Override
                         public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                            tv_select_location.setText(Html.fromHtml("<u>" + text + "</u>"));
+                            tv_select_location.setText(text + "");
                             tv_select_location.setTextColor(getResources().getColor(R.color.light_blue));
                             location = which;
                             return true;
@@ -355,14 +407,33 @@ public class ShowGermplasmFragment extends Fragment {
         }
     };
 
+    View.OnFocusChangeListener tv_select_source_focus = new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (hasFocus) {
+                MaterialDialog.Builder builder = new MaterialDialog.Builder(getContext());
+                builder
+                        .title("Select Source")
+                        .items(sourceList)
+                        .typeface("Montserrat-Regular.ttf", "Montserrat-Regular.ttf")
+                        .itemsCallbackSingleChoice(source, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                tv_select_source.setText(text + "");
+                                tv_select_source.setTextColor(getResources().getColor(R.color.light_blue));
+                                source = which;
+                                return true;
+                            }
+                        })
+                        .negativeText("cancel")
+                        .show();
+            }
+        }
+    };
+
     View.OnClickListener tv_select_source_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.bounce);
-            BounceInterpolator interpolator = new BounceInterpolator();
-            anim.setInterpolator(interpolator);
-            tv_select_source.startAnimation(anim);
-
             MaterialDialog.Builder builder = new MaterialDialog.Builder(getContext());
             builder
                     .title("Select Source")
@@ -371,7 +442,7 @@ public class ShowGermplasmFragment extends Fragment {
                     .itemsCallbackSingleChoice(source, new MaterialDialog.ListCallbackSingleChoice() {
                         @Override
                         public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                            tv_select_source.setText(Html.fromHtml("<u>" + text + "</u>"));
+                            tv_select_source.setText(text + "");
                             tv_select_source.setTextColor(getResources().getColor(R.color.light_blue));
                             source = which;
                             return true;
@@ -504,12 +575,12 @@ public class ShowGermplasmFragment extends Fragment {
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             FeedGermplasm model = dataSnapshot.getValue(FeedGermplasm.class);
             et_germplasm.setText(model.getG_name() + "");
-            tv_select_cross.setText(Html.fromHtml("<u>" + model.getG_cross() + "</u>"));
+            tv_select_cross.setText(model.getG_cross() + "");
             tv_select_cross.setTextColor(getResources().getColor(R.color.light_blue));
-            tv_select_source.setText(Html.fromHtml("<u>" + model.getG_source() + "</u>"));
+            tv_select_source.setText(model.getG_source() + "");
             tv_select_source.setTextColor(getResources().getColor(R.color.light_blue));
             et_lot.setText(model.getG_lot() + "");
-            tv_select_location.setText(Html.fromHtml("<u>" + model.getG_location() + "</u>"));
+            tv_select_location.setText(model.getG_location() + "");
             tv_select_location.setTextColor(getResources().getColor(R.color.light_blue));
             et_stock.setText(model.getG_stock() + "");
             et_balance.setText(model.getG_balance() + "");

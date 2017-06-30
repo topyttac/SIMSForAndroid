@@ -38,10 +38,11 @@ import java.util.List;
 import simms.biosci.simsapplication.Activity.AddSourceActivity;
 import simms.biosci.simsapplication.Adapter.SourceSearchAdapter;
 import simms.biosci.simsapplication.Adapter.SourceSearchTableAdapter;
+import simms.biosci.simsapplication.Interface.OnItemClickListener;
 import simms.biosci.simsapplication.Manager.IntentIntegrator;
 import simms.biosci.simsapplication.Manager.IntentResult;
-import simms.biosci.simsapplication.Interface.OnItemClickListener;
 import simms.biosci.simsapplication.Manager.ScannerInterface;
+import simms.biosci.simsapplication.Manager.SingletonSIMS;
 import simms.biosci.simsapplication.Object.FeedCross;
 import simms.biosci.simsapplication.Object.FeedGermplasm;
 import simms.biosci.simsapplication.Object.FeedLocation;
@@ -57,6 +58,7 @@ import static android.content.Context.MODE_PRIVATE;
 @SuppressWarnings("unused")
 public class SourceFragment extends Fragment {
 
+    private SingletonSIMS sims;
     private SharedPreferences display_read;
     private Boolean card_view_type;
     private Typeface montserrat_regular, montserrat_bold;
@@ -102,10 +104,11 @@ public class SourceFragment extends Fragment {
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
 
+        sims = SingletonSIMS.getInstance();
         contextWrapper = new ContextWrapper(getContext());
         scanIntegrator = new IntentIntegrator(this);
         mRootRef = FirebaseDatabase.getInstance().getReference();
-        mRootRef.child("source").orderByChild("s_name").addChildEventListener(sourceEventListener);
+        mRootRef.child(sims.getUser()).child("source").orderByChild("s_name").addChildEventListener(sourceEventListener);
     }
 
     @Override
@@ -191,7 +194,6 @@ public class SourceFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
     }
 
     @Override
@@ -351,7 +353,7 @@ public class SourceFragment extends Fragment {
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Log.e("SEARCH_EAN", "CANCEL");
             }
-        }else if (requestCode == REQUEST_CODE_SHOW) {
+        } else if (requestCode == REQUEST_CODE_SHOW) {
             try {
                 String what2do = data.getStringExtra("what2do");
                 if (what2do.toString().equals("update")) {
@@ -362,10 +364,10 @@ public class SourceFragment extends Fragment {
                         if (feedSources.get(i).getS_key().equals(key)) {
                             feedSources.get(i).setS_name(s_name + "");
                             feedSources.get(i).setS_desc(s_desc + "");
-                            if(card_view_type){
+                            if (card_view_type) {
                                 sourceSearchAdapter.notifyDataSetChanged();
                                 sourceSearchAdapter.notifyItemRangeChanged(i, feedSources.size());
-                            } else{
+                            } else {
                                 sourceSearchTableAdapter.notifyDataSetChanged();
                                 sourceSearchTableAdapter.notifyItemRangeChanged(i, feedSources.size());
                             }
@@ -376,10 +378,10 @@ public class SourceFragment extends Fragment {
                     for (int i = 0; i < feedSources.size(); i++) {
                         if (feedSources.get(i).getS_key().equals(key)) {
                             feedSources.remove(i);
-                            if(card_view_type){
+                            if (card_view_type) {
                                 sourceSearchAdapter.notifyItemRemoved(i);
                                 sourceSearchAdapter.notifyItemRangeChanged(i, feedSources.size());
-                            } else{
+                            } else {
                                 sourceSearchTableAdapter.notifyItemRemoved(i);
                                 sourceSearchTableAdapter.notifyItemRangeChanged(i, feedSources.size());
                             }

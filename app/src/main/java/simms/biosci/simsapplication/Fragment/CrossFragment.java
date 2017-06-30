@@ -38,10 +38,11 @@ import java.util.List;
 import simms.biosci.simsapplication.Activity.AddCrossActivity;
 import simms.biosci.simsapplication.Adapter.CrossSearchAdapter;
 import simms.biosci.simsapplication.Adapter.CrossSearchTableAdapter;
+import simms.biosci.simsapplication.Interface.OnItemClickListener;
 import simms.biosci.simsapplication.Manager.IntentIntegrator;
 import simms.biosci.simsapplication.Manager.IntentResult;
-import simms.biosci.simsapplication.Interface.OnItemClickListener;
 import simms.biosci.simsapplication.Manager.ScannerInterface;
+import simms.biosci.simsapplication.Manager.SingletonSIMS;
 import simms.biosci.simsapplication.Object.FeedCross;
 import simms.biosci.simsapplication.Object.FeedGermplasm;
 import simms.biosci.simsapplication.Object.FeedLocation;
@@ -57,6 +58,7 @@ import static android.content.Context.MODE_PRIVATE;
 @SuppressWarnings("unused")
 public class CrossFragment extends Fragment {
 
+    private SingletonSIMS sims;
     private SharedPreferences display_read;
     private Boolean card_view_type;
     private Typeface montserrat_regular, montserrat_bold;
@@ -102,10 +104,11 @@ public class CrossFragment extends Fragment {
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
 
+        sims = SingletonSIMS.getInstance();
         contextWrapper = new ContextWrapper(getContext());
         scanIntegrator = new IntentIntegrator(this);
         mRootRef = FirebaseDatabase.getInstance().getReference();
-        mRootRef.child("cross").orderByChild("c_name").addChildEventListener(crossEventListener);
+        mRootRef.child(sims.getUser()).child("cross").orderByChild("c_name").addChildEventListener(crossEventListener);
     }
 
     @Override

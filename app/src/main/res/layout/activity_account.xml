@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_account"
+        style="@style/text_view_setting"
+        android:text="@string/account"
+        android:textColor="@color/soft_gray" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:src="@drawable/locker"
+            style="@style/icon_account_activity" />
+
+        <LinearLayout
+            android:id="@+id/ll_change_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_background_setting"
+            android:orientation="vertical"
+            android:padding="@dimen/linear_setting_padding">
+
+            <TextView
+                android:id="@+id/tv_change_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/change_password"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_view_setting_type_font_size" />
+
+            <TextView
+                android:id="@+id/tv_change_password_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_top_setting_result"
+                android:text="@string/change_password_detail"
+                android:textSize="@dimen/text_view_setting_result_font_size" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

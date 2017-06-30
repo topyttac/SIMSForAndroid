@@ -3,6 +3,7 @@ package simms.biosci.simsapplication.Fragment;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +13,6 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.BounceInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
@@ -21,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
+import simms.biosci.simsapplication.Manager.SingletonSIMS;
 import simms.biosci.simsapplication.R;
 
 /**
@@ -29,8 +30,9 @@ import simms.biosci.simsapplication.R;
 @SuppressWarnings("unused")
 public class AddCrossFragment extends Fragment {
 
+    private SingletonSIMS sims;
     private Typeface montserrat_regular, montserrat_bold;
-    private TextView tv_cross_name, tv_cross_desc;
+    private TextInputLayout tv_cross_name, tv_cross_desc;
     private Button btn_add, btn_reset;
     private EditText et_cross_name, et_cross_desc;
     private DatabaseReference mRootRef, mCrossRef;
@@ -55,9 +57,9 @@ public class AddCrossFragment extends Fragment {
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
 
+        sims = SingletonSIMS.getInstance();
         mRootRef = FirebaseDatabase.getInstance().getReference();
-        mCrossRef = mRootRef.child("cross");
-
+        mCrossRef = mRootRef.child(sims.getUser()).child("cross");
     }
 
     @Override
@@ -80,9 +82,9 @@ public class AddCrossFragment extends Fragment {
 
         btn_add = (Button) rootView.findViewById(R.id.btn_add);
         btn_reset = (Button) rootView.findViewById(R.id.btn_reset);
-        tv_cross_name = (TextView) rootView.findViewById(R.id.tv_cross_name);
+        tv_cross_name = (TextInputLayout) rootView.findViewById(R.id.tv_cross_name);
         et_cross_name = (EditText) rootView.findViewById(R.id.et_cross_name);
-        tv_cross_desc = (TextView) rootView.findViewById(R.id.tv_cross_desc);
+        tv_cross_desc = (TextInputLayout) rootView.findViewById(R.id.tv_cross_desc);
         et_cross_desc = (EditText) rootView.findViewById(R.id.et_cross_desc);
 
         btn_add.setTypeface(montserrat_bold);
@@ -131,9 +133,9 @@ public class AddCrossFragment extends Fragment {
             anim.setInterpolator(interpolator);
             btn_add.startAnimation(anim);
 
-            if(et_cross_name.getText().toString().equals("") || et_cross_desc.getText().toString().equals("")){
+            if (et_cross_name.getText().toString().equals("") || et_cross_desc.getText().toString().equals("")) {
                 Toast.makeText(getContext(), "Please fill in all information.", Toast.LENGTH_SHORT).show();
-            } else{
+            } else {
                 String key = mCrossRef.push().getKey();
                 HashMap<String, Object> cross = new HashMap<String, Object>();
                 cross.put("c_name", et_cross_name.getText().toString());
@@ -143,7 +145,6 @@ public class AddCrossFragment extends Fragment {
                 child.put(key, cross);
                 mCrossRef.updateChildren(child);
                 Toast.makeText(getContext(), "Add source successfully.", Toast.LENGTH_SHORT).show();
-                cleanUp();
                 getActivity().finish();
             }
         }
@@ -160,8 +161,10 @@ public class AddCrossFragment extends Fragment {
         }
     };
 
-    private void cleanUp(){
+    private void cleanUp() {
         et_cross_name.setText("");
         et_cross_desc.setText("");
     }
+
+
 }

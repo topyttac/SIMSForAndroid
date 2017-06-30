@@ -22,21 +22,28 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import simms.biosci.simsapplication.Fragment.CrossFragment;
 import simms.biosci.simsapplication.Fragment.GermplasmFragment;
 import simms.biosci.simsapplication.Fragment.LocationFragment;
 import simms.biosci.simsapplication.Fragment.SourceFragment;
+import simms.biosci.simsapplication.Manager.SingletonSIMS;
 import simms.biosci.simsapplication.Manager.TypefaceSpan;
 import simms.biosci.simsapplication.R;
 
 public class MainActivity extends AppCompatActivity {
 
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private SingletonSIMS sims;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
-    private LinearLayout ll_germplasm, ll_location, ll_resource, ll_cross, ll_setting;
+    private LinearLayout ll_user, ll_germplasm, ll_location, ll_resource, ll_cross, ll_setting;
     private Typeface montserrat_regular, montserrat_bold;
-    private TextView tv_sims, tv_germplasm, tv_location, tv_resource, tv_cross, tv_setting, tv_released;
+    private TextView tv_sims, tv_user, tv_email, tv_germplasm, tv_location, tv_resource, tv_cross, tv_setting, tv_released;
     private static final int REQUEST_CODE = 2;
 
     @Override
@@ -52,9 +59,13 @@ public class MainActivity extends AppCompatActivity {
                             GermplasmFragment.newInstance())
                     .commit();
         }
+
+        sims = SingletonSIMS.getInstance();
     }
 
     private void initInstances() {
+        mAuth = FirebaseAuth.getInstance();
+
         montserrat_regular = Typeface.createFromAsset(getAssets(), "fonts/Montserrat-Regular.ttf");
         montserrat_bold = Typeface.createFromAsset(getAssets(), "fonts/Montserrat-SemiBold.ttf");
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -71,6 +82,9 @@ public class MainActivity extends AppCompatActivity {
         tv_cross = (TextView) findViewById(R.id.tv_cross);
         tv_setting = (TextView) findViewById(R.id.tv_setting);
         tv_released = (TextView) findViewById(R.id.tv_released);
+        tv_user = (TextView) findViewById(R.id.tv_user);
+        ll_user = (LinearLayout) findViewById(R.id.ll_user);
+        tv_email = (TextView) findViewById(R.id.tv_email);
 
         tv_sims.setTypeface(montserrat_bold);
         tv_germplasm.setTypeface(montserrat_bold);
@@ -79,10 +93,20 @@ public class MainActivity extends AppCompatActivity {
         tv_cross.setTypeface(montserrat_bold);
         tv_setting.setTypeface(montserrat_bold);
         tv_released.setTypeface(montserrat_regular);
+        tv_user.setTypeface(montserrat_bold);
+        tv_email.setTypeface(montserrat_regular);
 
         drawerLayout.openDrawer(Gravity.LEFT);
         ll_germplasm.setBackgroundColor(Color.parseColor("#EEEEEE"));
         setSupportActionBar(toolbar); // set toolbar
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                tv_email.setText(user.getEmail());
+            }
+        };
 
         // start hamburger
         actionBarDrawerToggle = new ActionBarDrawerToggle(
@@ -108,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
         ll_resource.setOnClickListener(ll_resource_click);
         ll_cross.setOnClickListener(ll_cross_click);
         ll_setting.setOnClickListener(ll_setting_click);
+        ll_user.setOnClickListener(ll_user_click);
     }
 
     @Override
@@ -132,11 +157,17 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (actionBarDrawerToggle.onOptionsItemSelected(item)) // when press hamburger
             return true;
-        else if (item.getItemId() == R.id.menu_home) {
-            Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+//        else if (item.getItemId() == R.id.menu_home) {
+//            Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+//            startActivity(intent);
+//            overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
+//            return true; }
+        else if (item.getItemId() == R.id.menu_signout) {
+            mAuth.signOut();
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
-            overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
-            return true;
+            overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -228,7 +259,16 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
             Intent intent = new Intent(MainActivity.this, SettingActivity.class);
             startActivity(intent);
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+            overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+        }
+    };
+
+    View.OnClickListener ll_user_click = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(MainActivity.this, AccountActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
         }
     };
     /*############ LISTENER #############*/
@@ -258,6 +298,20 @@ public class MainActivity extends AppCompatActivity {
                     exit = false;
                 }
             }, 3 * 1000);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
         }
     }
 }

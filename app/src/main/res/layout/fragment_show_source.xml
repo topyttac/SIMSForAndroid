@@ -8,7 +8,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="4dp"
         android:orientation="vertical">
 
         <ScrollView
@@ -22,105 +21,25 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tv_source_name"
+                    style="@style/text_input_layout">
 
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.5">
+                    <EditText
+                        android:id="@+id/et_source_name"
+                        style="@style/edit_text_input_layout"
+                        android:hint="@string/source_name" />
+                </android.support.design.widget.TextInputLayout>
 
-                        <TextView
-                            android:id="@+id/tv_source_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:gravity="right"
-                            android:text="Source Name"
-                            android:textColor="@color/green"
-                            android:textSize="18dp" />
-                    </FrameLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tv_source_desc"
+                    style="@style/text_input_layout">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text=" : "
-                        android:textColor="@color/green"
-                        android:textSize="18dp"
-                        android:textStyle="bold" />
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="25dp"
-                        android:layout_weight="2">
-
-                        <EditText
-                            android:id="@+id/et_source_name"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint=""
-                            android:lines="1"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textColorHint="#BDBDBD"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.5">
-
-                        <TextView
-                            android:id="@+id/tv_source_desc"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:gravity="right"
-                            android:text="Description"
-                            android:textColor="@color/green"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text=" : "
-                        android:textColor="@color/green"
-                        android:textSize="18dp"
-                        android:textStyle="bold" />
-
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="25dp"
-                        android:layout_weight="2">
-
-                        <EditText
-                            android:id="@+id/et_source_desc"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint=""
-                            android:lines="1"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textColorHint="#BDBDBD"
-                            android:textSize="18dp" />
-                    </FrameLayout>
-                </LinearLayout>
+                    <EditText
+                        android:id="@+id/et_source_desc"
+                        style="@style/edit_text_input_layout"
+                        android:hint="@string/description" />
+                </android.support.design.widget.TextInputLayout>
             </LinearLayout>
 
         </ScrollView>
@@ -149,7 +68,8 @@
                     android:id="@+id/btn_delete"
                     style="@style/button_order"
                     android:background="@drawable/selector_background_button_reset"
-                    android:text="DELETE" />
+                    android:text="DELETE"
+                    android:textColor="@drawable/selector_font_button_reset" />
             </FrameLayout>
 
             <FrameLayout
@@ -161,7 +81,8 @@
                     android:id="@+id/btn_update"
                     style="@style/button_order"
                     android:background="@drawable/selector_background_button_add"
-                    android:text="UPDATE" />
+                    android:text="UPDATE"
+                    android:textColor="@drawable/selector_font_button_add" />
             </FrameLayout>
         </LinearLayout>
     </LinearLayout>

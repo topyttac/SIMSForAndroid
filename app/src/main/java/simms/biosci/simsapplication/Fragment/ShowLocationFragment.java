@@ -5,8 +5,8 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +15,6 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.BounceInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -32,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import simms.biosci.simsapplication.Manager.DatabaseHelper;
+import simms.biosci.simsapplication.Manager.SingletonSIMS;
 import simms.biosci.simsapplication.Object.Amphur;
 import simms.biosci.simsapplication.Object.District;
 import simms.biosci.simsapplication.Object.FeedGermplasm;
@@ -45,10 +45,11 @@ import simms.biosci.simsapplication.R;
 @SuppressWarnings("unused")
 public class ShowLocationFragment extends Fragment {
 
+    private SingletonSIMS sims;
     private DatabaseHelper databaseHelper;
     private Typeface montserrat_regular, montserrat_bold, prompt_regular;
-    private TextView tv_location_name, tv_province, tv_district, tv_sub_district,
-            tv_select_province, tv_select_district, tv_select_sub_district;
+    private EditText tv_select_province, tv_select_district, tv_select_sub_district;
+    private TextInputLayout tv_location_name, tv_province, tv_district, tv_sub_district;
     private Button btn_update, btn_delete;
     private EditText et_location_name;
     private int province = -1, district = -1, sub_district = -1;
@@ -92,9 +93,10 @@ public class ShowLocationFragment extends Fragment {
             e.printStackTrace();
         }
 
+        sims = SingletonSIMS.getInstance();
         mRootRef = FirebaseDatabase.getInstance().getReference();
         mGermplasmRef = mRootRef.child("germplasm");
-        mRootRef.child("location").orderByChild("l_key").equalTo(key).addChildEventListener(show_location_click);
+        mRootRef.child(sims.getUser()).child("location").orderByChild("l_key").equalTo(key).addChildEventListener(show_location_click);
 
     }
 
@@ -121,14 +123,14 @@ public class ShowLocationFragment extends Fragment {
 
         btn_update = (Button) rootView.findViewById(R.id.btn_update);
         btn_delete = (Button) rootView.findViewById(R.id.btn_delete);
-        tv_location_name = (TextView) rootView.findViewById(R.id.tv_location_name);
-        tv_province = (TextView) rootView.findViewById(R.id.tv_province);
-        tv_district = (TextView) rootView.findViewById(R.id.tv_district);
-        tv_sub_district = (TextView) rootView.findViewById(R.id.tv_sub_district);
+        tv_location_name = (TextInputLayout) rootView.findViewById(R.id.tv_location_name);
+        tv_province = (TextInputLayout) rootView.findViewById(R.id.tv_province);
+        tv_district = (TextInputLayout) rootView.findViewById(R.id.tv_district);
+        tv_sub_district = (TextInputLayout) rootView.findViewById(R.id.tv_sub_district);
         et_location_name = (EditText) rootView.findViewById(R.id.et_location_name);
-        tv_select_province = (TextView) rootView.findViewById(R.id.tv_select_province);
-        tv_select_district = (TextView) rootView.findViewById(R.id.tv_select_district);
-        tv_select_sub_district = (TextView) rootView.findViewById(R.id.tv_select_sub_district);
+        tv_select_province = (EditText) rootView.findViewById(R.id.tv_select_province);
+        tv_select_district = (EditText) rootView.findViewById(R.id.tv_select_district);
+        tv_select_sub_district = (EditText) rootView.findViewById(R.id.tv_select_sub_district);
 
         btn_update.setTypeface(montserrat_bold);
         btn_delete.setTypeface(montserrat_bold);
@@ -141,15 +143,21 @@ public class ShowLocationFragment extends Fragment {
         tv_select_district.setTypeface(prompt_regular);
         tv_select_sub_district.setTypeface(prompt_regular);
 
-        tv_select_province.setText(Html.fromHtml("<u>Tap to select</u>"));
-        tv_select_district.setText(Html.fromHtml("<u>Tap to select</u>"));
-        tv_select_sub_district.setText(Html.fromHtml("<u>Tap to select</u>"));
+        tv_select_province.setText("Tap to select");
+        tv_select_district.setText("Tap to select");
+        tv_select_sub_district.setText("Tap to select");
+        tv_select_province.setKeyListener(null);
+        tv_select_district.setKeyListener(null);
+        tv_select_sub_district.setKeyListener(null);
 
         btn_update.setOnClickListener(btn_update_click);
         btn_delete.setOnClickListener(btn_delete_click);
         tv_select_province.setOnClickListener(tv_select_province_click);
         tv_select_district.setOnClickListener(tv_select_district_click);
         tv_select_sub_district.setOnClickListener(tv_select_sub_district_click);
+        tv_select_province.setOnFocusChangeListener(tv_select_province_focus);
+        tv_select_district.setOnFocusChangeListener(tv_select_district_focus);
+        tv_select_sub_district.setOnFocusChangeListener(tv_select_sub_district_focus);
 
         listProvince = databaseHelper.getAllProvince();
         provinceID = new int[listProvince.size()];
@@ -162,6 +170,7 @@ public class ShowLocationFragment extends Fragment {
             provinceName[i] = listProvince.get(i).getProvinceName();
             provinceGEO_ID[i] = listProvince.get(i).getGEO_ID();
         }
+
     }
 
     @Override
@@ -221,8 +230,8 @@ public class ShowLocationFragment extends Fragment {
                                 location.put("l_key", key);
                                 Map<String, Object> child = new HashMap<>();
                                 child.put(key, location);
-                                mRootRef.child("location").updateChildren(child);
-                                mRootRef.child("germplasm").orderByChild("g_location").equalTo(locationName).addChildEventListener(new ChildEventListener() {
+                                mRootRef.child(sims.getUser()).child("location").updateChildren(child);
+                                mRootRef.child(sims.getUser()).child("germplasm").orderByChild("g_location").equalTo(locationName).addChildEventListener(new ChildEventListener() {
                                     @Override
                                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                                         FeedGermplasm model = dataSnapshot.getValue(FeedGermplasm.class);
@@ -300,7 +309,7 @@ public class ShowLocationFragment extends Fragment {
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            mRootRef.child("location").child(key).removeValue();
+                            mRootRef.child(sims.getUser()).child("location").child(key).removeValue();
 //                            mRootRef.child("germplasm").orderByChild("g_location").equalTo(locationName).addChildEventListener(new ChildEventListener() {
 //                                @Override
 //                                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -340,14 +349,43 @@ public class ShowLocationFragment extends Fragment {
         }
     };
 
+    View.OnFocusChangeListener tv_select_province_focus = new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (hasFocus) {
+                MaterialDialog.Builder builder = new MaterialDialog.Builder(getContext());
+                builder
+                        .title("Select Province")
+                        .items(provinceName)
+                        .typeface("Montserrat-Regular.ttf", "Prompt-Regular.ttf")
+                        .itemsCallbackSingleChoice(province, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                tv_select_province.setText(text + "");
+                                tv_select_province.setTextColor(getResources().getColor(R.color.light_blue));
+                                province = which;
+
+                                listAmphur = databaseHelper.getAllAmphur(provinceID[which]);
+                                amphurID = new int[listAmphur.size()];
+                                amphurName = new String[listAmphur.size()];
+                                amphurProvinceID = new int[listAmphur.size()];
+                                for (int i = 0; i < listAmphur.size(); i++) {
+                                    amphurID[i] = listAmphur.get(i).getAmphurID();
+                                    amphurName[i] = listAmphur.get(i).getAmphurName();
+                                    amphurProvinceID[i] = listAmphur.get(i).getProvinceID();
+                                }
+                                return true;
+                            }
+                        })
+                        .negativeText("cancel")
+                        .show();
+            }
+        }
+    };
+
     View.OnClickListener tv_select_province_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.bounce);
-            BounceInterpolator interpolator = new BounceInterpolator();
-            anim.setInterpolator(interpolator);
-            tv_select_province.startAnimation(anim);
-
             MaterialDialog.Builder builder = new MaterialDialog.Builder(getContext());
             builder
                     .title("Select Province")
@@ -356,7 +394,7 @@ public class ShowLocationFragment extends Fragment {
                     .itemsCallbackSingleChoice(province, new MaterialDialog.ListCallbackSingleChoice() {
                         @Override
                         public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                            tv_select_province.setText(Html.fromHtml("<u>" + text + "</u>"));
+                            tv_select_province.setText(text + "");
                             tv_select_province.setTextColor(getResources().getColor(R.color.light_blue));
                             province = which;
 
@@ -377,13 +415,49 @@ public class ShowLocationFragment extends Fragment {
         }
     };
 
+    View.OnFocusChangeListener tv_select_district_focus = new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (hasFocus) {
+                if (tv_select_province.getText().toString().equals("Tap to select") || province == -1) {
+                    Toast.makeText(getContext(), "Please select province first.", Toast.LENGTH_SHORT).show();
+                } else {
+                    MaterialDialog.Builder builder = new MaterialDialog.Builder(getContext());
+                    builder
+                            .title("Select District")
+                            .items(amphurName)
+                            .typeface("Montserrat-Regular.ttf", "Prompt-Regular.ttf")
+                            .itemsCallbackSingleChoice(district, new MaterialDialog.ListCallbackSingleChoice() {
+                                @Override
+                                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                    tv_select_district.setText(text + "");
+                                    tv_select_district.setTextColor(getResources().getColor(R.color.light_blue));
+                                    district = which;
+
+                                    listDistrict = databaseHelper.getAllDistrict(amphurID[which]);
+                                    districtID = new int[listDistrict.size()];
+                                    districtName = new String[listDistrict.size()];
+                                    districtAmphurID = new int[listDistrict.size()];
+                                    districtProvinceID = new int[listDistrict.size()];
+                                    for (int i = 0; i < listDistrict.size(); i++) {
+                                        districtID[i] = listDistrict.get(i).getDistrictID();
+                                        districtName[i] = listDistrict.get(i).getDistrictName();
+                                        districtAmphurID[i] = listDistrict.get(i).getAmphurID();
+                                        districtProvinceID[i] = listDistrict.get(i).getProvinceID();
+                                    }
+                                    return true;
+                                }
+                            })
+                            .negativeText("cancel")
+                            .show();
+                }
+            }
+        }
+    };
+
     View.OnClickListener tv_select_district_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.bounce);
-            BounceInterpolator interpolator = new BounceInterpolator();
-            anim.setInterpolator(interpolator);
-            tv_select_district.startAnimation(anim);
             if (tv_select_province.getText().toString().equals("Tap to select") || province == -1) {
                 Toast.makeText(getContext(), "Please select province first.", Toast.LENGTH_SHORT).show();
             } else {
@@ -395,7 +469,7 @@ public class ShowLocationFragment extends Fragment {
                         .itemsCallbackSingleChoice(district, new MaterialDialog.ListCallbackSingleChoice() {
                             @Override
                             public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                                tv_select_district.setText(Html.fromHtml("<u>" + text + "</u>"));
+                                tv_select_district.setText(text + "");
                                 tv_select_district.setTextColor(getResources().getColor(R.color.light_blue));
                                 district = which;
 
@@ -419,13 +493,37 @@ public class ShowLocationFragment extends Fragment {
         }
     };
 
+    View.OnFocusChangeListener tv_select_sub_district_focus = new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (hasFocus) {
+                if (tv_select_province.getText().toString().equals("Tap to select") || tv_select_district.getText().toString().equals("Tap to select") || district == -1) {
+                    Toast.makeText(getContext(), "Please select district first.", Toast.LENGTH_SHORT).show();
+                } else {
+                    MaterialDialog.Builder builder = new MaterialDialog.Builder(getContext());
+                    builder
+                            .title("Select Sub-district")
+                            .items(districtName)
+                            .typeface("Montserrat-Regular.ttf", "Prompt-Regular.ttf")
+                            .itemsCallbackSingleChoice(sub_district, new MaterialDialog.ListCallbackSingleChoice() {
+                                @Override
+                                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                    tv_select_sub_district.setText(text + "");
+                                    tv_select_sub_district.setTextColor(getResources().getColor(R.color.light_blue));
+                                    sub_district = which;
+                                    return true;
+                                }
+                            })
+                            .negativeText("cancel")
+                            .show();
+                }
+            }
+        }
+    };
+
     View.OnClickListener tv_select_sub_district_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.bounce);
-            BounceInterpolator interpolator = new BounceInterpolator();
-            anim.setInterpolator(interpolator);
-            tv_select_sub_district.startAnimation(anim);
             if (tv_select_province.getText().toString().equals("Tap to select") || tv_select_district.getText().toString().equals("Tap to select") || district == -1) {
                 Toast.makeText(getContext(), "Please select district first.", Toast.LENGTH_SHORT).show();
             } else {
@@ -437,7 +535,7 @@ public class ShowLocationFragment extends Fragment {
                         .itemsCallbackSingleChoice(sub_district, new MaterialDialog.ListCallbackSingleChoice() {
                             @Override
                             public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                                tv_select_sub_district.setText(Html.fromHtml("<u>" + text + "</u>"));
+                                tv_select_sub_district.setText(text + "");
                                 tv_select_sub_district.setTextColor(getResources().getColor(R.color.light_blue));
                                 sub_district = which;
                                 return true;
@@ -454,11 +552,11 @@ public class ShowLocationFragment extends Fragment {
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             model = dataSnapshot.getValue(FeedLocation.class);
             et_location_name.setText(model.getL_name() + "");
-            tv_select_province.setText(Html.fromHtml("<u>" + model.getL_province() + "</u>"));
+            tv_select_province.setText(model.getL_province() + "");
             tv_select_province.setTextColor(getResources().getColor(R.color.light_blue));
-            tv_select_district.setText(Html.fromHtml("<u>" + model.getL_district() + "</u>"));
+            tv_select_district.setText(model.getL_district() + "");
             tv_select_district.setTextColor(getResources().getColor(R.color.light_blue));
-            tv_select_sub_district.setText(Html.fromHtml("<u>" + model.getL_sub_district() + "</u>"));
+            tv_select_sub_district.setText(model.getL_sub_district() + "");
             tv_select_sub_district.setTextColor(getResources().getColor(R.color.light_blue));
             locationName = model.getL_name();
         }
