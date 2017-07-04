@@ -45,6 +45,8 @@ public class SplashActivity extends AppCompatActivity {
                 if (user != null) {
                     String email = user.getEmail();
                     email = email.replace(".", "");
+                    email = email.replace(".", "");
+                    email = email.replace(".", "");
                     email = email.replace("#", "");
                     email = email.replace("$", "");
                     email = email.replace("[", "");
