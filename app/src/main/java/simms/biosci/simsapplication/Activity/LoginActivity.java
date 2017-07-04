@@ -21,13 +21,15 @@ import com.google.firebase.auth.FirebaseUser;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import simms.biosci.simsapplication.Manager.SingletonSIMS;
 import simms.biosci.simsapplication.R;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private SingletonSIMS sims;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private  FirebaseUser user;
+    private FirebaseUser user;
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
     private Typeface montserrat_regular, montserrat_bold;
@@ -55,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
         mAuth = FirebaseAuth.getInstance();
+        sims = SingletonSIMS.getInstance();
 
         montserrat_regular = Typeface.createFromAsset(getAssets(), "fonts/Montserrat-Regular.ttf");
         montserrat_bold = Typeface.createFromAsset(getAssets(), "fonts/Montserrat-SemiBold.ttf");
@@ -71,7 +74,18 @@ public class LoginActivity extends AppCompatActivity {
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(FirebaseAuth firebaseAuth) {
-               user = firebaseAuth.getCurrentUser();
+                user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    String email = user.getEmail();
+                    email = email.replace(".", "");
+                    email = email.replace(".", "");
+                    email = email.replace(".", "");
+                    email = email.replace("#", "");
+                    email = email.replace("$", "");
+                    email = email.replace("[", "");
+                    email = email.replace("]", "");
+                    sims.setUser(email);
+                }
             }
         };
 
